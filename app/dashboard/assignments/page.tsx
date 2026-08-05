@@ -5,14 +5,21 @@ import { getMySubmissionForAssignment } from "@/lib/lessons/repository";
 
 export const metadata = { robots: { index: false, follow: false } };
 
+interface AssignmentRow {
+  id: string;
+  title: string;
+  description: string | null;
+  due_at: string | null;
+}
+
 export default async function AssignmentsPage() {
-  const assignments = await getPendingAssignments();
+  const assignments: AssignmentRow[] = await getPendingAssignments();
   const submissionEntries = await Promise.all(
-    assignments.map(async (a: { id: string }) => [a.id, await getMySubmissionForAssignment(a.id)] as const)
+    assignments.map(async (a) => [a.id, await getMySubmissionForAssignment(a.id)] as const)
   );
-  // Map keyed by assignment id rather than a parallel array indexed by
-  // position — see app/admin/teachers/page.tsx for why array[i] breaks
-  // the build under this project's noUncheckedIndexedAccess setting.
+  // Map keyed by assignment id, with an explicit source-array type — see
+  // app/teach/attendance/page.tsx for why both parts of this pattern
+  // matter, not just the Map half of it.
   const submissionsByAssignmentId = new Map(submissionEntries);
 
   return (
@@ -29,7 +36,7 @@ export default async function AssignmentsPage() {
         />
       ) : (
         <div className="mt-8 space-y-4">
-          {assignments.map((a: { id: string; title: string; description: string | null; due_at: string | null }) => (
+          {assignments.map((a) => (
             <div key={a.id}>
               {a.due_at && (
                 <p className="mb-1.5 text-xs font-semibold text-navy-500 dark:text-navy-400">

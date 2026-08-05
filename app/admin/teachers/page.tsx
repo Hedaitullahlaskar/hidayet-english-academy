@@ -5,10 +5,16 @@ import { getAllTeachers, getTeacherNotes } from "@/lib/admin/repository";
 
 export const metadata = { robots: { index: false, follow: false } };
 
+interface TeacherRow {
+  id: string;
+  full_name: string;
+  avatar_url: string | null;
+}
+
 export default async function AdminTeachersPage() {
-  const teachers = await getAllTeachers();
+  const teachers: TeacherRow[] = await getAllTeachers();
   const notesEntries = await Promise.all(
-    teachers.map(async (t: { id: string }) => [t.id, await getTeacherNotes(t.id)] as const)
+    teachers.map(async (t) => [t.id, await getTeacherNotes(t.id)] as const)
   );
   // A Map keyed by teacher id, rather than a second array indexed by
   // position — array[i] under this project's noUncheckedIndexedAccess
@@ -33,7 +39,7 @@ export default async function AdminTeachersPage() {
         <EmptyState icon="👨‍🏫" title="No teachers yet" body="Promote a registered student account to teacher using the form above." />
       ) : (
         <div className="space-y-4">
-          {teachers.map((t: { id: string; full_name: string; avatar_url: string | null }) => {
+          {teachers.map((t) => {
             const notes = notesByTeacherId.get(t.id) ?? [];
             return (
               <div key={t.id} className="rounded-lg border border-navy-100 bg-white p-5 shadow-card dark:border-navy-700 dark:bg-navy-800">

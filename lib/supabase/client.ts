@@ -15,7 +15,7 @@ import { createBrowserClient } from "@supabase/ssr";
  * to change it per-call after the fact.
  */
 export function createClient(persistent: boolean = true) {
-  return createBrowserClient(
+  return createBrowserClient<any>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     persistent ? { cookieOptions: { maxAge: 60 * 60 * 24 * 30 } } : {} // omitting maxAge entirely (not setting it to undefined) is what makes it a true session cookie

@@ -28,8 +28,9 @@ export function AnimatedProgressBar({
       return;
     }
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
+      (entries) => {
+        const entry = entries[0];
+        if (entry?.isIntersecting) {
           // Small delay so the fill is visibly a fill, not an instant jump.
           requestAnimationFrame(() => setWidth(clamped));
           observer.disconnect();

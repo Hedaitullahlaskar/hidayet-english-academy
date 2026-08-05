@@ -4,14 +4,26 @@ import { getTodaysLiveClasses, getEnrolledStudentsForClass } from "@/lib/teacher
 
 export const metadata = { robots: { index: false, follow: false } };
 
+interface LiveClassRow {
+  id: string;
+  title: string;
+  scheduled_at: string;
+}
+
 export default async function AttendancePage() {
-  const classes = await getTodaysLiveClasses();
+  const classes: LiveClassRow[] = await getTodaysLiveClasses();
   const rosterEntries = await Promise.all(
-    classes.map(async (c: { id: string }) => [c.id, await getEnrolledStudentsForClass(c.id)] as const)
+    classes.map(async (c) => [c.id, await getEnrolledStudentsForClass(c.id)] as const)
   );
   // Map keyed by class id rather than a parallel array indexed by
   // position — see app/admin/teachers/page.tsx for why array[i] breaks
   // the build under this project's noUncheckedIndexedAccess setting.
+  // The explicit LiveClassRow[] annotation above matters too: without it,
+  // `classes` is inferred `any` (from the untyped Supabase result this
+  // repository function returns), which makes Promise.all's own generic
+  // inference collapse to `{}` instead of the real tuple type — a much
+  // less obvious failure than the noUncheckedIndexedAccess one, caught
+  // by actually running `tsc` rather than guessing from patterns alone.
   const rostersByClassId = new Map(rosterEntries);
 
   return (
@@ -28,7 +40,7 @@ export default async function AttendancePage() {
         />
       ) : (
         <div className="mt-8 space-y-6">
-          {classes.map((c: { id: string; title: string; scheduled_at: string }) => {
+          {classes.map((c) => {
             const roster = rostersByClassId.get(c.id) ?? [];
             return (
               <div key={c.id} className="rounded-lg border border-navy-100 bg-white p-5 shadow-card dark:border-navy-700 dark:bg-navy-800">

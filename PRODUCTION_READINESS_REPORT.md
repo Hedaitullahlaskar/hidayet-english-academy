@@ -93,6 +93,71 @@ results above carry real weight.
   the payments module; only Razorpay and Stripe are real.
 - **No automated test suite** anywhere in the codebase.
 
+## Real TypeScript compiler verification (this session)
+
+The previous version of this report was explicit that no real compiler
+had been run — only static syntax-balance checking. This session closes
+part of that gap for real: a `tsc` binary was found already present in
+this sandbox, and used to type-check the actual project against its real
+`tsconfig.json`. `npm install` still isn't possible here (no network
+access to the registry — confirmed by a direct 403 from `npm install`,
+not assumed), so this is not the same as `next build`, but it is a real
+compiler checking real code against real type rules, not pattern-matching.
+
+**Two genuine, previously-undetected bugs were found and fixed:**
+
+1. **The actual root cause of the error you reported.** Not a mistake in
+   the previous fix — a deeper issue upstream. `getAllTeachers()` (and
+   similarly-shaped repository functions) return `Promise<any>`, since
+   this project has no generated Supabase `Database` type. Passing an
+   `any`-typed array through `Promise.all(x.map(...))` makes TypeScript's
+   generic inference collapse to `{}` instead of the real tuple type —
+   confirmed by isolating it in a minimal reproduction, then by forcing
+   TypeScript to reveal its actual inferred type on the real file twice
+   (once at the definition, once at the call site) before writing a fix,
+   not by guessing. Fixed in the three files that had it
+   (`app/admin/teachers/page.tsx`, `app/teach/attendance/page.tsx`,
+   `app/dashboard/assignments/page.tsx`) by explicitly typing the source
+   array before mapping over it.
+2. **A real `noUncheckedIndexedAccess` violation unrelated to the above**:
+   `AnimatedProgressBar.tsx` and `Reveal.tsx` both destructured
+   `([entry]) => ...` from an `IntersectionObserver` callback — array
+   destructuring is indexed access under the hood, so this is a genuine
+   strict-mode error, not an artifact. Fixed in both.
+
+**Twenty errors were investigated and deliberately left unchanged**,
+because they're false positives specific to this sandboxed environment,
+not real bugs: `course`/`policy`/`attemptResult` being reported as
+possibly null/undefined after a `if (!x) notFound()` or `redirect(...)`
+check. This idiom is correct — `next/navigation`'s real `notFound`/
+`redirect` functions are typed to return `never`, which is exactly what
+lets TypeScript narrow the value afterward — but that typing is invisible
+without the real `next` package installed. A further six errors on
+`Badge`/`Card`/`Container` components followed the same pattern: real
+`react` type declarations are unavailable locally but exist in your
+actual build. Verified this distinction file by file rather than assumed
+it once and applied it everywhere.
+
+**ESLint could not be run** in this session either, for the identical
+reason — `eslint-config-next` and this project's other lint dependencies
+aren't installable without network access. If `next build` (which runs
+lint as part of the build by default) surfaces an ESLint error next,
+treat it with the same real-compiler weight as the `tsc` findings above,
+not as noise.
+
+**One more change worth being precise about**: before isolating the real
+root cause above, I added an explicit `<any>` Database generic to all
+three Supabase client constructors (`lib/supabase/server.ts`,
+`client.ts`, `admin.ts`) — a standard, sanctioned pattern for projects
+without generated Supabase types. I could **not** confirm locally whether
+this changes anything in a real build, since `@supabase/ssr` itself is
+unresolvable without `node_modules`, which means TypeScript can't apply
+a generic argument to a function signature it can't see. I kept the
+change anyway — it's low-risk and well-justified even though it wasn't
+the fix for the specific bug above, which turned out to be the
+`Promise.all`/`any` inference issue instead. Flagging this distinction
+so "kept" isn't confused with "confirmed effective."
+
 ## Post-deployment fixes (real `next build` errors, found via actual Vercel builds)
 
 The original readiness report was explicit that no real `next build` had
