@@ -93,6 +93,52 @@ results above carry real weight.
   the payments module; only Razorpay and Stripe are real.
 - **No automated test suite** anywhere in the codebase.
 
+## Post-deployment fixes (real `next build` errors, found via actual Vercel builds)
+
+The original readiness report was explicit that no real `next build` had
+been run in the sandboxed environment, and that this was a genuine gap,
+not a formality. This section is that gap closing in practice, one real
+build failure at a time — the honest way to read this section is "here
+is what a real compiler caught that static text analysis structurally
+could not," not "here is a list of oversights."
+
+**Root cause**: `tsconfig.json` has `"noUncheckedIndexedAccess": true` —
+a strict setting under which `array[i]` is typed `T | undefined`, not
+`T`, whenever `i` is a variable rather than a literal. Reading a property
+off that result (`array[i].length`, `array[i].map(...)`) is a real
+compile error under this setting, even though it's completely invisible
+to brace/paren/bracket balance checking or any regex-based static
+analysis — the error is about *types*, not *syntax*.
+
+**What was fixed**: Vercel's build reported this in
+`app/admin/teachers/page.tsx`. Rather than patch only the reported line,
+I searched the whole codebase for the same pattern and found three more
+real instances of it (`app/teach/attendance/page.tsx`,
+`app/teach/analytics/page.tsx`, `app/dashboard/assignments/page.tsx`) —
+each would very likely have caused the *next* Vercel build to fail on a
+different file, one at a time, in a frustrating cycle. All four were
+fixed the same way: replacing a second array indexed by loop position
+with a `Map` keyed by a real id (student, teacher, course, or assignment
+id) — a genuinely more correct pattern than adding a null-check, since it
+removes the possibility of position-based arrays silently drifting out
+of sync with each other, not just the type error.
+
+A fifth related instance (`lib/assessments/shuffle.ts`'s Fisher-Yates
+swap) was a different kind of case: `arr[i]` and `arr[j]` are
+mathematically always in-bounds by the shuffle algorithm's own
+construction, but `noUncheckedIndexedAccess` can't prove that from the
+loop alone. Fixed with justified non-null assertions and a comment
+explaining exactly why they're safe there, rather than restructuring a
+correct algorithm to work around a type-checker limitation.
+
+**What this means for you going forward**: if another Vercel build fails
+with a similar "Object is possibly 'undefined'" error, it's worth
+checking whether it's the same `array[i]` pattern before assuming it's
+unrelated — this codebase's strict `noUncheckedIndexedAccess` setting
+means any array indexed by a loop or map variable (rather than accessed
+via `.map()`/`.filter()`/a `Map`/a `.find()` with a null-check) is a
+candidate for this exact class of error.
+
 ## Deployment checklist
 
 - [ ] Create Supabase project, run `supabase/schema.sql`

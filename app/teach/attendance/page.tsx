@@ -6,7 +6,13 @@ export const metadata = { robots: { index: false, follow: false } };
 
 export default async function AttendancePage() {
   const classes = await getTodaysLiveClasses();
-  const rosters = await Promise.all(classes.map((c: { id: string }) => getEnrolledStudentsForClass(c.id)));
+  const rosterEntries = await Promise.all(
+    classes.map(async (c: { id: string }) => [c.id, await getEnrolledStudentsForClass(c.id)] as const)
+  );
+  // Map keyed by class id rather than a parallel array indexed by
+  // position — see app/admin/teachers/page.tsx for why array[i] breaks
+  // the build under this project's noUncheckedIndexedAccess setting.
+  const rostersByClassId = new Map(rosterEntries);
 
   return (
     <div>
@@ -22,24 +28,27 @@ export default async function AttendancePage() {
         />
       ) : (
         <div className="mt-8 space-y-6">
-          {classes.map((c: { id: string; title: string; scheduled_at: string }, i: number) => (
-            <div key={c.id} className="rounded-lg border border-navy-100 bg-white p-5 shadow-card dark:border-navy-700 dark:bg-navy-800">
-              <p className="font-semibold text-navy-900 dark:text-white">{c.title}</p>
-              <p className="text-sm text-navy-500 dark:text-navy-400">{new Date(c.scheduled_at).toLocaleString()}</p>
-              {rosters[i].length === 0 ? (
-                <EmptyState
-                  className="mt-4"
-                  icon="🧑‍🎓"
-                  title="No enrolled students yet"
-                  body="Once students enroll in this course, they'll appear here to mark present/absent."
-                />
-              ) : (
-                <div className="mt-4">
-                  <AttendanceMarkingList liveClassId={c.id} students={rosters[i]} />
-                </div>
-              )}
-            </div>
-          ))}
+          {classes.map((c: { id: string; title: string; scheduled_at: string }) => {
+            const roster = rostersByClassId.get(c.id) ?? [];
+            return (
+              <div key={c.id} className="rounded-lg border border-navy-100 bg-white p-5 shadow-card dark:border-navy-700 dark:bg-navy-800">
+                <p className="font-semibold text-navy-900 dark:text-white">{c.title}</p>
+                <p className="text-sm text-navy-500 dark:text-navy-400">{new Date(c.scheduled_at).toLocaleString()}</p>
+                {roster.length === 0 ? (
+                  <EmptyState
+                    className="mt-4"
+                    icon="🧑‍🎓"
+                    title="No enrolled students yet"
+                    body="Once students enroll in this course, they'll appear here to mark present/absent."
+                  />
+                ) : (
+                  <div className="mt-4">
+                    <AttendanceMarkingList liveClassId={c.id} students={roster} />
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
