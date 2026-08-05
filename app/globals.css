@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-paper-50 text-navy-800 antialiased transition-colors duration-300;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+
+  html.dark body {
+    @apply bg-navy-950 text-navy-100;
+  }
+
+  ::selection {
+    @apply bg-gold-300/60 text-navy-900;
+  }
+
+  /* Visible, on-brand keyboard focus ring everywhere */
+  :focus-visible {
+    outline: 2px solid #c9a227;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display text-navy-900;
+    letter-spacing: -0.01em;
+  }
+
+  html.dark h1, html.dark h2, html.dark h3, html.dark h4 {
+    @apply text-white;
+  }
+
+  [lang="bn"] {
+    @apply font-bengali;
+    line-height: 1.7;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .bg-grid-navy {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
