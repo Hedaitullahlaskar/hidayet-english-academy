@@ -21,7 +21,7 @@ export default async function DoubtsPage() {
         <EmptyState className="mt-8" icon="💬" title="No doubts yet" body="Questions students ask will appear here for you to answer." />
       ) : (
         <div className="mt-8 space-y-4">
-          {doubts.map((d) => (
+          {doubts.map((d: { id: string; question: string; status: string; course_slug: string; profiles: { full_name: string } | null; doubt_replies: { id: string; reply: string }[] }) => (
             <DoubtCard key={d.id} doubt={d} teacherId={teacher?.id ?? ""} />
           ))}
         </div>

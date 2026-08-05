@@ -20,7 +20,7 @@ export async function GET(request: Request, { params }: { params: { slug: string
     }
 
     const { data: prices } = await supabase.from("course_prices").select("currency").eq("admin_course_id", course.id);
-    return NextResponse.json({ available: (prices?.length ?? 0) > 0, currencies: prices?.map((p) => p.currency) ?? [] });
+    return NextResponse.json({ available: (prices?.length ?? 0) > 0, currencies: prices?.map((p: { currency: string }) => p.currency) ?? [] });
   } catch {
     return NextResponse.json({ available: false });
   }

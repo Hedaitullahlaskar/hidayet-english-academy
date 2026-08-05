@@ -59,7 +59,7 @@ export default async function AdminGlobalDashboard() {
         <div className="rounded-lg border border-navy-100 bg-white p-6 shadow-card dark:border-navy-700 dark:bg-navy-800">
           <h2 className="font-display text-lg font-semibold text-navy-900 dark:text-white">System Health</h2>
           <ul className="mt-4 space-y-2">
-            {health.map((h) => (
+            {health.map((h: { name: string; ok: boolean; detail: string }) => (
               <li key={h.name} className="flex items-center justify-between rounded-lg border border-navy-100 p-3 text-sm dark:border-navy-700">
                 <span className="font-medium text-navy-800 dark:text-navy-100">{h.name}</span>
                 <span className={h.ok ? "font-semibold text-success-text dark:text-success" : "font-semibold text-error"}>

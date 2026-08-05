@@ -15,7 +15,7 @@ export default async function AttendancePage() {
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
         <StatWidget icon="🔥" label="Current Streak" value={streak ? `${streak.current_streak} days` : "0 days"} tone="gold" />
         <StatWidget icon="🏆" label="Longest Streak" value={streak ? `${streak.longest_streak} days` : "0 days"} />
-        <StatWidget icon="📅" label="Classes Attended" value={String(attendance.filter((a) => a.status === "present").length)} />
+        <StatWidget icon="📅" label="Classes Attended" value={String(attendance.filter((a: { status: string }) => a.status === "present").length)} />
       </div>
 
       <h2 className="mt-8 font-display text-lg font-semibold text-navy-900 dark:text-white">Attendance History</h2>
@@ -23,7 +23,7 @@ export default async function AttendancePage() {
         <EmptyState className="mt-4" icon="📅" title="No attendance recorded yet" body="Your attendance at live classes will be tracked here automatically." />
       ) : (
         <ul className="mt-4 space-y-2">
-          {attendance.map((a) => (
+          {attendance.map((a: { id: string; status: string; live_classes: { title: string } | null }) => (
             <li key={a.id} className="rounded-lg border border-navy-100 p-3 text-sm dark:border-navy-700">
               {a.live_classes?.title ?? "Live class"} — {a.status}
             </li>

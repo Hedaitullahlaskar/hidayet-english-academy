@@ -15,7 +15,7 @@ export default async function AnnouncementsPage() {
         <EmptyState className="mt-8" icon="📢" title="No announcements yet" body="Course and academy-wide updates will appear here." />
       ) : (
         <div className="mt-8 space-y-4">
-          {announcements.map((a) => (
+          {announcements.map((a: { id: string; title: string; body: string; published_at: string }) => (
             <div key={a.id} className="rounded-lg border border-navy-100 bg-white p-5 shadow-card dark:border-navy-700 dark:bg-navy-800">
               <p className="font-semibold text-navy-900 dark:text-white">{a.title}</p>
               <p className="mt-1 text-sm text-navy-600 dark:text-navy-300">{a.body}</p>

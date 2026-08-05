@@ -19,7 +19,7 @@ export default async function NotebookPage() {
           {notes.length === 0 ? (
             <EmptyState className="mt-3" icon="📝" title="No notes yet" body="Notes you take during lessons will appear here." />
           ) : (
-            <ul className="mt-3 space-y-2">{notes.map((n) => <li key={n.id} className="rounded-lg border border-navy-100 p-3 text-sm dark:border-navy-700">{n.content}</li>)}</ul>
+            <ul className="mt-3 space-y-2">{notes.map((n: { id: string; content: string }) => <li key={n.id} className="rounded-lg border border-navy-100 p-3 text-sm dark:border-navy-700">{n.content}</li>)}</ul>
           )}
         </div>
         <div>
@@ -47,7 +47,7 @@ export default async function NotebookPage() {
           {vocabulary.length === 0 ? (
             <EmptyState className="mt-3" icon="🔤" title="No words saved yet" body="Save new words as you learn them, with your own example sentences." />
           ) : (
-            <ul className="mt-3 space-y-2">{vocabulary.map((v) => <li key={v.id} className="rounded-lg border border-navy-100 p-3 text-sm dark:border-navy-700">{v.word}</li>)}</ul>
+            <ul className="mt-3 space-y-2">{vocabulary.map((v: { id: string; word: string }) => <li key={v.id} className="rounded-lg border border-navy-100 p-3 text-sm dark:border-navy-700">{v.word}</li>)}</ul>
           )}
         </div>
       </div>

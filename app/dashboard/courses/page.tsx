@@ -21,7 +21,7 @@ export default async function MyCoursesPage() {
         />
       ) : (
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {enrollments.map((e) => (
+          {enrollments.map((e: { id: string; course_slug: string }) => (
             <div key={e.id} className="rounded-lg border border-navy-100 bg-white p-5 shadow-card dark:border-navy-700 dark:bg-navy-800">
               <p className="font-display font-semibold text-navy-900 dark:text-white">{e.course_slug}</p>
               <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-navy-100 dark:bg-navy-700">

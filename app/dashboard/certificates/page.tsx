@@ -20,7 +20,7 @@ export default async function CertificatesPage() {
         />
       ) : (
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {certificates.map((c) => (
+          {certificates.map((c: { id: string; course_slug: string; issued_at: string; verification_code: string }) => (
             <div key={c.id} className="rounded-lg border border-gold-400 bg-navy-800 p-5 text-white shadow-elevated">
               <span className="text-2xl">🎓</span>
               <p className="mt-3 font-display font-semibold">{c.course_slug}</p>
