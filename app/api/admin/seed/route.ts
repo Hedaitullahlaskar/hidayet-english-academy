@@ -28,7 +28,8 @@ export async function POST(request: NextRequest) {
         // If user already exists, try to look them up via listUsers
         // (some Supabase installs return an error instead of data).
         const list = await admin.auth.admin.listUsers();
-        const found = list.data.find((u: any) => u.email === email);
+        const usersArray: any[] = (list as any).data ?? (list as any).users ?? [];
+        const found = usersArray.find((u: any) => u.email === email);
         if (found) return found.id;
         throw error;
       }
