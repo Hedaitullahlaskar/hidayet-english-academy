@@ -197,7 +197,7 @@ export async function getEnrolledStudentsForClass(liveClassId: string) {
       .eq("status", "active");
 
     const { data: existingAttendance } = await supabase.from("attendance").select("student_id, status").eq("live_class_id", liveClassId);
-    const attendanceMap = new Map((existingAttendance ?? []).map((a: { student_id: string; status: string }) => [a.student_id, a.status]));
+    const attendanceMap = new Map((existingAttendance ?? []).map((a: { student_id: string; status: "present" | "absent" | "excused" }) => [a.student_id, a.status]));
 
     return (enrollments ?? []).map((e: { student_id: string; profiles: { id: string; full_name: string; avatar_url: string | null } | null }) => ({
       studentId: e.student_id,
