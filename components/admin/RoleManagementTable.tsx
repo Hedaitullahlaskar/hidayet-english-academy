@@ -44,7 +44,7 @@ export function RoleManagementTable({ users, currentAdminId }: { users: UserRow[
                 </td>
                 <td className="p-4">
                   {isSelf ? (
-                    <span className="text-xs text-navy-400">Can't change your own role here</span>
+                    <span className="text-xs text-navy-400">Can&apos;t change your own role here</span>
                   ) : (
                     <select
                       value={roles[u.id]}

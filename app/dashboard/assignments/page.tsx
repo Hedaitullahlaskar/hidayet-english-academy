@@ -25,7 +25,7 @@ export default async function AssignmentsPage() {
   return (
     <div>
       <h1 className="font-display text-2xl font-semibold text-navy-900 dark:text-white">Homework & Assignments</h1>
-      <p className="mt-1 text-navy-600 dark:text-navy-300">Purposeful work, tied directly to what you're learning.</p>
+      <p className="mt-1 text-navy-600 dark:text-navy-300">Purposeful work, tied directly to what you&apos;re learning.</p>
 
       {assignments.length === 0 ? (
         <EmptyState

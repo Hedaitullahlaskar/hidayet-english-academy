@@ -10,7 +10,7 @@ export default async function AttendancePage() {
   return (
     <div>
       <h1 className="font-display text-2xl font-semibold text-navy-900 dark:text-white">Attendance & Streak</h1>
-      <p className="mt-1 text-navy-600 dark:text-navy-300">Consistency compounds — here's your record.</p>
+      <p className="mt-1 text-navy-600 dark:text-navy-300">Consistency compounds — here&apos;s your record.</p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
         <StatWidget icon="🔥" label="Current Streak" value={streak ? `${streak.current_streak} days` : "0 days"} tone="gold" />

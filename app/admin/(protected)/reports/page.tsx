@@ -21,7 +21,7 @@ export default async function AdminReportsPage() {
 
       <p className="mt-6 text-sm text-navy-500 dark:text-navy-400">
         Deeper reports (revenue trends, cohort retention, per-course completion rates) need real usage history to
-        be meaningful — the queries are straightforward to add to <code>lib/admin/repository.ts</code> once there's
+        be meaningful — the queries are straightforward to add to <code>lib/admin/repository.ts</code> once there&apos;s
         real data to report on. Building elaborate charts against zero real data would be misleading, not premium.
       </p>
     </div>

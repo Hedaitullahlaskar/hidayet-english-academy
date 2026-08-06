@@ -12,8 +12,8 @@ export function AboutFinalCTA() {
             This Is the Story So Far. Yours Could Be Next.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-balance text-navy-300">
-            Every student we've ever taught started exactly where you are
-            now — one free class away from finding out what's possible.
+            Every student we&apos;ve ever taught started exactly where you are
+            now — one free class away from finding out what&apos;s possible.
           </p>
           <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button href="/#enroll" size="lg">

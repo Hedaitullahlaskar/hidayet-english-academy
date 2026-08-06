@@ -31,8 +31,8 @@ export function DeleteAccountPanel({ hasPendingRequest }: { hasPendingRequest: b
       <div className="rounded-lg border border-error/30 bg-error/5 p-5">
         <Badge tone="outline">Deletion Requested</Badge>
         <p className="mt-2 text-sm text-navy-700 dark:text-navy-200">
-          Your account is scheduled for deletion. An admin reviews every request before it's processed — this isn't
-          instant, and you can contact support if you change your mind before it's completed.
+          Your account is scheduled for deletion. An admin reviews every request before it&apos;s processed — this isn&apos;t
+          instant, and you can contact support if you change your mind before it&apos;s completed.
         </p>
       </div>
     );
@@ -42,7 +42,7 @@ export function DeleteAccountPanel({ hasPendingRequest }: { hasPendingRequest: b
     return (
       <div>
         <p className="text-sm text-navy-600 dark:text-navy-300">
-          Deleting your account removes your login and personal data. This can't be undone once processed.
+          Deleting your account removes your login and personal data. This can&apos;t be undone once processed.
         </p>
         <button onClick={() => setConfirming(true)} className="mt-3 text-sm font-semibold text-error underline">
           Request Account Deletion

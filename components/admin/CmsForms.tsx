@@ -55,7 +55,7 @@ export function TestimonialList({ testimonials }: { testimonials: { id: string; 
       {testimonials.map((t) => (
         <div key={t.id} className="rounded-lg border border-navy-100 bg-white p-4 shadow-card dark:border-navy-700 dark:bg-navy-800">
           <div className="flex items-start justify-between gap-2">
-            <p className="text-sm text-navy-800 dark:text-navy-100">"{t.quote}"</p>
+            <p className="text-sm text-navy-800 dark:text-navy-100">&quot;{t.quote}&quot;</p>
             <Badge tone={pubMap[t.id] ? "success" : "outline"}>{pubMap[t.id] ? "Live" : "Draft"}</Badge>
           </div>
           <div className="mt-2 flex items-center justify-between">

@@ -29,7 +29,7 @@ export default async function AttendancePage() {
   return (
     <div>
       <h1 className="font-display text-2xl font-semibold text-navy-900 dark:text-white">Attendance</h1>
-      <p className="mt-1 text-navy-600 dark:text-navy-300">Mark attendance for today's live classes.</p>
+      <p className="mt-1 text-navy-600 dark:text-navy-300">Mark attendance for today&apos;s live classes.</p>
 
       {classes.length === 0 ? (
         <EmptyState

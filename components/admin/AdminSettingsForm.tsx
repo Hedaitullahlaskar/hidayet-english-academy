@@ -129,7 +129,7 @@ export function AdminSettingsForm({ initialName, initialPhone, initialTimezone, 
 
       {status === "saved" && <p className="mt-4 text-sm font-medium text-success-text dark:text-success">Saved.</p>}
       {status === "error" && (
-        <p className="mt-4 text-sm font-medium text-error">Couldn't save — please try again.</p>
+        <p className="mt-4 text-sm font-medium text-error">Couldn&apos;t save — please try again.</p>
       )}
 
       <Button type="submit" size="lg" className="mt-6" disabled={status === "saving"}>

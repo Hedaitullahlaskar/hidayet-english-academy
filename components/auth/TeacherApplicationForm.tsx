@@ -64,8 +64,8 @@ export function TeacherApplicationForm() {
         <span className="text-3xl" aria-hidden="true">📝</span>
         <h2 className="mt-4 font-display text-xl font-semibold text-navy-900 dark:text-white">Application Submitted</h2>
         <p className="mt-2 text-navy-600 dark:text-navy-300">
-          We've sent a confirmation link to <strong>{email}</strong> — verify your email first, then an admin will
-          review your application. You'll be able to log in as a teacher once approved.
+          We&apos;ve sent a confirmation link to <strong>{email}</strong> — verify your email first, then an admin will
+          review your application. You&apos;ll be able to log in as a teacher once approved.
         </p>
       </div>
     );

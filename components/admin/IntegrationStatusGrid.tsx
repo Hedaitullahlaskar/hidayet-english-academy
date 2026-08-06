@@ -37,7 +37,7 @@ export function IntegrationStatusGrid({
           </div>
           <p className="mt-2 font-mono text-xs text-navy-500 dark:text-navy-400">{i.envVarHint}</p>
           <p className="mt-2 text-xs text-navy-600 dark:text-navy-300">
-            Set the real value as an environment variable at deploy time — it's never entered or stored here.
+            Set the real value as an environment variable at deploy time — it&apos;s never entered or stored here.
           </p>
           {!statusMap[i.key] && (
             <button

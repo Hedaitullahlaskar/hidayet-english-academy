@@ -13,7 +13,7 @@ export function CoursesHero() {
             Find the Right Course for Exactly Where You Are
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-balance leading-relaxed text-navy-300 sm:text-lg">
-            Filter by level, who it's for, or what you're trying to
+            Filter by level, who it&apos;s for, or what you&apos;re trying to
             achieve — every course is taught with the same bilingual,
             speaking-first method.
           </p>

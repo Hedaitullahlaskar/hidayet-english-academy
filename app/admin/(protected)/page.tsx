@@ -30,12 +30,12 @@ export default async function AdminGlobalDashboard() {
 
       {stats.activeStudents === 0 && stats.totalStudents > 0 && (
         <p className="mt-3 text-xs text-navy-500 dark:text-navy-400">
-          "Active Students" reads 0 honestly — tracking real 7-day activity needs session logging that isn't built yet, not because nobody is active.
+          &quot;Active Students&quot; reads 0 honestly — tracking real 7-day activity needs session logging that isn&apos;t built yet, not because nobody is active.
         </p>
       )}
       {stats.revenue === 0 && (
         <p className="mt-1 text-xs text-navy-500 dark:text-navy-400">
-          Revenue reads ₹0 because no live payment gateway is connected yet (Module 16) — this isn't a placeholder, it's accurate.
+          Revenue reads ₹0 because no live payment gateway is connected yet (Module 16) — this isn&apos;t a placeholder, it&apos;s accurate.
         </p>
       )}
 

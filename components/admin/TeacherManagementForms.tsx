@@ -32,7 +32,7 @@ export function PromoteTeacherForm() {
     <form onSubmit={handleSubmit} className="rounded-xl border border-navy-100 bg-white p-6 shadow-card dark:border-navy-700 dark:bg-navy-800">
       <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Promote by Email</label>
       <p className="mb-3 text-xs text-navy-500 dark:text-navy-400">
-        The person must already have a registered student account — this promotes an existing account to teacher, it doesn't create a new one.
+        The person must already have a registered student account — this promotes an existing account to teacher, it doesn&apos;t create a new one.
       </p>
       <div className="flex gap-2">
         <input

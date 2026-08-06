@@ -39,8 +39,8 @@ export default async function AdminSettingsPage() {
             </div>
           </div>
           <p className="mt-4 text-xs text-navy-500 dark:text-navy-400">
-            These currently reflect the real defaults already built into the codebase (Module 4's currency
-            detection, Module 5's language switcher). Making them admin-editable rather than code-level constants
+            These currently reflect the real defaults already built into the codebase (Module 4&apos;s currency
+            detection, Module 5&apos;s language switcher). Making them admin-editable rather than code-level constants
             is a reasonable next step, not done in this pass to avoid touching frozen modules unprompted.
           </p>
         </div>

@@ -80,7 +80,7 @@ export function ScholarshipApplyForm() {
 
             <div>
               <label htmlFor="sch-course" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">
-                Course You'd Like to Join
+                Course You&apos;d Like to Join
               </label>
               <select
                 id="sch-course"

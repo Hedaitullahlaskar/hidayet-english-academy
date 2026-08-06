@@ -67,7 +67,7 @@ export function TeacherLoginForm() {
     >
       {notStaffError && (
         <p className="mb-4 rounded-lg bg-error/10 p-3 text-sm font-medium text-error">
-          That account doesn't have teacher access.
+          That account doesn&apos;t have teacher access.
         </p>
       )}
 

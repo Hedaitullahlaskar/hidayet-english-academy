@@ -76,7 +76,7 @@ export function DeletionRequestReview({ requests }: { requests: DeletionRequest[
       {visible.map((r) => (
         <div key={r.id} className="rounded-lg border border-error/30 bg-error/5 p-4">
           <p className="font-semibold text-navy-900 dark:text-white">{r.profiles?.full_name ?? "User"}</p>
-          {r.reason && <p className="mt-1 text-sm text-navy-600 dark:text-navy-300">"{r.reason}"</p>}
+          {r.reason && <p className="mt-1 text-sm text-navy-600 dark:text-navy-300">&quot;{r.reason}&quot;</p>}
           <button
             onClick={() => handleProcess(r)}
             disabled={pending === r.id}

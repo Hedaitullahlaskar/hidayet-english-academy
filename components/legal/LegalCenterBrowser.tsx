@@ -65,7 +65,7 @@ export function LegalCenterBrowser({ policies }: { policies: PolicyDocument[] })
       </p>
 
       {filtered.length === 0 ? (
-        <p className="mt-8 text-navy-600 dark:text-navy-300">No policies match "{query}". Try a different search term.</p>
+        <p className="mt-8 text-navy-600 dark:text-navy-300">No policies match &quot;{query}&quot;. Try a different search term.</p>
       ) : (
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {filtered.map((p) => (

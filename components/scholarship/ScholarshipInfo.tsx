@@ -28,8 +28,8 @@ export function ScholarshipInfo() {
             &ldquo;No Deserving Student Should Stop Learning Because of Financial Problems.&rdquo;
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-balance leading-relaxed text-navy-300">
-            This isn't a marketing line. It's the reason the Madhyamik
-            program is free, and it's why this scholarship exists for
+            This isn&apos;t a marketing line. It&apos;s the reason the Madhyamik
+            program is free, and it&apos;s why this scholarship exists for
             every other course we teach.
           </p>
         </Reveal>

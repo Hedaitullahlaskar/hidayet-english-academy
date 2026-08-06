@@ -13,8 +13,8 @@ export default async function DoubtsPage() {
       <p className="mt-1 text-navy-600 dark:text-navy-300">Questions students ask, and your replies.</p>
 
       <div className="mt-6 rounded-lg border border-gold-300 bg-paper-100 p-4 text-sm text-navy-700 dark:border-navy-700 dark:bg-navy-900 dark:text-navy-200">
-        <strong>Note:</strong> there's no "Ask a Doubt" button in the student dashboard yet — that entry point wasn't
-        part of Module 5. This panel is fully built and ready the moment it's added.
+        <strong>Note:</strong> there&apos;s no &quot;Ask a Doubt&quot; button in the student dashboard yet — that entry point wasn&apos;t
+        part of Module 5. This panel is fully built and ready the moment it&apos;s added.
       </div>
 
       {doubts.length === 0 ? (

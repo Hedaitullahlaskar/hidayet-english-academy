@@ -38,7 +38,7 @@ export default async function TeacherHomePage() {
       <h1 className="font-display text-2xl font-semibold text-navy-900 dark:text-white">
         Welcome back, {firstName} 👋
       </h1>
-      <p className="mt-1 text-navy-600 dark:text-navy-300">Here's what's happening across the academy today.</p>
+      <p className="mt-1 text-navy-600 dark:text-navy-300">Here&apos;s what&apos;s happening across the academy today.</p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatWidget icon="🧑‍🎓" label="Total Students" value={String(students.length)} />
@@ -98,7 +98,7 @@ export default async function TeacherHomePage() {
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <div className="rounded-lg border border-navy-100 bg-white p-6 shadow-card dark:border-navy-700 dark:bg-navy-800">
-          <h2 className="font-display text-lg font-semibold text-navy-900 dark:text-white">Today's Classes</h2>
+          <h2 className="font-display text-lg font-semibold text-navy-900 dark:text-white">Today&apos;s Classes</h2>
           {todaysClasses.length === 0 ? (
             <EmptyState className="mt-4" icon="📹" title="Nothing scheduled today" body="Classes you schedule will appear here." />
           ) : (

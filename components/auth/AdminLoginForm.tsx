@@ -65,7 +65,7 @@ export function AdminLoginForm() {
     >
       {notAdminError && (
         <p className="mb-4 rounded-lg bg-error/10 p-3 text-sm font-medium text-error">
-          That account doesn't have admin access.
+          That account doesn&apos;t have admin access.
         </p>
       )}
 
@@ -111,7 +111,7 @@ export function AdminLoginForm() {
       </Button>
 
       <p className="mt-5 text-center text-xs text-navy-500 dark:text-navy-400">
-        Admin accounts are created by a super administrator — there's no
+        Admin accounts are created by a super administrator — there&apos;s no
         self-registration and no Google/OTP sign-in here by design. This is
         the highest-privilege login on the platform, kept deliberately
         narrower than student and teacher access.

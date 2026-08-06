@@ -18,7 +18,7 @@ export function MethodHero() {
           <p className="mx-auto mt-5 max-w-xl text-balance leading-relaxed text-navy-300 sm:text-lg">
             Millions of talented Bengali-speaking students study English for
             over a decade and still freeze the moment they need to say a
-            sentence out loud. Here's why — and exactly what we do
+            sentence out loud. Here&apos;s why — and exactly what we do
             differently.
           </p>
         </Reveal>

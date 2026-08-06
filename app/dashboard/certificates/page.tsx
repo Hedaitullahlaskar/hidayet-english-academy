@@ -9,7 +9,7 @@ export default async function CertificatesPage() {
   return (
     <div>
       <h1 className="font-display text-2xl font-semibold text-navy-900 dark:text-white">Certificates</h1>
-      <p className="mt-1 text-navy-600 dark:text-navy-300">Verifiable, shareable proof of what you've completed.</p>
+      <p className="mt-1 text-navy-600 dark:text-navy-300">Verifiable, shareable proof of what you&apos;ve completed.</p>
 
       {certificates.length === 0 ? (
         <EmptyState

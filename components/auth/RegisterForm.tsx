@@ -70,7 +70,7 @@ export function RegisterForm() {
           Check Your Email
         </h2>
         <p className="mt-2 text-navy-600 dark:text-navy-300">
-          We've sent a confirmation link to <strong>{email}</strong>. Click it
+          We&apos;ve sent a confirmation link to <strong>{email}</strong>. Click it
           to activate your account, then come back and log in.
         </p>
       </div>

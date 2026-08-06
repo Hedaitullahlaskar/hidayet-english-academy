@@ -12,7 +12,7 @@ export default async function ProgressReportsPage() {
     return (
       <div>
         <h1 className="font-display text-2xl font-semibold text-navy-900 dark:text-white">Progress Reports</h1>
-        <p className="mt-1 text-navy-600 dark:text-navy-300">Your overall performance across every course, once you're enrolled in one.</p>
+        <p className="mt-1 text-navy-600 dark:text-navy-300">Your overall performance across every course, once you&apos;re enrolled in one.</p>
         <EmptyState className="mt-8" icon="📊" title="No performance data yet" body="Enroll in a course to start building a real performance picture here." />
       </div>
     );
@@ -47,7 +47,7 @@ export default async function ProgressReportsPage() {
       </div>
 
       <p className="mt-4 text-xs text-navy-400 dark:text-navy-500">
-        A metric shows "No data yet" rather than 0% when nothing has happened yet — an honest zero looks the same as
+        A metric shows &quot;No data yet&quot; rather than 0% when nothing has happened yet — an honest zero looks the same as
         a discouraging failing score otherwise.
       </p>
     </div>

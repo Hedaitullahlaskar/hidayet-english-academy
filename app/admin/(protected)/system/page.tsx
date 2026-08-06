@@ -13,13 +13,13 @@ export default function AdminSystemPage() {
           <div className="rounded-lg border border-navy-100 bg-white p-4 shadow-card dark:border-navy-700 dark:bg-navy-800">
             <p className="font-semibold text-navy-900 dark:text-white">Row-Level Security</p>
             <p className="mt-1 text-sm text-navy-600 dark:text-navy-300">
-              Every table enforces access at the database level (see <code>supabase/schema.sql</code>) — not just hidden in the UI. This isn't a toggle; it's structural.
+              Every table enforces access at the database level (see <code>supabase/schema.sql</code>) — not just hidden in the UI. This isn&apos;t a toggle; it&apos;s structural.
             </p>
           </div>
           <div className="rounded-lg border border-navy-100 bg-white p-4 shadow-card dark:border-navy-700 dark:bg-navy-800">
             <p className="font-semibold text-navy-900 dark:text-white">Password Policy</p>
             <p className="mt-1 text-sm text-navy-600 dark:text-navy-300">
-              Minimum 8 characters, enforced at registration. Supabase Auth's own policies (breach detection, rate limiting) apply automatically once a real project is connected.
+              Minimum 8 characters, enforced at registration. Supabase Auth&apos;s own policies (breach detection, rate limiting) apply automatically once a real project is connected.
             </p>
           </div>
           <div className="rounded-lg border border-dashed border-navy-200 bg-paper-100 p-4 dark:border-navy-700 dark:bg-navy-900">
@@ -35,7 +35,7 @@ export default function AdminSystemPage() {
         <h2 className="font-display text-lg font-semibold text-navy-900 dark:text-white">Backup &amp; Data Export</h2>
         <p className="mt-2 max-w-2xl text-sm text-navy-600 dark:text-navy-300">
           Full database backup and point-in-time recovery is handled by Supabase at the infrastructure level, not
-          by a button in this app — that's the correct, safer place for it. What this app <em>can</em> genuinely do
+          by a button in this app — that&apos;s the correct, safer place for it. What this app <em>can</em> genuinely do
           is export your own data as JSON, any time:
         </p>
         <div className="mt-4">

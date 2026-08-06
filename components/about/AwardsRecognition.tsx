@@ -13,7 +13,7 @@ export function AwardsRecognition() {
               🏆
             </span>
             <p className="mt-4 leading-relaxed text-navy-600 dark:text-navy-300">
-              We're early in our digital journey, and any formal awards or
+              We&apos;re early in our digital journey, and any formal awards or
               press recognition will be proudly displayed here as they come.
               What we can tell you today: our reputation was built the
               old-fashioned way — one WhatsApp group, one enrolled student,

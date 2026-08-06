@@ -13,7 +13,7 @@ export default function RazorpayCheckoutPage({ params }: { params: { gatewayOrde
           <RazorpayWidget gatewayOrderId={params.gatewayOrderId} keyId={keyId} />
         ) : (
           <p className="text-navy-600 dark:text-navy-300">
-            Payments aren't connected yet — NEXT_PUBLIC_RAZORPAY_KEY_ID isn't set.
+            Payments aren&apos;t connected yet — NEXT_PUBLIC_RAZORPAY_KEY_ID isn&apos;t set.
           </p>
         )}
       </Container>

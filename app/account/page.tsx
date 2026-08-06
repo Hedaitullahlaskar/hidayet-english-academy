@@ -34,7 +34,7 @@ export default async function AccountSecurityPage() {
       </Link>
       <h1 className="mt-4 font-display text-2xl font-semibold text-navy-900 dark:text-white">Account Security</h1>
       <p className="mt-1 text-navy-600 dark:text-navy-300">
-        Works the same regardless of whether you're logged in as a student, teacher, or admin.
+        Works the same regardless of whether you&apos;re logged in as a student, teacher, or admin.
       </p>
 
       <section className="mt-8">
