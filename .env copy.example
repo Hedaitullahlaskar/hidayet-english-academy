@@ -1,0 +1,64 @@
+# Copy this file to .env.local and fill in real values to activate the
+# Student LMS backend (auth, dashboard data, everything in Module 5).
+# Without these, the app runs, but every dashboard page shows its honest
+# empty state instead of real data, and login/register will fail.
+
+# From your Supabase project settings → API
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+
+# Service role key — server-side only, NEVER exposed to the browser.
+# Needed later for admin-dashboard operations (Module 12) that must bypass RLS.
+SUPABASE_SERVICE_ROLE_KEY=
+
+# Powers the AI Learning Assistant (Module 9). Without this, /dashboard/ai-assistant
+# shows an honest "not configured" state instead of a broken chat.
+ANTHROPIC_API_KEY=
+
+# Payments (India via Razorpay, international via Stripe).
+# RAZORPAY_KEY_ID is safe to expose to the browser by design (Razorpay's own
+# convention, same as Stripe's "publishable key"). It's needed in BOTH of the
+# forms below, set to the identical value — Next.js treats NEXT_PUBLIC_ and
+# non-prefixed variables as entirely separate names even when intended to
+# hold the same value. The client-side widget reads the NEXT_PUBLIC_ one;
+# order creation (lib/payments/providers/razorpay.ts) reads the plain one.
+# Missing either one independently breaks checkout, so set both.
+NEXT_PUBLIC_RAZORPAY_KEY_ID=
+RAZORPAY_KEY_ID=
+RAZORPAY_KEY_SECRET=
+RAZORPAY_WEBHOOK_SECRET=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+
+# Used to build absolute checkout redirect URLs (Stripe success/cancel).
+# Set to your real deployed domain in production, e.g. https://hidayetenglishacademy.com
+NEXT_PUBLIC_SITE_URL=
+
+# Transactional email (enrollment confirmations, payment receipts,
+# certificate notifications). Without this, those events still happen
+# correctly — the email send is skipped and logged, not a crash.
+RESEND_API_KEY=
+EMAIL_FROM_ADDRESS=Hidayet English Academy <noreply@hidayetenglishacademy.com>
+
+# Google Meet auto-link generation, via the Calendar API (a Meet link is a
+# side effect of creating a Calendar event with conferenceData set — there
+# is no separate standalone "Meet API"). The refresh token belongs to
+# whichever Google account should own these calendar events (e.g. the
+# academy's own account) — obtained once via a standard OAuth consent
+# flow, not something a student or teacher authorizes per-class.
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REFRESH_TOKEN=
+
+# Zoom auto-meeting creation, via Zoom's Server-to-Server OAuth app type
+# (Zoom's current recommended approach — no per-user consent flow needed).
+ZOOM_ACCOUNT_ID=
+ZOOM_CLIENT_ID=
+ZOOM_CLIENT_SECRET=
+
+# WhatsApp Business Cloud API — architecture only in this module (see
+# lib/whatsapp/reminders.ts). Real message delivery additionally requires
+# Meta Business verification and pre-approved message templates, which is
+# a business-process step, not something these two keys alone unlock.
+WHATSAPP_BUSINESS_TOKEN=
+WHATSAPP_PHONE_NUMBER_ID=
