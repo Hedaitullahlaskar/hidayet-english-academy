@@ -2,6 +2,7 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { SuspendedAccountNotice } from "@/components/shared/SuspendedAccountNotice";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getCurrentAdminProfile } from "@/lib/admin/repository";
+import { canAccessAdmin } from "@/lib/auth/permissions";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = createServerSupabaseClient();
@@ -14,7 +15,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-  if (!profile || profile.role !== "admin") {
+  if (!canAccessAdmin(profile?.role)) {
     return null;
   }
 

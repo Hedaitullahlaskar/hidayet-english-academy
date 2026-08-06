@@ -1,6 +1,7 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { canAccessAdmin, canAccessTeach, loginPathFor } from "@/lib/auth/permissions";
 
 /**
  * Two responsibilities:
@@ -49,7 +50,7 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    const loginPath = isAdminRoute ? "/admin/login" : isTeachRoute ? "/teach/login" : "/login";
+    const loginPath = isAdminRoute ? loginPathFor("admin") : isTeachRoute ? loginPathFor("teach") : loginPathFor("dashboard");
     const loginUrl = new URL(loginPath, request.url);
     loginUrl.searchParams.set("redirectTo", request.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);
@@ -61,9 +62,9 @@ export async function middleware(request: NextRequest) {
   if (isTeachRoute || isAdminRoute) {
     const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
     const role = profile?.role;
-    const allowed = isAdminRoute ? role === "admin" : role === "teacher" || role === "admin";
+    const allowed = isAdminRoute ? canAccessAdmin(role) : canAccessTeach(role);
     if (!allowed) {
-      const rejectPath = isAdminRoute ? "/admin/login?error=not_admin" : "/teach/login?error=not_staff";
+      const rejectPath = isAdminRoute ? `${loginPathFor("admin")}?error=not_admin` : `${loginPathFor("teach")}?error=not_staff`;
       return NextResponse.redirect(new URL(rejectPath, request.url));
     }
   }
