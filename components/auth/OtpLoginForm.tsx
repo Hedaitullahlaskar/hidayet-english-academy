@@ -35,11 +35,6 @@ export function OtpLoginForm({ onBack }: { onBack: () => void }) {
     }
 
     const supabase = createClient();
-    const origin = (process.env.NEXT_PUBLIC_SITE_URL && process.env.NEXT_PUBLIC_SITE_URL !== "http://localhost:3000")
-      ? process.env.NEXT_PUBLIC_SITE_URL
-      : window.location.origin;
-
-    const redirectTo = `${origin}/auth/callback?next=/dashboard`;
 
     const { error: otpError } =
       mode === "email"
