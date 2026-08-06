@@ -48,7 +48,6 @@ export function RegisterForm() {
           guardian_name: isMinor ? guardianName.trim() : null,
           guardian_contact: isMinor ? guardianContact.trim() : null,
         },
-        redirectTo: `${origin}/auth/callback?next=/dashboard`,
       },
     });
 
