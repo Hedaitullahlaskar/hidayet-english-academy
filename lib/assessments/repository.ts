@@ -93,10 +93,12 @@ export async function submitTestAttempt(
   if (!test) return { success: false, error: "Test not found." };
 
   let earned = 0;
-  for (const tq of (test as { test_questions?: { marks: number; questions: { id: string; correct_answer: string | null } }[] }).test_questions ?? []) {
-    const given = (answers[tq.questions.id] ?? "").trim().toLowerCase();
-    const correct = (tq.questions.correct_answer ?? "").trim().toLowerCase();
-    if (given === correct) earned += tq.marks;
+  const testQuestions = (test as any).test_questions ?? [];
+  for (const tq of testQuestions as any[]) {
+    const questionId = tq?.questions?.id ?? tq?.questions?.[0]?.id;
+    const given = (answers[questionId] ?? "").trim().toLowerCase();
+    const correct = ((tq?.questions?.correct_answer ?? tq?.questions?.[0]?.correct_answer) ?? "").trim().toLowerCase();
+    if (given === correct) earned += Number(tq.marks) || 0;
   }
 
   const admin = createAdminClient();
