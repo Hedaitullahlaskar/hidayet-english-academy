@@ -17,6 +17,7 @@ const navItems: { href: string; labelKey: TranslationKey; icon: string; badgeKey
   { href: "/dashboard/doubts", labelKey: "nav_doubts", icon: "💬" },
   { href: "/dashboard/attendance", labelKey: "nav_attendance", icon: "🔥" },
   { href: "/dashboard/certificates", labelKey: "nav_certificates", icon: "🎓" },
+  { href: "/dashboard/downloads", labelKey: "nav_downloads", icon: "⬇️" },
   { href: "/dashboard/reports", labelKey: "nav_reports", icon: "📊" },
   { href: "/dashboard/announcements", labelKey: "nav_announcements", icon: "📢" },
   { href: "/dashboard/settings", labelKey: "nav_settings", icon: "⚙️" },

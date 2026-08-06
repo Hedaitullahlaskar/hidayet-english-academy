@@ -1065,6 +1065,15 @@ alter table certificates add column if not exists certificate_type text not null
 alter table certificates add column if not exists achievement_title text;
 
 -- ============================================================================
+-- CLASS REMINDER DELIVERY (Module 10 follow-up) — see LIVE_CLASS_MODULE_README.md
+-- ============================================================================
+
+-- Set by /api/cron/reminders once a reminder pass has run for this class,
+-- so a cron firing more often than the reminder window never double-sends.
+-- Nullable and unset by default — every class starts un-reminded.
+alter table live_classes add column if not exists reminder_sent_at timestamptz;
+
+-- ============================================================================
 -- End of schema. See COURSES_MODULE_README.md, LMS_MODULE_README.md,
 -- TEACHER_MODULE_README.md, ADMIN_MODULE_README.md, AUTH_MODULE_README.md,
 -- AI_LESSON_PLAYER_README.md, PAYMENTS_MODULE_README.md,

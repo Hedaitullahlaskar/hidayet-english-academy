@@ -106,6 +106,38 @@ export async function getLiveClassById(id: string) {
   }, null);
 }
 
+/**
+ * Every downloadable resource across a student's enrolled courses, in one
+ * place — lesson notes and live-class materials/recordings otherwise only
+ * ever show up scattered across each individual lesson/class page. RLS
+ * ("Enrolled students can view lessons/live classes") already scopes both
+ * queries to courses this student is actually enrolled in, same as every
+ * other function here.
+ */
+export async function getMyDownloads() {
+  return safeQuery(async () => {
+    const supabase = createServerSupabaseClient();
+
+    const [{ data: lessonNotes }, { data: classMaterials }] = await Promise.all([
+      supabase
+        .from("lessons")
+        .select("id, title, course_slug, module_title, notes_url")
+        .not("notes_url", "is", null)
+        .order("order_index", { ascending: true }),
+      supabase
+        .from("live_classes")
+        .select("id, title, course_slug, materials_url, recording_url, scheduled_at")
+        .or("materials_url.not.is.null,recording_url.not.is.null")
+        .order("scheduled_at", { ascending: false }),
+    ]);
+
+    return {
+      lessonNotes: lessonNotes ?? [],
+      classMaterials: classMaterials ?? [],
+    };
+  }, { lessonNotes: [], classMaterials: [] });
+}
+
 export async function getLiveClassesInRange(startISO: string, endISO: string) {
   return safeQuery(async () => {
     const supabase = createServerSupabaseClient();

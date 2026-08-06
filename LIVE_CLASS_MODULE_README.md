@@ -69,18 +69,32 @@ one of the few pieces in this module that works completely today, with
 no configuration at all: click "Add to Calendar," get a file any
 calendar app opens directly.
 
-## WhatsApp reminders: architecture, precisely as scoped
+## Reminders: now a real, triggered send path (follow-up pass)
 
-`lib/whatsapp/reminders.ts` is deliberately not a working send path, and
-the code says why in its own comments: even with
-`WHATSAPP_BUSINESS_TOKEN` and `WHATSAPP_PHONE_NUMBER_ID` set, real
-message delivery additionally requires Meta Business verification and a
-pre-approved message template — a business process measured in days, not
-something two environment variables unlock. The exact real request
-payload for the WhatsApp Business Cloud API is written out in a comment,
-commented out rather than half-working, so wiring in a real send later is
-uncommenting code against a known-correct shape, not designing one from
-scratch.
+The gap the original module README flagged — "architecture, precisely as
+scoped" — is closed. `sendClassReminder()` in `lib/whatsapp/reminders.ts`
+now makes the real WhatsApp Business Cloud API call (previously commented
+out), `lib/email/templates.ts` gained a `classReminderEmail` template, and
+`/api/cron/reminders` is a real endpoint — triggered by Vercel Cron (see
+`vercel.json`, every 10 minutes) — that finds classes starting within 30
+minutes (`lib/liveclass/reminders.ts`'s `REMINDER_LEAD_MINUTES`), emails
+every enrolled student (works as soon as Resend is configured), and
+attempts a WhatsApp message too (works only once WhatsApp credentials
+**and** an approved Meta message template both exist — the business
+verification step still isn't something code can shortcut). Each class is
+marked `reminder_sent_at` before sending, not after, so a slow or
+partially-failed run never causes a duplicate reminder on the next cron
+tick. Full credential list: `CREDENTIALS_CHECKLIST.md`.
+
+## Downloads: materials_url finally has its UI
+
+The original module README noted `materials_url` was "reserved... not yet
+given its own UI." `/dashboard/downloads` (new) now aggregates lesson
+notes (`lessons.notes_url`) and live-class materials/recordings
+(`live_classes.materials_url` / `recording_url`) across every enrolled
+course in one place, via `getMyDownloads()` in
+`lib/dashboard/repository.ts` — both queries rely on the same RLS
+enrollment policies as everywhere else in this file, nothing new to grant.
 
 ## Recordings & replay
 
@@ -106,7 +120,9 @@ follow-up), and `status` (`scheduled`/`completed`/`cancelled`).
 |---|---|
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_REFRESH_TOKEN` | Google Meet auto-generation |
 | `ZOOM_ACCOUNT_ID` / `ZOOM_CLIENT_ID` / `ZOOM_CLIENT_SECRET` | Zoom auto-generation |
-| `WHATSAPP_BUSINESS_TOKEN` / `WHATSAPP_PHONE_NUMBER_ID` | Reminder architecture — inert until a template is also approved in Meta Business Manager |
+| `WHATSAPP_BUSINESS_TOKEN` / `WHATSAPP_PHONE_NUMBER_ID` | WhatsApp reminders — inert until a template is also approved in Meta Business Manager |
+| `WHATSAPP_TEMPLATE_NAME` | Optional override if your approved template isn't named `class_reminder` |
+| `CRON_SECRET` | Authenticates Vercel Cron's call to `/api/cron/reminders` |
 
 ## Why no preview was regenerated for this module
 

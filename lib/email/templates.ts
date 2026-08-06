@@ -1,3 +1,5 @@
+import { formatInTimezone } from "@/lib/utils/timezone";
+
 /**
  * Email templates — inline-styled HTML, since that's what's reliably
  * supported across real email clients (no external stylesheets, no
@@ -55,6 +57,27 @@ export function paymentReceiptEmail(
         <tr><td style="padding:8px 0; color:#666; border-top:1px solid #eee;">Amount Paid</td><td style="padding:8px 0; text-align:right; font-weight:bold; border-top:1px solid #eee;">${currency} ${amount}</td></tr>
       </table>
       <p style="margin-top:20px; font-size:13px; color:#888;">This email serves as your receipt for this transaction.</p>
+    `),
+  };
+}
+
+export function classReminderEmail(
+  studentName: string,
+  classTitle: string,
+  startTimeIso: string,
+  meetingUrl: string,
+  studentTimezone: string
+): { subject: string; html: string } {
+  const startsAt = formatInTimezone(startTimeIso, studentTimezone);
+  return {
+    subject: `Starting soon: ${classTitle}`,
+    html: wrapper(`
+      <h2 style="color:${NAVY}; margin-top:0;">Your class starts soon</h2>
+      <p>Hi ${studentName}, <strong>${classTitle}</strong> begins at ${startsAt}.</p>
+      <p style="margin-top:24px;">
+        <a href="${meetingUrl}" style="background:${GOLD}; color:${NAVY}; padding:12px 24px; border-radius:999px; text-decoration:none; font-weight:bold;">Join the Class →</a>
+      </p>
+      <p style="margin-top:16px; font-size:13px; color:#888;">If the button doesn't work, copy this link: ${meetingUrl}</p>
     `),
   };
 }
