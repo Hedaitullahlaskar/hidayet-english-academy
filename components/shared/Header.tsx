@@ -191,7 +191,7 @@ export function Header() {
               <Avatar name={session.fullName} avatarUrl={session.avatarUrl} size={32} />
               <span className="text-sm font-semibold text-navy-800 dark:text-navy-100">Dashboard</span>
             </Link>
-          ) : session === null ? (
+          ) : session === null || session === undefined ? (
             <div className="flex items-center gap-3">
               <Link href="/login" className="text-sm font-semibold text-navy-700 hover:text-gold-800 dark:text-navy-200 dark:hover:text-gold-400">Student Login</Link>
               <Link href="/teach/login" className="text-sm font-semibold text-navy-700 hover:text-gold-800 dark:text-navy-200 dark:hover:text-gold-400">Teacher Login</Link>
@@ -267,7 +267,7 @@ export function Header() {
               <Avatar name={session.fullName} avatarUrl={session.avatarUrl} size={28} />
               Go to Dashboard
             </Link>
-          ) : session === null ? (
+          ) : session === null || session === undefined ? (
             <>
               <Link
                 href="/login"
