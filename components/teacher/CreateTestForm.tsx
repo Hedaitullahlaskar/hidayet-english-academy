@@ -3,12 +3,11 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
-import { coursesData } from "@/content/courses-data";
 import { createTest } from "@/lib/teacher/repository";
 
-export function CreateTestForm() {
+export function CreateTestForm({ courses }: { courses: { slug: string; name: string }[] }) {
   const router = useRouter();
-  const [courseSlug, setCourseSlug] = useState(coursesData[0]?.slug ?? "");
+  const [courseSlug, setCourseSlug] = useState(courses[0]?.slug ?? "");
   const [title, setTitle] = useState("");
   const [testType, setTestType] = useState<"weekly" | "mock">("weekly");
   const [scheduledAt, setScheduledAt] = useState("");
@@ -62,7 +61,7 @@ export function CreateTestForm() {
         <div>
           <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Course</label>
           <select value={courseSlug} onChange={(e) => setCourseSlug(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white">
-            {coursesData.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
+            {courses.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
           </select>
         </div>
         <div>

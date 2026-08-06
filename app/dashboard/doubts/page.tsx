@@ -2,11 +2,15 @@ import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { AskDoubtForm } from "@/components/dashboard/AskDoubtForm";
 import { getMyDoubts } from "@/lib/dashboard/doubts-repository";
+import { getMyEnrollments } from "@/lib/dashboard/repository";
+import { getAllCourses } from "@/lib/courses/repository";
 
 export const metadata = { robots: { index: false, follow: false } };
 
 export default async function StudentDoubtsPage() {
-  const doubts = await getMyDoubts();
+  const [doubts, enrollments, allCourses] = await Promise.all([getMyDoubts(), getMyEnrollments(), getAllCourses()]);
+  const enrolledSlugs = new Set(enrollments.map((e: { course_slug: string }) => e.course_slug));
+  const myCourses = allCourses.filter((c) => enrolledSlugs.has(c.slug)).map((c) => ({ slug: c.slug, name: c.name }));
 
   return (
     <div>
@@ -14,7 +18,11 @@ export default async function StudentDoubtsPage() {
       <p className="mt-1 text-navy-600 dark:text-navy-300">Stuck on something? Ask directly — your teacher sees and replies here.</p>
 
       <div className="mt-8">
-        <AskDoubtForm />
+        {myCourses.length === 0 ? (
+          <EmptyState icon="📚" title="Enroll in a course first" body="Once you're enrolled in a course, you can ask your teacher questions about it here." />
+        ) : (
+          <AskDoubtForm courses={myCourses} />
+        )}
       </div>
 
       <h2 className="mb-4 mt-10 font-display text-lg font-semibold text-navy-900 dark:text-white">Your Questions</h2>

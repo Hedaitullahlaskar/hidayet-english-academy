@@ -1,15 +1,13 @@
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { getMyDownloads } from "@/lib/dashboard/repository";
-import { coursesData } from "@/content/courses-data";
+import { getAllCourses } from "@/lib/courses/repository";
 
 export const metadata = { robots: { index: false, follow: false } };
 
-function courseName(slug: string): string {
-  return coursesData.find((c) => c.slug === slug)?.name ?? slug;
-}
-
 export default async function DownloadsPage() {
-  const { lessonNotes, classMaterials } = await getMyDownloads();
+  const [{ lessonNotes, classMaterials }, allCourses] = await Promise.all([getMyDownloads(), getAllCourses()]);
+  const courseNameBySlug = new Map(allCourses.map((c) => [c.slug, c.name]));
+  const courseName = (slug: string) => courseNameBySlug.get(slug) ?? slug;
   const isEmpty = lessonNotes.length === 0 && classMaterials.length === 0;
 
   return (

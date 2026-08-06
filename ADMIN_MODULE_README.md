@@ -45,32 +45,24 @@ here:
 
 | Admin section | Real, working admin side | Not yet connected |
 |---|---|---|
-| **Course Management** | Full CRUD against a real `admin_courses` table | Public `/courses` pages still read `content/courses-data.ts` (Module 4, frozen) |
+| ~~Course Management~~ | ~~Full CRUD against a real `admin_courses` table~~ | **Closed** — see COURSES_MODULE_README.md |
 | ~~Website CMS~~ | ~~Real testimonials/banners tables, real publish toggles~~ | **Closed** — see below |
 | ~~Scholarships~~ | ~~Full review/approve/reject queue against `scholarship_applications`~~ | **Closed** — see SESSION_COMPLETION_README.md |
 
-Website CMS: `Testimonials` (closed in the session-completion pass) and
-`AnnouncementBar` (closed in a later pass) both now read their real,
-admin-published tables (`testimonials`, `site_banners`) with the same
-honest-fallback pattern as everywhere else — an unpublished/empty table
-shows a real empty state or a sensible default, never fake data.
+All three gaps this table originally tracked are now closed:
 
-**Course Management remains open, deliberately.** `admin_courses` is a
-narrow catalog record (slug, name, category, level, price, publish
-toggle) — it does not hold the rich content `content/courses-data.ts`
-actually has (full descriptions, curriculum, images, comparisons, FAQ).
-Making admin-created/edited courses actually appear on `/courses` means
-one of:
-1. Migrating the full rich content structure into `admin_courses` (or a
-   related table) and rebuilding the public course pages to read from it
-   — a real content migration, not a one-line data-source swap; or
-2. A narrower sync (admin controls publish status/price only, rich
-   content stays in the static file) — simpler, but the two sources can
-   drift out of sync per course.
-Both are genuinely buildable without new credentials, but they're a
-product decision (how much of the course catalog should live in the
-database vs. stay hand-authored), not a mechanical fix — flagging it
-explicitly rather than picking one silently.
+- **Course Management** — `admin_courses` was expanded to hold the full
+  rich course content (previously only in the now-deleted
+  `content/courses-data.ts`), and `lib/courses/repository.ts` now queries
+  it directly. Publishing a course in `/admin/courses` makes it live on
+  `/courses` immediately — no more separate, disconnected data source.
+  See `COURSES_MODULE_README.md`'s follow-up section for the full
+  migration writeup, including the new teacher-course-assignment system
+  ("teachers manage only their assigned courses").
+- **Website CMS** — `Testimonials` and `AnnouncementBar` both read their
+  real, admin-published tables (`testimonials`, `site_banners`) with the
+  same honest-fallback pattern as everywhere else — an unpublished/empty
+  table shows a real empty state or sensible default, never fake data.
 
 ## Payments: what "Razorpay, Stripe, PayPal, Wise" actually means today
 

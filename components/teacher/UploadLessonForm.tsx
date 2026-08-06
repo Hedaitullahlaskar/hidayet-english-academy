@@ -3,9 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
-import { coursesData } from "@/content/courses-data";
 import { createClient } from "@/lib/supabase/client";
 import { createLesson } from "@/lib/teacher/repository";
 
@@ -15,10 +13,10 @@ const typeConfig = {
   audio: { icon: "🎧", label: "Audio", accept: "audio/*" },
 } as const;
 
-export function UploadLessonForm() {
+export function UploadLessonForm({ courses }: { courses: { slug: string; name: string }[] }) {
   const router = useRouter();
   const [lessonType, setLessonType] = useState<keyof typeof typeConfig>("video");
-  const [courseSlug, setCourseSlug] = useState(coursesData[0]?.slug ?? "");
+  const [courseSlug, setCourseSlug] = useState(courses[0]?.slug ?? "");
   const [moduleTitle, setModuleTitle] = useState("");
   const [title, setTitle] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -96,7 +94,7 @@ export function UploadLessonForm() {
             onChange={(e) => setCourseSlug(e.target.value)}
             className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white"
           >
-            {coursesData.map((c) => (
+            {courses.map((c) => (
               <option key={c.slug} value={c.slug}>{c.name}</option>
             ))}
           </select>

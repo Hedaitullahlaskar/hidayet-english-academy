@@ -1,11 +1,11 @@
 import { CreateAssignmentForm } from "@/components/teacher/CreateAssignmentForm";
 import { AssignmentReviewPanel } from "@/components/teacher/AssignmentReviewPanel";
-import { getAllAssignments } from "@/lib/teacher/repository";
+import { getAllAssignments, getCoursesForTeacher } from "@/lib/teacher/repository";
 
 export const metadata = { robots: { index: false, follow: false } };
 
 export default async function HomeworkPage() {
-  const assignments = await getAllAssignments();
+  const [assignments, courses] = await Promise.all([getAllAssignments(), getCoursesForTeacher()]);
 
   return (
     <div>
@@ -15,7 +15,7 @@ export default async function HomeworkPage() {
       <div className="mt-8 grid gap-10 lg:grid-cols-2">
         <div>
           <h2 className="mb-4 font-display text-lg font-semibold text-navy-900 dark:text-white">Create Assignment</h2>
-          <CreateAssignmentForm />
+          <CreateAssignmentForm courses={courses} />
         </div>
         <div>
           <h2 className="mb-4 font-display text-lg font-semibold text-navy-900 dark:text-white">Review Submissions</h2>

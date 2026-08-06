@@ -2,12 +2,12 @@ import { EmptyState } from "@/components/dashboard/EmptyState";
 import { Badge } from "@/components/ui/Badge";
 import { CreateLiveClassForm } from "@/components/teacher/CreateLiveClassForm";
 import { AttachRecordingForm } from "@/components/teacher/AttachRecordingForm";
-import { getAllLiveClasses } from "@/lib/teacher/repository";
+import { getAllLiveClasses, getCoursesForTeacher } from "@/lib/teacher/repository";
 
 export const metadata = { robots: { index: false, follow: false } };
 
 export default async function LiveClassSchedulePage() {
-  const classes = await getAllLiveClasses();
+  const [classes, courses] = await Promise.all([getAllLiveClasses(), getCoursesForTeacher()]);
   const now = new Date();
 
   return (
@@ -18,7 +18,7 @@ export default async function LiveClassSchedulePage() {
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_1.2fr]">
         <div>
           <h2 className="mb-4 font-display text-lg font-semibold text-navy-900 dark:text-white">Schedule a New Class</h2>
-          <CreateLiveClassForm />
+          <CreateLiveClassForm courses={courses} />
         </div>
 
         <div>

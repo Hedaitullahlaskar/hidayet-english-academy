@@ -1,5 +1,46 @@
 # Module 4 — Courses Ecosystem: Documentation
 
+## Follow-up: the migration this module always pointed toward, done
+
+Everything below this section is the original Module 4 writeup, kept as
+the historical record of what was built and why — including the note that
+`content/courses-data.ts` was deliberately temporary. That file is now
+deleted. `admin_courses` (see `supabase/schema.sql`) is the real,
+database-backed single source of truth, exactly as this doc always said
+the eventual swap would look:
+
+- **`lib/courses/repository.ts`'s function bodies changed to query
+  Supabase — nothing else did.** Every page/component listed below still
+  calls `getAllCourses()`, `getCourseBySlug()`, `getAllCourseSlugs()`,
+  `getFeaturedCourses()`, `getFilteredCourses()` exactly as before. That
+  was the whole point of the repository seam, and it held.
+- **All 20 courses migrated with zero data loss** — see the `insert into
+  admin_courses ... on conflict (slug) do update` block in `schema.sql`,
+  generated directly from the old static array.
+- **Admin can now create, edit, publish, archive, and delete courses**
+  through `/admin/courses` and `/admin/courses/[id]/edit` — this actually
+  changes what's live on `/courses` immediately, closing the gap
+  `ADMIN_MODULE_README.md` had flagged ("admin CRUD exists, public site
+  doesn't read it").
+- **Teachers manage only their courses they're assigned to** — a new
+  `teacher_course_assignments` table + `can_manage_course()` SQL function
+  replace the old "any teacher can touch any course" policy across
+  lessons, assignments, submissions, tests, test_questions, live_classes,
+  attendance, certificates, the question bank, and doubts. See the
+  "COURSE CATALOG MIGRATION" section of `schema.sql` for the full
+  reasoning, including the backfill that assigns every existing teacher to
+  every existing course so nobody already teaching a course loses access
+  the moment this migration runs.
+- **The public catalog is still public, deliberately.** "Students only see
+  courses they're enrolled in" applies to a course's actual lesson
+  content (already enrollment-gated), not the `/courses` catalog listing
+  — a course-selling business has to let non-enrolled visitors browse and
+  buy. Only `status = 'published'` courses are ever visible to anonymous
+  visitors; draft and archived courses are admin/assigned-teacher-only.
+- **Payments are real now too** (see `PAYMENTS_MODULE_README.md`) — the
+  "architecture-only, not live" section below predates that module and is
+  now historical, not current state.
+
 ## What "not hardcoded" means today, honestly
 
 There is no live database yet (Module 0 in the Implementation Roadmap hasn't

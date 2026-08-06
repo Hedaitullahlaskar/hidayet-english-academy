@@ -11,7 +11,7 @@ export default async function AdminCoursesPage() {
     <div>
       <h1 className="font-display text-2xl font-semibold text-navy-900 dark:text-white">Course Management</h1>
       <p className="mt-1 text-navy-600 dark:text-navy-300">
-        Create and publish courses through this admin table — separate from the public catalog&apos;s static file until the two are wired together (see README).
+        This table is the real, single source of truth for the public course catalog — publishing a course here makes it live on <code>/courses</code> immediately.
       </p>
 
       <div className="mt-8 grid gap-10 lg:grid-cols-2">

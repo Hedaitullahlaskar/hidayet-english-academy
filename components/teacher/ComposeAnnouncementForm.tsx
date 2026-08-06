@@ -2,14 +2,13 @@
 
 import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
-import { coursesData } from "@/content/courses-data";
 import { createAnnouncement } from "@/lib/teacher/repository";
 
-export function ComposeAnnouncementForm() {
+export function ComposeAnnouncementForm({ courses }: { courses: { slug: string; name: string }[] }) {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [audience, setAudience] = useState<"all" | "course">("all");
-  const [courseSlug, setCourseSlug] = useState(coursesData[0]?.slug ?? "");
+  const [courseSlug, setCourseSlug] = useState(courses[0]?.slug ?? "");
   const [status, setStatus] = useState<"idle" | "sending" | "error" | "done">("idle");
   const [error, setError] = useState("");
 
@@ -53,7 +52,7 @@ export function ComposeAnnouncementForm() {
         <div className="mt-4">
           <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Course</label>
           <select value={courseSlug} onChange={(e) => setCourseSlug(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white">
-            {coursesData.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
+            {courses.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
           </select>
         </div>
       )}

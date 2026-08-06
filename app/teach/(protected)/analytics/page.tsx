@@ -1,11 +1,11 @@
 import { StatWidget } from "@/components/dashboard/StatWidget";
-import { coursesData } from "@/content/courses-data";
-import { getCourseAnalytics } from "@/lib/teacher/repository";
+import { getCourseAnalytics, getCoursesForTeacher } from "@/lib/teacher/repository";
 
 export const metadata = { robots: { index: false, follow: false } };
 
 export default async function AnalyticsPage() {
-  const featured = coursesData.slice(0, 6);
+  const myCourses = await getCoursesForTeacher();
+  const featured = myCourses.slice(0, 6);
   const analyticsEntries = await Promise.all(
     featured.map(async (c) => [c.slug, await getCourseAnalytics(c.slug)] as const)
   );
@@ -24,7 +24,7 @@ export default async function AnalyticsPage() {
           const a = analyticsBySlug.get(c.slug);
           return (
             <div key={c.slug} className="rounded-lg border border-navy-100 bg-white p-5 shadow-card dark:border-navy-700 dark:bg-navy-800">
-              <p className="font-display font-semibold text-navy-900 dark:text-white">{c.icon} {c.name}</p>
+              <p className="font-display font-semibold text-navy-900 dark:text-white">{c.name}</p>
               <div className="mt-4 space-y-3">
                 <StatWidget icon="🧑‍🎓" label="Enrolled" value={String(a?.enrolledCount ?? 0)} />
                 <StatWidget icon="📊" label="Avg. Test Score" value={a?.avgTestScore != null ? `${a.avgTestScore}%` : "No data yet"} />

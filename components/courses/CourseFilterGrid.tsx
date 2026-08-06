@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { CourseCard } from "@/components/courses/CourseCard";
 import { cn } from "@/lib/utils";
-import { filterOptions } from "@/lib/courses/repository";
+import { filterOptions } from "@/lib/courses/filterOptions";
 import type { CourseAudience, CourseCategory, CourseDetail, CourseLevel } from "@/types";
 
 interface CourseFilterGridProps {

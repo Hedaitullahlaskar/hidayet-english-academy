@@ -67,6 +67,43 @@ export async function getStudentEnrollments(studentId: string) {
   }, []);
 }
 
+/**
+ * The courses this teacher is allowed to manage content for — an admin
+ * sees every published course (admins aren't rows in
+ * teacher_course_assignments, they don't need to be; can_manage_course()
+ * in schema.sql grants them access regardless), a teacher sees only what
+ * they're actually assigned to. Two queries rather than a PostgREST
+ * embedded select — course_slug is a plain matching column across this
+ * whole codebase, not a declared foreign key, so `admin_courses(...)`
+ * embedding syntax wouldn't resolve.
+ */
+export async function getCoursesForTeacher(): Promise<{ slug: string; name: string }[]> {
+  return safeQuery(async () => {
+    const supabase = createServerSupabaseClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return [];
+
+    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+
+    if (profile?.role === "admin") {
+      const { data } = await supabase.from("admin_courses").select("slug, name").order("name", { ascending: true });
+      return data ?? [];
+    }
+
+    const { data: assignments } = await supabase
+      .from("teacher_course_assignments")
+      .select("course_slug")
+      .eq("teacher_id", user.id);
+    const slugs = (assignments ?? []).map((a: { course_slug: string }) => a.course_slug);
+    if (slugs.length === 0) return [];
+
+    const { data: courses } = await supabase.from("admin_courses").select("slug, name").in("slug", slugs).order("name", { ascending: true });
+    return courses ?? [];
+  }, []);
+}
+
 export async function getStudentSubmissions(studentId: string) {
   return safeQuery(async () => {
     const supabase = createServerSupabaseClient();

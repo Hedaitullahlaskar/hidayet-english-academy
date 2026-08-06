@@ -1074,6 +1074,216 @@ alter table certificates add column if not exists achievement_title text;
 alter table live_classes add column if not exists reminder_sent_at timestamptz;
 
 -- ============================================================================
+-- COURSE CATALOG MIGRATION — admin_courses becomes the single source of
+-- truth for course content, closing the gap ADMIN_MODULE_README.md
+-- flagged: full admin CRUD existed here with the public site still reading
+-- content/courses-data.ts (now deleted from the app entirely). See
+-- COURSES_MODULE_README.md for the full writeup of this pass.
+-- ============================================================================
+
+-- Full CourseDetail-shaped content, previously only in the deleted static file.
+alter table admin_courses add column if not exists name_bn text;
+alter table admin_courses add column if not exists tagline text;
+alter table admin_courses add column if not exists icon text;
+alter table admin_courses add column if not exists audience text[] not null default '{}';
+-- `categories` (plural, array) supersedes the original singular `category`
+-- column — a course can genuinely have more than one (e.g. Interview +
+-- Career). The old `category` column is left in place, unused, rather
+-- than dropped or type-converted in place — safer under repeated re-runs
+-- of this file than an ALTER COLUMN TYPE would be.
+alter table admin_courses add column if not exists categories text[] not null default '{}';
+alter table admin_courses add column if not exists duration text;
+alter table admin_courses add column if not exists format text;
+alter table admin_courses add column if not exists language text;
+alter table admin_courses add column if not exists schedule text;
+alter table admin_courses add column if not exists overview text;
+alter table admin_courses add column if not exists who_should_join text[] not null default '{}';
+alter table admin_courses add column if not exists eligibility text;
+alter table admin_courses add column if not exists syllabus text[] not null default '{}';
+alter table admin_courses add column if not exists outcomes text[] not null default '{}';
+alter table admin_courses add column if not exists weekly_practice text;
+alter table admin_courses add column if not exists assignments_summary text;
+alter table admin_courses add column if not exists mock_tests_summary text;
+alter table admin_courses add column if not exists certificate_status text not null default 'coming-soon' check (certificate_status in ('available', 'coming-soon'));
+alter table admin_courses add column if not exists is_coming_soon boolean not null default false;
+alter table admin_courses add column if not exists is_featured boolean not null default false;
+
+-- Publish/archive lifecycle. `is_published` (existing) is kept as-is for
+-- anything still reading it, but `status` is now the real source of
+-- truth — it adds the 'archived' state is_published alone can't express.
+-- The admin publish/archive/unpublish actions set both together (see
+-- lib/admin/repository.ts) so they never drift apart.
+alter table admin_courses add column if not exists status text not null default 'draft' check (status in ('draft', 'published', 'archived'));
+update admin_courses set status = 'published' where is_published = true and status = 'draft';
+
+-- Public read now checks `status`, not `is_published` — status alone can
+-- tell "never published" and "archived" apart, which is_published can't.
+-- This is the ONLY table where "everyone" includes anonymous visitors —
+-- the whole point of a course catalog is that non-enrolled visitors must
+-- be able to browse and buy. Enrollment-gating applies to a course's
+-- actual lesson CONTENT (lessons/live_classes/etc, already RLS-scoped to
+-- enrolled students below and elsewhere in this file), never to the
+-- catalog listing itself.
+drop policy if exists "Anyone can view published courses" on admin_courses;
+create policy "Anyone can view published courses" on admin_courses for select using (status = 'published');
+
+-- Course catalog records (name, price, publish/archive/delete) are
+-- admin-only — distinct from course CONTENT (lessons, tests, live
+-- classes, etc.), which an assigned teacher manages via the policies
+-- further below. A teacher can't rename, reprice, or unpublish a course
+-- directly, even one they're assigned to.
+drop policy if exists "Staff manage courses" on admin_courses;
+create policy "Admins manage courses" on admin_courses for all using (is_admin(auth.uid()));
+
+-- ---------------------------------------------------------------------------
+-- TEACHER COURSE ASSIGNMENTS — which teacher(s) can manage which course's
+-- content. Previously any teacher/admin ("is_staff") could manage any
+-- course's lessons/tests/etc; this table is what "teachers manage only
+-- their own assigned courses" is actually enforced against below.
+-- ---------------------------------------------------------------------------
+create table if not exists teacher_course_assignments (
+  id uuid primary key default gen_random_uuid(),
+  teacher_id uuid not null references profiles(id) on delete cascade,
+  course_slug text not null,
+  assigned_by uuid references profiles(id),
+  assigned_at timestamptz not null default now(),
+  unique (teacher_id, course_slug)
+);
+alter table teacher_course_assignments enable row level security;
+create policy "Teachers view their own assignments"
+  on teacher_course_assignments for select
+  using (auth.uid() = teacher_id);
+create policy "Admins manage teacher assignments"
+  on teacher_course_assignments for all
+  using (is_admin(auth.uid()));
+
+-- Admins always pass (same "highest privilege" pattern as is_staff/is_admin
+-- elsewhere in this file); a teacher passes only if actually assigned.
+create or replace function can_manage_course(uid uuid, slug text) returns boolean as $$
+  select is_admin(uid) or exists (
+    select 1 from teacher_course_assignments
+    where teacher_id = uid and course_slug = slug
+  );
+$$ language sql security definer;
+
+-- Seed: migrate every course that lived in content/courses-data.ts (the
+-- prior single source of truth, now removed from the app entirely) into
+-- admin_courses, published, so nothing is lost and the public site keeps
+-- working the moment this file is run. This INSERT is now the only
+-- remaining record of that original static content.
+insert into admin_courses
+  (slug, name, name_bn, tagline, icon, level, audience, categories, duration, format, language, schedule, overview, who_should_join, eligibility, syllabus, outcomes, weekly_practice, assignments_summary, mock_tests_summary, certificate_status, is_coming_soon, is_featured, is_free, status)
+values
+('spoken-english-master-course', 'Spoken English Master Course', 'স্পোকেন ইংলিশ মাস্টার কোর্স', 'Our flagship path from first sentence to fluent conversation.', '🗣️', 'All Levels', '{"Students","College","Professionals"}', '{"Speaking"}', 'Basic (6 months) → Intermediate (1 year) → Advanced (2 years)', 'Live', 'Bilingual — Bengali & English', 'Batches run through the week; timing confirmed at enrollment to suit your time zone.', 'Our most complete spoken English journey — three connected levels that take you from basic sentence-building to fluent, confident conversation, all taught with our bilingual, speaking-first method.', '{"Anyone starting from scratch who wants a complete, structured path","Students who''ve studied English for years but still can''t speak it","Professionals who want fluency, not just exam grammar"}', 'No prior spoken English proficiency required — placement is honest and judgment-free.', '{"Foundational grammar and sentence construction","Daily guided speaking practice","Vocabulary building by real-life theme","Conversation and real-world scenario practice"}', '{"Speak in complete, grammatically sound sentences","Hold an everyday conversation without freezing","Read and understand general English confidently","A foundation strong enough to build any specialization on top of"}', 'Structured speaking and grammar exercises assigned every week.', 'Checked, purposeful assignments tied directly to that week''s lesson.', 'Regular practice evaluations to catch gaps early.', 'coming-soon', false, true, false, 'published'),
+('complete-english-grammar-mastery', 'Complete English Grammar Mastery', 'সম্পূর্ণ ইংলিশ গ্রামার মাস্টারি', 'Every grammar rule, explained bilingually, drilled through real examples.', '📖', 'All Levels', '{"Students","College"}', '{"Grammar"}', 'Self-paced core syllabus + live sessions', 'Hybrid', 'Bilingual — Bengali & English', 'Live doubt-solving sessions weekly; core material available anytime.', 'A structured, rule-by-rule journey through English grammar — from tenses to complex sentence structure — explained in Bengali first, then anchored firmly in English.', '{"Students who know grammar rules but still make the same mistakes","Anyone preparing for board or competitive exams","Learners who were only ever taught grammar in English and stayed confused"}', 'Open to all levels — the syllabus is sequenced from foundational to advanced.', '{"Tenses, taught in the order they''re actually used in speech","Sentence structure, clauses, and common error patterns","A running \"common mistakes Bengali speakers make\" correction log","Applied grammar — using rules in real writing and speech, not just worksheets"}', '{"Stop translating grammar rules and start using them naturally","Recognize and self-correct the most common Bengali-English error patterns","Write and speak with structural confidence"}', 'Themed grammar drills released weekly.', 'Written exercises reviewed with corrective feedback.', 'Regular practice tests across every grammar topic covered.', 'coming-soon', false, false, false, 'published'),
+('vocabulary-builder', 'Vocabulary Builder', 'ভোকাবুলারি বিল্ডার', 'Themed word lists and spaced repetition — words you''ll actually use.', '🔤', 'All Levels', '{"Students","College","Professionals"}', '{"Vocabulary"}', 'Self-paced with weekly practice sets', 'Hybrid', 'Bilingual — Bengali & English', 'New themed word sets released weekly.', 'Vocabulary organized by real-life theme — travel, interviews, workplace, exams — with every word anchored in a full example sentence instead of an isolated list to memorize and forget.', '{"Anyone whose vocabulary feels smaller than their actual thinking","Students preparing for exams with a vocabulary component","Professionals who want sharper, more precise everyday English"}', 'Open to all levels.', '{"Theme-based word sets (not alphabetical lists)","Every word taught inside a full example sentence","Planned spaced-repetition review for long-term retention","Bilingual meaning and English usage shown side by side"}', '{"A working vocabulary organized around real situations, not random lists","Words that stick because you''ve seen them used, not just defined","Faster, more precise expression in both speech and writing"}', 'Themed word sets with usage exercises.', 'Sentence-writing tasks using newly learned words.', 'Periodic vocabulary recall checks.', 'coming-soon', false, false, false, 'published'),
+('pronunciation-accent-training', 'Pronunciation & Accent Training', 'প্রোনানসিয়েশন ও অ্যাকসেন্ট ট্রেনিং', 'Focused correction of the sounds Bengali speakers find hardest.', '🎙️', 'Intermediate', '{"Students","Professionals","Job Seekers"}', '{"Speaking"}', 'Short-course intensive', 'Live', 'Bilingual — Bengali & English', 'Live practice sessions, confirmed at enrollment.', 'Focused, judgment-free training on the specific sound patterns that make Bengali-accented English hard to follow for others — so you''re understood clearly, without needing to erase your identity.', '{"Anyone who''s been asked to \"repeat that\" one too many times","Job seekers preparing for interviews or client-facing roles","Students who want clearer, more confident spoken delivery"}', 'Basic conversational English recommended before joining.', '{"Listen-and-repeat drills targeting real Bengali-to-English sound gaps","Stress, rhythm, and intonation patterns in natural speech","Clarity-focused correction — not accent elimination","Practice built into real conversation scenarios"}', '{"Clearer, more easily understood spoken English","Confidence speaking without over-monitoring every word","Awareness of your own common pronunciation patterns and how to adjust them"}', 'Guided listen-and-repeat drills.', 'Recorded practice with teacher feedback.', 'Periodic clarity and comprehension checks.', 'coming-soon', false, false, false, 'published'),
+('spoken-english-for-beginners', 'Spoken English for Beginners', 'বিগিনারদের জন্য স্পোকেন ইংলিশ', 'Your very first steps — no prior knowledge assumed, ever.', '🌱', 'Beginner', '{"Students","Children"}', '{"Speaking"}', '6 months', 'Live', 'Bilingual — Bengali & English', 'Batches run through the week; timing confirmed at enrollment.', 'Built for absolute beginners — starting from simple words and sentences, with every explanation grounded in Bengali so nothing feels overwhelming.', '{"Anyone who has never really spoken English before","Students who feel \"behind\" and want to start fresh, without shame","Parents choosing a first English program for an older child or teen"}', 'None — this is specifically designed for a true beginner.', '{"Basic sentence construction and everyday vocabulary","Simple, guided speaking practice from lesson one","Foundational grammar, explained bilingually","Confidence-building through low-pressure repetition"}', '{"Comfort speaking simple, correct English sentences","A foundation ready for the Intermediate level","Real confidence, not just theoretical knowledge"}', 'Simple guided speaking exercises.', 'Light, confidence-building practice tasks.', 'Gentle, low-pressure progress checks.', 'coming-soon', false, false, false, 'published'),
+('advanced-spoken-english', 'Advanced Spoken English', 'অ্যাডভান্সড স্পোকেন ইংলিশ', 'Master English completely. Speak fluently, think in English.', '🚀', 'Advanced', '{"College","Professionals","Job Seekers"}', '{"Speaking"}', '2 years', 'Live', 'Bilingual instruction, English-majority practice', 'Batches run through the week; timing confirmed at enrollment.', 'For learners who already speak reasonably well and want to go further — nuanced expression, complex conversation, and the shift from translating to truly thinking in English.', '{"Learners who''ve completed our Basic and Intermediate levels","Confident speakers who want polish, nuance, and range","Professionals preparing for senior, English-heavy roles"}', 'Intermediate-level spoken comfort recommended.', '{"Advanced conversation and debate practice","Nuanced vocabulary and idiomatic expression","Public speaking and presentation skills","Personality development alongside language skill"}', '{"Genuine fluency — thinking in English, not translating","Confidence in high-stakes conversations and presentations","Career-ready communication skills"}', 'Advanced conversation and debate sessions.', 'Presentation and structured-argument tasks.', 'Comprehensive fluency evaluations.', 'coming-soon', false, false, false, 'published'),
+('interview-english', 'Interview English', 'ইন্টারভিউ ইংলিশ', 'Speak with confidence in any interview, anywhere.', '💼', 'Intermediate', '{"College","Job Seekers"}', '{"Interview","Career"}', 'Short-course intensive', 'Live', 'Bilingual instruction, English-majority practice', 'Live sessions, confirmed at enrollment.', 'Focused preparation for the moment that matters most — the interview. Real questions, professional phrasing, and live mock-interview practice.', '{"Job seekers with an interview coming up","Final-year college students entering the job market","Anyone who freezes under interview pressure, regardless of actual ability"}', 'Basic conversational English recommended.', '{"Common interview questions and confident answer structures","Professional phrasing and tone","Body language and delivery alongside language","Live, recorded mock interview practice with feedback"}', '{"A confident, structured approach to any interview question","Reduced anxiety through repeated real practice","Professional communication that reflects your actual ability"}', 'Mock interview drills.', 'Self-introduction and answer-structuring exercises.', 'Full live mock interviews with feedback.', 'coming-soon', false, false, false, 'published'),
+('hotel-hospitality-english', 'Hotel & Hospitality English', 'হোটেল ও হসপিটালিটি ইংলিশ', 'Workplace English for hospitality and service careers.', '🏨', 'Intermediate', '{"Professionals","Job Seekers"}', '{"Career"}', 'Short-course intensive', 'Live', 'Bilingual instruction, English-majority practice', 'Live sessions, confirmed at enrollment.', 'Practical English for hotel, restaurant, and guest-service roles — guest conversation, phone etiquette, and the vocabulary this specific industry actually uses.', '{"Hospitality and service-industry job seekers","Current hospitality staff wanting stronger guest communication","Anyone pursuing hospitality careers abroad"}', 'Basic conversational English recommended.', '{"Guest-facing conversation scenarios","Phone and email etiquette for hospitality settings","Industry-specific vocabulary and phrasing","Handling complaints and requests professionally"}', '{"Confident, professional guest communication","Industry-relevant vocabulary ready for real shifts","Stronger prospects for hospitality roles, including abroad"}', 'Guest-scenario role-play exercises.', 'Written guest-communication tasks (emails, messages).', 'Scenario-based practice evaluations.', 'coming-soon', false, false, false, 'published'),
+('corporate-english', 'Corporate English', 'কর্পোরেট ইংলিশ', 'Professional communication for the modern workplace.', '🏢', 'Advanced', '{"Professionals"}', '{"Career"}', 'Short-course intensive', 'Live', 'Bilingual instruction, English-majority practice', 'Live sessions, confirmed at enrollment.', 'Email writing, meeting participation, presentations, and everyday workplace conversation — English built for the corporate environment specifically.', '{"Working professionals in English-heavy corporate roles","Anyone preparing for a promotion or client-facing responsibilities","Teams wanting sharper, more confident workplace communication"}', 'Intermediate spoken and written English recommended.', '{"Professional email and report writing","Meeting participation and presentation skills","Everyday workplace conversation and small talk","Cross-cultural communication awareness"}', '{"Confident participation in meetings and presentations","Clear, professional written communication","Communication that supports career advancement"}', 'Workplace-scenario writing and speaking tasks.', 'Real-format email and report exercises.', 'Presentation and communication evaluations.', 'coming-soon', false, false, false, 'published'),
+('business-english', 'Business English', 'বিজনেস ইংলিশ', 'Negotiate, network, and communicate like a business professional.', '📊', 'Advanced', '{"Professionals"}', '{"Career"}', 'Short-course intensive', 'Live', 'Bilingual instruction, English-majority practice', 'Live sessions, confirmed at enrollment.', 'Beyond day-to-day workplace English — negotiation, networking, client relationships, and the language of business itself.', '{"Business owners and entrepreneurs communicating with English-speaking clients","Professionals in sales, business development, or client relations","Anyone building an international business network"}', 'Intermediate-to-advanced English recommended.', '{"Negotiation and persuasive communication","Networking and relationship-building conversation","Business writing — proposals, pitches, client communication","Presenting ideas and numbers with confidence"}', '{"Confidence in high-stakes business conversations","Stronger client and partner relationships through clearer communication","Professional presence in English-speaking business contexts"}', 'Negotiation and pitch-practice exercises.', 'Business writing tasks (proposals, client emails).', 'Simulated negotiation and pitch evaluations.', 'coming-soon', false, false, false, 'published'),
+('ielts-preparation', 'IELTS Preparation', 'আইইএলটিএস প্রস্তুতি', 'Coming soon — structured preparation for the IELTS exam.', '📄', 'Advanced', '{"Students","College","Job Seekers"}', '{"School","Career"}', 'To be announced', 'Live', 'Bilingual instruction, English-majority practice', 'To be announced.', 'A dedicated IELTS preparation track is in planning. This page will be updated with full syllabus and schedule details once the program launches.', '{"Students and professionals planning to study or work abroad","Anyone needing a certified English proficiency score"}', 'To be announced.', '{"Full syllabus to be announced when this program launches."}', '{"To be announced."}', 'To be announced.', 'To be announced.', 'To be announced.', 'coming-soon', true, false, false, 'published'),
+('pte-preparation', 'PTE Preparation', 'পিটিই প্রস্তুতি', 'Coming soon — structured preparation for the PTE Academic exam.', '🖥️', 'Advanced', '{"Students","College","Job Seekers"}', '{"School","Career"}', 'To be announced', 'Live', 'Bilingual instruction, English-majority practice', 'To be announced.', 'A dedicated PTE Academic preparation track is in planning. This page will be updated with full syllabus and schedule details once the program launches.', '{"Students and professionals planning to study or migrate abroad","Anyone needing a computer-based English proficiency score"}', 'To be announced.', '{"Full syllabus to be announced when this program launches."}', '{"To be announced."}', 'To be announced.', 'To be announced.', 'To be announced.', 'coming-soon', true, false, false, 'published'),
+('oet-preparation', 'OET Preparation', 'ওইটি প্রস্তুতি', 'Coming soon — English preparation for healthcare professionals.', '🩺', 'Advanced', '{"Professionals","Job Seekers"}', '{"Career"}', 'To be announced', 'Live', 'Bilingual instruction, English-majority practice', 'To be announced.', 'A dedicated OET track for nurses, doctors, and other healthcare professionals is in planning. This page will be updated once the program launches.', '{"Healthcare professionals seeking OET certification to work abroad"}', 'To be announced.', '{"Full syllabus to be announced when this program launches."}', '{"To be announced."}', 'To be announced.', 'To be announced.', 'To be announced.', 'coming-soon', true, false, false, 'published'),
+('madhyamik-english', 'Madhyamik English', 'মাধ্যমিক ইংলিশ', '100% free board-exam English mastery for Class 10 students.', '🎓', 'Intermediate', '{"Children","Students"}', '{"School","Grammar"}', 'Aligned to the board exam schedule', 'Live', 'Bilingual — Bengali & English', 'Batches run through the week; timing confirmed at enrollment.', 'A complete, 100% free English program built specifically for Madhyamik (Class 10) students — grammar, writing, and exam strategy, taught with genuine care.', '{"Every Madhyamik (Class 10) student — regardless of financial background"}', 'Currently enrolled in, or preparing for, the Madhyamik (Class 10) board exam.', '{"Complete grammar syllabus, A to Z","Seen and unseen passage practice","Board-pattern writing practice","Exam strategy and time management"}', '{"Strong, confident board-exam English performance","Real grammar understanding, not just memorized answers","A foundation that carries into Higher Secondary and beyond"}', 'Board-pattern practice sets released weekly.', 'Checked writing and grammar assignments.', 'Regular board-pattern test practice.', 'coming-soon', false, true, true, 'published'),
+('hs-english', 'HS English', 'উচ্চ মাধ্যমিক ইংলিশ', 'Higher Secondary English, built for real exam confidence.', '📚', 'Intermediate', '{"Students","College"}', '{"School","Grammar"}', 'Aligned to the board exam schedule', 'Live', 'Bilingual — Bengali & English', 'Batches run through the week; timing confirmed at enrollment.', 'Structured English preparation for Higher Secondary (Class 11–12) students — building on Madhyamik-level grammar toward more advanced comprehension and writing.', '{"Higher Secondary (Class 11–12) students preparing for board exams"}', 'Currently enrolled in Higher Secondary studies.', '{"Advanced grammar and comprehension","Essay and formal writing practice","Seen and unseen passage analysis","Board-pattern exam strategy"}', '{"Confident, exam-ready English skills","Stronger writing and comprehension for higher studies ahead","A bridge between board English and real-world fluency"}', 'Board-pattern comprehension and writing sets.', 'Essay and formal-writing assignments.', 'Regular board-pattern test practice.', 'coming-soon', false, false, false, 'published'),
+('english-for-competitive-exams', 'English for Competitive Exams', 'প্রতিযোগিতামূলক পরীক্ষার ইংলিশ', 'English preparation for government and competitive entrance exams.', '🏆', 'Advanced', '{"Students","Job Seekers"}', '{"School","Career"}', 'Short-course intensive', 'Live', 'Bilingual instruction, English-majority practice', 'Live sessions, confirmed at enrollment.', 'Focused English preparation for the kind of competitive and government exams many Bengali-speaking students take — comprehension, grammar accuracy, and vocabulary under time pressure.', '{"Students and job seekers preparing for competitive or government exams"}', 'Intermediate English level recommended.', '{"Grammar accuracy under exam conditions","Comprehension and vocabulary-in-context practice","Time-management strategy for English sections","Common competitive-exam question patterns"}', '{"Faster, more accurate performance on English sections","Reduced exam-day anxiety through repeated practice","A vocabulary and grammar base built for test conditions"}', 'Timed practice sets.', 'Exam-format grammar and comprehension exercises.', 'Timed mock sections mirroring real exam conditions.', 'coming-soon', false, false, false, 'published'),
+('kids-english', 'Kids English', 'কিডস ইংলিশ', 'A joyful, confidence-first introduction to English for children.', '🧒', 'Beginner', '{"Children"}', '{"Speaking","Vocabulary"}', '6 months', 'Live', 'Bilingual — Bengali & English', 'Batches run through the week; timing confirmed at enrollment.', 'A gentle, game-based introduction to English for children — built around stories, play, and encouragement rather than pressure or memorization.', '{"Children beginning their English learning journey"}', 'Designed for young learners; exact age guidance shared at enrollment.', '{"Basic vocabulary through stories and games","Simple, encouraged speaking practice","Foundational reading readiness","Confidence and curiosity-building activities"}', '{"Comfort and curiosity around speaking English","A joyful early foundation, not fear of the subject","Readiness for more structured English learning ahead"}', 'Playful, story-based practice activities.', 'Light, engagement-focused home activities.', 'Gentle, encouragement-focused progress checks.', 'coming-soon', false, false, false, 'published'),
+('english-for-homemakers', 'English for Homemakers', 'গৃহিণীদের জন্য ইংলিশ', 'Practical, everyday English — on a schedule that respects your day.', '🏡', 'Beginner', '{"Students"}', '{"Speaking"}', '6 months', 'Live', 'Bilingual — Bengali & English', 'Flexible batch timing designed around a homemaker''s daily schedule.', 'Practical, everyday spoken English — for conversations with children''s schools, doctors, shopping, travel, and simply feeling confident in English-speaking spaces.', '{"Homemakers who want practical English for daily life, at a comfortable pace"}', 'None — designed to start from wherever you are.', '{"Everyday conversation — home, school, market, travel","Practical vocabulary for common daily situations","Confidence-building speaking practice","Basic grammar, explained simply and bilingually"}', '{"Comfort speaking English in everyday situations","Confidence in settings like children''s schools or clinics","A foundation you can keep building on, at your own pace"}', 'Everyday-scenario speaking practice.', 'Light, practical conversation tasks.', 'Gentle, encouraging progress checks.', 'coming-soon', false, false, false, 'published'),
+('english-for-working-professionals', 'English for Working Professionals', 'কর্মজীবীদের জন্য ইংলিশ', 'Fit fluency into a working schedule — practical, career-focused English.', '💻', 'Intermediate', '{"Professionals"}', '{"Career"}', '1 year', 'Live', 'Bilingual instruction, English-majority practice', 'Evening and weekend batches designed around working hours.', 'Built for professionals balancing a full-time job — practical spoken and written English for the workplace, at a pace and schedule that respects your time.', '{"Working professionals who want fluency without disrupting their job"}', 'Basic English comprehension recommended.', '{"Workplace conversation and everyday professional English","Email and message writing","Meeting and small-talk confidence","Practical grammar review"}', '{"Confident everyday workplace communication","Improved written professional English","Fluency progress that fits around a full-time job"}', 'Workplace-scenario practice, scheduled around working hours.', 'Practical writing and speaking tasks.', 'Periodic progress evaluations.', 'coming-soon', false, false, false, 'published'),
+('english-for-international-job-seekers', 'English for International Job Seekers', 'আন্তর্জাতিক চাকরিপ্রার্থীদের জন্য ইংলিশ', 'Career-ready English for Bengali speakers job-hunting abroad.', '🌍', 'Advanced', '{"Job Seekers","Professionals"}', '{"Career","Interview"}', 'Short-course intensive', 'Live', 'Bilingual instruction, English-majority practice', 'Live sessions, timed to work across time zones.', 'Focused English preparation for Bengali speakers pursuing jobs abroad — resumes, interviews, workplace communication, and the confidence to compete internationally.', '{"Job seekers applying for roles in the Middle East, Europe, North America, or elsewhere abroad","Professionals preparing for international recruitment processes"}', 'Intermediate spoken English recommended.', '{"Resume and cover letter English","International interview practice","Workplace communication across cultures","Confidence for video and phone interviews"}', '{"Application materials that read professionally","Interview confidence for international recruiters","Communication skills built for a global workplace"}', 'International interview and application practice.', 'Resume, cover letter, and self-introduction tasks.', 'Full mock international interview sessions.', 'coming-soon', false, false, false, 'published')
+on conflict (slug) do update set
+  name = excluded.name,
+  name_bn = excluded.name_bn,
+  tagline = excluded.tagline,
+  icon = excluded.icon,
+  level = excluded.level,
+  audience = excluded.audience,
+  categories = excluded.categories,
+  duration = excluded.duration,
+  format = excluded.format,
+  language = excluded.language,
+  schedule = excluded.schedule,
+  overview = excluded.overview,
+  who_should_join = excluded.who_should_join,
+  eligibility = excluded.eligibility,
+  syllabus = excluded.syllabus,
+  outcomes = excluded.outcomes,
+  weekly_practice = excluded.weekly_practice,
+  assignments_summary = excluded.assignments_summary,
+  mock_tests_summary = excluded.mock_tests_summary,
+  certificate_status = excluded.certificate_status,
+  is_coming_soon = excluded.is_coming_soon,
+  is_featured = excluded.is_featured,
+  is_free = excluded.is_free,
+  updated_at = now();
+
+-- Backfill: assign every existing teacher to every existing course. This
+-- preserves exactly today's behavior (any teacher/admin could touch any
+-- course's content under the old is_staff-only policies) so flipping the
+-- policies below to assignment-based access doesn't lock a real,
+-- currently-working teacher out of courses they already teach the moment
+-- this migration runs. Admins narrow these down to real assignments
+-- afterward via /admin/courses — this is a safe starting point, not the
+-- intended long-term assignment state.
+insert into teacher_course_assignments (teacher_id, course_slug)
+select p.id, c.slug
+from profiles p
+cross join admin_courses c
+where p.role = 'teacher'
+on conflict (teacher_id, course_slug) do nothing;
+
+-- Course-scoped content tables: "any staff" tightened to "admin, or the
+-- specifically assigned teacher." Each drop+recreate targets the exact
+-- policy that previously used is_staff(auth.uid()) alone for this table.
+drop policy if exists "Staff manage lessons" on lessons;
+create policy "Staff manage lessons" on lessons for all using (can_manage_course(auth.uid(), course_slug));
+
+drop policy if exists "Staff manage assignments" on assignments;
+create policy "Staff manage assignments" on assignments for all using (can_manage_course(auth.uid(), course_slug));
+
+drop policy if exists "Staff manage all submissions" on submissions;
+create policy "Staff manage all submissions" on submissions for all using (
+  exists (select 1 from assignments a where a.id = submissions.assignment_id and can_manage_course(auth.uid(), a.course_slug))
+);
+
+drop policy if exists "Staff manage tests" on tests;
+create policy "Staff manage tests" on tests for all using (can_manage_course(auth.uid(), course_slug));
+
+drop policy if exists "Staff manage test questions" on test_questions;
+create policy "Staff manage test questions" on test_questions for all using (
+  exists (select 1 from tests t where t.id = test_questions.test_id and can_manage_course(auth.uid(), t.course_slug))
+);
+
+drop policy if exists "Staff manage live classes" on live_classes;
+create policy "Staff manage live classes" on live_classes for all using (can_manage_course(auth.uid(), course_slug));
+
+drop policy if exists "Staff manage attendance" on attendance;
+create policy "Staff manage attendance" on attendance for all using (
+  exists (select 1 from live_classes lc where lc.id = attendance.live_class_id and can_manage_course(auth.uid(), lc.course_slug))
+);
+
+drop policy if exists "Staff manage certificates" on certificates;
+create policy "Staff manage certificates" on certificates for all using (can_manage_course(auth.uid(), course_slug));
+
+drop policy if exists "Staff manage the question bank" on questions;
+create policy "Staff manage the question bank" on questions for all using (can_manage_course(auth.uid(), course_slug));
+
+drop policy if exists "Staff view and update all doubts" on doubts;
+create policy "Staff view and update all doubts" on doubts for all using (can_manage_course(auth.uid(), course_slug));
+
+-- Deliberately left broader (any staff, not assignment-scoped):
+-- doubt_replies ("Staff can reply on any doubt") — cross-course help on a
+-- student's question is reasonable collaboration, not a content-ownership
+-- action; and announcements ("Staff manage announcements"), since an
+-- announcement's course_slug is nullable (audience can be sitewide),
+-- which doesn't map onto a single course assignment. test_attempts'
+-- staff-visibility policy is also left as-is (view-only; the actual score
+-- write path is separately protected by protect_test_attempt_score()).
+
+-- ============================================================================
 -- End of schema. See COURSES_MODULE_README.md, LMS_MODULE_README.md,
 -- TEACHER_MODULE_README.md, ADMIN_MODULE_README.md, AUTH_MODULE_README.md,
 -- AI_LESSON_PLAYER_README.md, PAYMENTS_MODULE_README.md,

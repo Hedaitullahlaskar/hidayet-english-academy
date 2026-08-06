@@ -1,10 +1,10 @@
 import { IssueCertificateForm } from "@/components/teacher/IssueCertificateForm";
-import { getAllStudents } from "@/lib/teacher/repository";
+import { getAllStudents, getCoursesForTeacher } from "@/lib/teacher/repository";
 
 export const metadata = { robots: { index: false, follow: false } };
 
 export default async function IssueCertificatesPage() {
-  const students = await getAllStudents();
+  const [students, courses] = await Promise.all([getAllStudents(), getCoursesForTeacher()]);
 
   return (
     <div>
@@ -13,7 +13,7 @@ export default async function IssueCertificatesPage() {
         Each certificate gets a unique, publicly verifiable code the moment it&apos;s issued.
       </p>
       <div className="mt-8 max-w-xl">
-        <IssueCertificateForm students={students} />
+        <IssueCertificateForm students={students} courses={courses} />
       </div>
     </div>
   );

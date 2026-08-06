@@ -217,9 +217,38 @@ export async function addTeacherNote(teacherId: string, note: string): Promise<M
 }
 
 // ---------------------------------------------------------------------------
-// Course Management (admin_courses — see schema.sql note on why this is
-// separate from content/courses-data.ts)
+// Course Management — admin_courses is the single source of truth for the
+// whole course catalog (content, not just publish status). See
+// COURSES_MODULE_README.md for the migration this replaced.
 // ---------------------------------------------------------------------------
+
+export interface AdminCourseInput {
+  slug: string;
+  name: string;
+  name_bn?: string;
+  tagline?: string;
+  icon?: string;
+  level: string;
+  audience?: string[];
+  categories?: string[];
+  duration?: string;
+  format?: string;
+  language?: string;
+  schedule?: string;
+  overview?: string;
+  who_should_join?: string[];
+  eligibility?: string;
+  syllabus?: string[];
+  outcomes?: string[];
+  weekly_practice?: string;
+  assignments_summary?: string;
+  mock_tests_summary?: string;
+  certificate_status?: "available" | "coming-soon";
+  is_coming_soon?: boolean;
+  is_featured?: boolean;
+  is_free: boolean;
+  price_inr?: number;
+}
 
 export async function getAdminCourses() {
   return safeQuery(async () => {
@@ -229,24 +258,91 @@ export async function getAdminCourses() {
   }, []);
 }
 
-export async function createAdminCourse(input: {
-  slug: string;
-  name: string;
-  category: string;
-  level: string;
-  is_free: boolean;
-  price_inr?: number;
-}): Promise<MutationResult> {
+export async function getAdminCourseBySlug(slug: string) {
+  return safeQuery(async () => {
+    const supabase = createServerSupabaseClient();
+    const { data } = await supabase.from("admin_courses").select("*").eq("slug", slug).maybeSingle();
+    return data;
+  }, null);
+}
+
+export async function getAdminCourseById(id: string) {
+  return safeQuery(async () => {
+    const supabase = createServerSupabaseClient();
+    const { data } = await supabase.from("admin_courses").select("*").eq("id", id).maybeSingle();
+    return data;
+  }, null);
+}
+
+export async function createAdminCourse(input: AdminCourseInput): Promise<MutationResult> {
   const supabase = createServerSupabaseClient();
-  const { error } = await supabase.from("admin_courses").insert(input);
+  const { error } = await supabase.from("admin_courses").insert({ ...input, status: "draft", is_published: false });
   if (!error) await logAction("course_created", "admin_courses", input.slug);
   return error ? { success: false, error: error.message } : { success: true };
 }
 
-export async function toggleCoursePublish(id: string, publish: boolean): Promise<MutationResult> {
+export async function updateAdminCourse(id: string, input: Partial<AdminCourseInput>): Promise<MutationResult> {
   const supabase = createServerSupabaseClient();
-  const { error } = await supabase.from("admin_courses").update({ is_published: publish }).eq("id", id);
-  if (!error) await logAction(publish ? "course_published" : "course_unpublished", "admin_courses", id);
+  const { error } = await supabase.from("admin_courses").update(input).eq("id", id);
+  if (!error) await logAction("course_updated", "admin_courses", id);
+  return error ? { success: false, error: error.message } : { success: true };
+}
+
+export type CourseStatus = "draft" | "published" | "archived";
+
+// `status` is the real lifecycle field; `is_published` is kept in sync
+// alongside it purely so anything still reading the older boolean column
+// never sees it drift out of date with the richer status.
+export async function setCourseStatus(id: string, status: CourseStatus): Promise<MutationResult> {
+  const supabase = createServerSupabaseClient();
+  const { error } = await supabase
+    .from("admin_courses")
+    .update({ status, is_published: status === "published" })
+    .eq("id", id);
+  if (!error) await logAction(`course_${status}`, "admin_courses", id);
+  return error ? { success: false, error: error.message } : { success: true };
+}
+
+export async function deleteAdminCourse(id: string): Promise<MutationResult> {
+  const supabase = createServerSupabaseClient();
+  const { error } = await supabase.from("admin_courses").delete().eq("id", id);
+  if (!error) await logAction("course_deleted", "admin_courses", id);
+  return error ? { success: false, error: error.message } : { success: true };
+}
+
+// ---------------------------------------------------------------------------
+// Teacher ↔ Course assignments — which teacher(s) can manage a course's
+// content (lessons, tests, live classes, etc). Admin-only to change; see
+// the RLS policies in schema.sql for how this is actually enforced.
+// ---------------------------------------------------------------------------
+
+export async function getTeacherAssignmentsForCourse(courseSlug: string) {
+  return safeQuery(async () => {
+    const supabase = createServerSupabaseClient();
+    const { data } = await supabase
+      .from("teacher_course_assignments")
+      .select("id, teacher_id, profiles(id, full_name, email)")
+      .eq("course_slug", courseSlug);
+    return data ?? [];
+  }, []);
+}
+
+export async function assignTeacherToCourse(teacherId: string, courseSlug: string): Promise<MutationResult> {
+  const supabase = createServerSupabaseClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { error } = await supabase
+    .from("teacher_course_assignments")
+    .insert({ teacher_id: teacherId, course_slug: courseSlug, assigned_by: user?.id });
+  if (!error) await logAction("teacher_assigned_to_course", "teacher_course_assignments", `${teacherId}:${courseSlug}`);
+  return error ? { success: false, error: error.message } : { success: true };
+}
+
+export async function unassignTeacherFromCourse(assignmentId: string): Promise<MutationResult> {
+  const supabase = createServerSupabaseClient();
+  const { error } = await supabase.from("teacher_course_assignments").delete().eq("id", assignmentId);
+  if (!error) await logAction("teacher_unassigned_from_course", "teacher_course_assignments", assignmentId);
   return error ? { success: false, error: error.message } : { success: true };
 }
 

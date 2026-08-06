@@ -1,12 +1,12 @@
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { CreateQuestionForm } from "@/components/teacher/CreateQuestionForm";
-import { getQuestionBank } from "@/lib/teacher/repository";
+import { getQuestionBank, getCoursesForTeacher } from "@/lib/teacher/repository";
 
 export const metadata = { robots: { index: false, follow: false } };
 
 export default async function QuestionBankPage() {
-  const questions = await getQuestionBank();
+  const [questions, courses] = await Promise.all([getQuestionBank(), getCoursesForTeacher()]);
 
   return (
     <div>
@@ -16,7 +16,7 @@ export default async function QuestionBankPage() {
       <div className="mt-8 grid gap-10 lg:grid-cols-2">
         <div>
           <h2 className="mb-4 font-display text-lg font-semibold text-navy-900 dark:text-white">Add a Question</h2>
-          <CreateQuestionForm />
+          <CreateQuestionForm courses={courses} />
         </div>
         <div>
           <h2 className="mb-4 font-display text-lg font-semibold text-navy-900 dark:text-white">Question Bank ({questions.length})</h2>

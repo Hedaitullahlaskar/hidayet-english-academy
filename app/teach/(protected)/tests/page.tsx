@@ -1,12 +1,12 @@
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { CreateTestForm } from "@/components/teacher/CreateTestForm";
-import { getAllTests } from "@/lib/teacher/repository";
+import { getAllTests, getCoursesForTeacher } from "@/lib/teacher/repository";
 
 export const metadata = { robots: { index: false, follow: false } };
 
 export default async function TestsPage() {
-  const tests = await getAllTests();
+  const [tests, courses] = await Promise.all([getAllTests(), getCoursesForTeacher()]);
 
   return (
     <div>
@@ -16,7 +16,7 @@ export default async function TestsPage() {
       <div className="mt-8 grid gap-10 lg:grid-cols-2">
         <div>
           <h2 className="mb-4 font-display text-lg font-semibold text-navy-900 dark:text-white">Create a Test</h2>
-          <CreateTestForm />
+          <CreateTestForm courses={courses} />
         </div>
         <div>
           <h2 className="mb-4 font-display text-lg font-semibold text-navy-900 dark:text-white">All Tests</h2>
