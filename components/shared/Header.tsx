@@ -192,12 +192,11 @@ export function Header() {
               <span className="text-sm font-semibold text-navy-800 dark:text-navy-100">Dashboard</span>
             </Link>
           ) : session === null ? (
-            <Link
-              href="/login"
-              className="text-sm font-semibold text-navy-700 hover:text-gold-800 dark:text-navy-200 dark:hover:text-gold-400"
-            >
-              Log In
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link href="/login" className="text-sm font-semibold text-navy-700 hover:text-gold-800 dark:text-navy-200 dark:hover:text-gold-400">Student Login</Link>
+              <Link href="/teach/login" className="text-sm font-semibold text-navy-700 hover:text-gold-800 dark:text-navy-200 dark:hover:text-gold-400">Teacher Login</Link>
+              <Link href="/admin/login" className="text-sm font-semibold text-navy-700 hover:text-gold-800 dark:text-navy-200 dark:hover:text-gold-400">Admin Login</Link>
+            </div>
           ) : null}
           <Button href="/#enroll" size="sm">
             Join Free Class
@@ -269,13 +268,29 @@ export function Header() {
               Go to Dashboard
             </Link>
           ) : session === null ? (
-            <Link
-              href="/login"
-              onClick={() => setMenuOpen(false)}
-              className="rounded-md px-3 py-3 text-base font-semibold text-navy-800 hover:bg-navy-50 dark:text-white dark:hover:bg-navy-900"
-            >
-              Log In
-            </Link>
+            <>
+              <Link
+                href="/login"
+                onClick={() => setMenuOpen(false)}
+                className="rounded-md px-3 py-3 text-base font-semibold text-navy-800 hover:bg-navy-50 dark:text-white dark:hover:bg-navy-900"
+              >
+                Student Login
+              </Link>
+              <Link
+                href="/teach/login"
+                onClick={() => setMenuOpen(false)}
+                className="rounded-md px-3 py-3 text-base font-semibold text-navy-800 hover:bg-navy-50 dark:text-white dark:hover:bg-navy-900"
+              >
+                Teacher Login
+              </Link>
+              <Link
+                href="/admin/login"
+                onClick={() => setMenuOpen(false)}
+                className="rounded-md px-3 py-3 text-base font-semibold text-navy-800 hover:bg-navy-50 dark:text-white dark:hover:bg-navy-900"
+              >
+                Admin Login
+              </Link>
+            </>
           ) : null}
           <div className="mt-2 flex items-center gap-3 px-3">
             <button
