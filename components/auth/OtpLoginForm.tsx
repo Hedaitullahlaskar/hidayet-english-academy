@@ -43,8 +43,8 @@ export function OtpLoginForm({ onBack }: { onBack: () => void }) {
 
     const { error: otpError } =
       mode === "email"
-        ? await supabase.auth.signInWithOtp({ email: contact.trim(), options: { emailRedirectTo: redirectTo } })
-        : await supabase.auth.signInWithOtp({ phone: contact.trim(), options: { smsRedirectTo: redirectTo } });
+        ? await supabase.auth.signInWithOtp({ email: contact.trim() })
+        : await supabase.auth.signInWithOtp({ phone: contact.trim() });
 
     if (otpError) {
       setStatus("error");
