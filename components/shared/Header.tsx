@@ -34,36 +34,47 @@ export function Header() {
   // Homepage → Login → Dashboard → Logout → Homepage loop — the header
   // had no login link and no awareness of an existing session at all.
   useEffect(() => {
-    const supabase = createClient();
     let active = true;
 
     async function loadSession() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!active) return;
-      if (!user) {
-        setSession(null);
-        return;
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!active) return;
+        if (!user) {
+          setSession(null);
+          return;
+        }
+        const { data: profile } = await supabase.from("profiles").select("full_name, avatar_url, role").eq("id", user.id).single();
+        if (!active) return;
+        setSession(
+          profile
+            ? { fullName: profile.full_name, avatarUrl: profile.avatar_url, role: profile.role as UserRole }
+            : null
+        );
+      } catch {
+        if (active) setSession(null);
       }
-      const { data: profile } = await supabase.from("profiles").select("full_name, avatar_url, role").eq("id", user.id).single();
-      if (!active) return;
-      setSession(
-        profile
-          ? { fullName: profile.full_name, avatarUrl: profile.avatar_url, role: profile.role as UserRole }
-          : null
-      );
     }
+
     loadSession();
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => loadSession());
+    try {
+      const supabase = createClient();
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange(() => loadSession());
 
-    return () => {
+      return () => {
+        active = false;
+        subscription.unsubscribe();
+      };
+    } catch {
       active = false;
-      subscription.unsubscribe();
-    };
+      return undefined;
+    }
   }, []);
 
   useEffect(() => {
