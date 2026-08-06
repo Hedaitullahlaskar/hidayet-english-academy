@@ -319,9 +319,13 @@ export async function deleteAdminCourse(id: string): Promise<MutationResult> {
 export async function getTeacherAssignmentsForCourse(courseSlug: string) {
   return safeQuery(async () => {
     const supabase = createServerSupabaseClient();
+    // teacher_course_assignments has TWO foreign keys into profiles
+    // (teacher_id and assigned_by) — an unqualified `profiles(...)` embed
+    // is ambiguous and PostgREST rejects it at query time. `!teacher_id`
+    // tells it which FK to follow.
     const { data } = await supabase
       .from("teacher_course_assignments")
-      .select("id, teacher_id, profiles(id, full_name, email)")
+      .select("id, teacher_id, profiles!teacher_id(id, full_name, email)")
       .eq("course_slug", courseSlug);
     return data ?? [];
   }, []);

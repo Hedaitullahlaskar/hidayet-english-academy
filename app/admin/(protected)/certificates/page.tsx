@@ -15,6 +15,7 @@ export default async function AdminCertificatesPage() {
         <EmptyState className="mt-8" icon="🎓" title="No certificates issued yet" body="Certificates issued by any teacher will appear here, searchable by verification code." />
       ) : (
         <div className="mt-8 overflow-hidden rounded-lg border border-navy-100 shadow-card dark:border-navy-700">
+          <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left text-sm">
             <thead><tr className="bg-navy-800 text-white"><th className="p-4">Student</th><th className="p-4">Course</th><th className="p-4">Issued</th><th className="p-4">Verification Code</th></tr></thead>
             <tbody>
@@ -28,6 +29,7 @@ export default async function AdminCertificatesPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/Badge";
 import { PolicyRenderer } from "@/components/legal/PolicyRenderer";
 import { LegalAdviceDisclaimer } from "@/components/legal/LegalAdviceDisclaimer";
 import { allPolicies, getPolicyBySlug } from "@/content/legal";
+import { safeJsonLd } from "@/lib/utils";
 
 const SITE_URL = "https://www.hidayetenglishacademy.com";
 
@@ -49,7 +50,7 @@ export default function PolicyPage({ params }: { params: { slug: string } }) {
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
         />
 
         <nav aria-label="Breadcrumb" className="mb-6 text-sm text-navy-500 dark:text-navy-400">

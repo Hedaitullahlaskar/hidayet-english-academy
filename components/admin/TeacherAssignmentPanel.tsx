@@ -30,13 +30,24 @@ export function TeacherAssignmentPanel({
   const router = useRouter();
   const assignedIds = new Set(assignments.map((a) => a.teacher_id));
   const availableTeachers = allTeachers.filter((t) => !assignedIds.has(t.id));
-  const [selectedTeacherId, setSelectedTeacherId] = useState(availableTeachers[0]?.id ?? "");
+  const [selectedTeacherId, setSelectedTeacherId] = useState("");
   const [busy, setBusy] = useState(false);
 
+  // Derived, not just initial state: after an assign/unassign, router.refresh()
+  // brings new `assignments`/`allTeachers` props, which can drop the
+  // previously-selected teacher out of `availableTeachers` (they're now
+  // assigned). useState's initializer only runs once on mount, so without
+  // this fallback the <select> would keep pointing at a stale id — assign
+  // would silently resubmit an already-assigned teacher and hit the
+  // unique(teacher_id, course_slug) constraint instead of doing anything.
+  const effectiveSelectedId = availableTeachers.some((t) => t.id === selectedTeacherId)
+    ? selectedTeacherId
+    : availableTeachers[0]?.id ?? "";
+
   async function handleAssign() {
-    if (!selectedTeacherId) return;
+    if (!effectiveSelectedId) return;
     setBusy(true);
-    const result = await assignTeacherToCourse(selectedTeacherId, courseSlug);
+    const result = await assignTeacherToCourse(effectiveSelectedId, courseSlug);
     setBusy(false);
     if (result.success) router.refresh();
   }
@@ -76,7 +87,7 @@ export function TeacherAssignmentPanel({
       {availableTeachers.length > 0 && (
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <select
-            value={selectedTeacherId}
+            value={effectiveSelectedId}
             onChange={(e) => setSelectedTeacherId(e.target.value)}
             className="rounded-lg border border-navy-200 bg-white px-3 py-2 text-sm text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white"
           >

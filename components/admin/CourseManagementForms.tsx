@@ -121,109 +121,109 @@ export function CourseForm({ existing }: { existing?: AdminCourseRecord }) {
     <form onSubmit={handleSubmit} className="rounded-xl border border-navy-100 bg-white p-6 shadow-card dark:border-navy-700 dark:bg-navy-800">
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="sm:col-span-2">
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Course Name</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
+          <label htmlFor="course-name" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Course Name</label>
+          <input id="course-name" type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
         </div>
         {!isEdit && (
           <div>
-            <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Slug <span className="font-normal text-navy-400">(auto-generated if left blank)</span></label>
-            <input type="text" value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="e.g. spoken-english-master-course" className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
+            <label htmlFor="course-slug" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Slug <span className="font-normal text-navy-400">(auto-generated if left blank)</span></label>
+            <input id="course-slug" type="text" value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="e.g. spoken-english-master-course" className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
           </div>
         )}
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Name (Bengali)</label>
-          <input type="text" value={nameBn} onChange={(e) => setNameBn(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
+          <label htmlFor="course-name-bn" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Name (Bengali)</label>
+          <input id="course-name-bn" type="text" value={nameBn} onChange={(e) => setNameBn(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
         </div>
         <div className="sm:col-span-2">
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Tagline</label>
-          <input type="text" value={tagline} onChange={(e) => setTagline(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
+          <label htmlFor="course-tagline" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Tagline</label>
+          <input id="course-tagline" type="text" value={tagline} onChange={(e) => setTagline(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Icon (emoji)</label>
-          <input type="text" value={icon} onChange={(e) => setIcon(e.target.value)} placeholder="🗣️" className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
+          <label htmlFor="course-icon" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Icon (emoji)</label>
+          <input id="course-icon" type="text" value={icon} onChange={(e) => setIcon(e.target.value)} placeholder="🗣️" className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Level</label>
-          <select value={level} onChange={(e) => setLevel(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white">
+          <label htmlFor="course-level" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Level</label>
+          <select id="course-level" value={level} onChange={(e) => setLevel(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white">
             {LEVELS.map((l) => <option key={l}>{l}</option>)}
           </select>
         </div>
 
-        <div className="sm:col-span-2">
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Audience</label>
+        <fieldset className="sm:col-span-2 m-0 border-0 p-0">
+          <legend className="mb-1.5 text-sm font-semibold text-navy-800 dark:text-navy-100">Audience</legend>
           <div className="flex flex-wrap gap-2">
             {AUDIENCES.map((a) => (
-              <button key={a} type="button" onClick={() => setAudience((prev) => toggleInArray(prev, a))} className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${audience.includes(a) ? "border-gold-500 bg-gold-600 text-navy-900" : "border-navy-200 text-navy-700 dark:border-navy-600 dark:text-navy-200"}`}>
+              <button key={a} type="button" aria-pressed={audience.includes(a)} onClick={() => setAudience((prev) => toggleInArray(prev, a))} className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${audience.includes(a) ? "border-gold-500 bg-gold-600 text-navy-900" : "border-navy-200 text-navy-700 dark:border-navy-600 dark:text-navy-200"}`}>
                 {a}
               </button>
             ))}
           </div>
-        </div>
-        <div className="sm:col-span-2">
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Categories</label>
+        </fieldset>
+        <fieldset className="sm:col-span-2 m-0 border-0 p-0">
+          <legend className="mb-1.5 text-sm font-semibold text-navy-800 dark:text-navy-100">Categories</legend>
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map((c) => (
-              <button key={c} type="button" onClick={() => setCategories((prev) => toggleInArray(prev, c))} className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${categories.includes(c) ? "border-gold-500 bg-gold-600 text-navy-900" : "border-navy-200 text-navy-700 dark:border-navy-600 dark:text-navy-200"}`}>
+              <button key={c} type="button" aria-pressed={categories.includes(c)} onClick={() => setCategories((prev) => toggleInArray(prev, c))} className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${categories.includes(c) ? "border-gold-500 bg-gold-600 text-navy-900" : "border-navy-200 text-navy-700 dark:border-navy-600 dark:text-navy-200"}`}>
                 {c}
               </button>
             ))}
           </div>
-        </div>
+        </fieldset>
 
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Duration</label>
-          <input type="text" value={duration} onChange={(e) => setDuration(e.target.value)} placeholder="e.g. 6 months" className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
+          <label htmlFor="course-duration" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Duration</label>
+          <input id="course-duration" type="text" value={duration} onChange={(e) => setDuration(e.target.value)} placeholder="e.g. 6 months" className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Format</label>
-          <select value={format} onChange={(e) => setFormat(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white">
+          <label htmlFor="course-format" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Format</label>
+          <select id="course-format" value={format} onChange={(e) => setFormat(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white">
             {FORMATS.map((f) => <option key={f}>{f}</option>)}
           </select>
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Language</label>
-          <input type="text" value={language} onChange={(e) => setLanguage(e.target.value)} placeholder="e.g. Bilingual — Bengali & English" className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
+          <label htmlFor="course-language" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Language</label>
+          <input id="course-language" type="text" value={language} onChange={(e) => setLanguage(e.target.value)} placeholder="e.g. Bilingual — Bengali & English" className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Schedule</label>
-          <input type="text" value={schedule} onChange={(e) => setSchedule(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
+          <label htmlFor="course-schedule" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Schedule</label>
+          <input id="course-schedule" type="text" value={schedule} onChange={(e) => setSchedule(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
         </div>
 
         <div className="sm:col-span-2">
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Overview</label>
-          <textarea value={overview} onChange={(e) => setOverview(e.target.value)} rows={3} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
+          <label htmlFor="course-overview" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Overview</label>
+          <textarea id="course-overview" value={overview} onChange={(e) => setOverview(e.target.value)} rows={3} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Who Should Join <span className="font-normal text-navy-400">(one per line)</span></label>
-          <textarea value={whoShouldJoin} onChange={(e) => setWhoShouldJoin(e.target.value)} rows={4} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
+          <label htmlFor="course-who-should-join" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Who Should Join <span className="font-normal text-navy-400">(one per line)</span></label>
+          <textarea id="course-who-should-join" value={whoShouldJoin} onChange={(e) => setWhoShouldJoin(e.target.value)} rows={4} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Eligibility</label>
-          <textarea value={eligibility} onChange={(e) => setEligibility(e.target.value)} rows={4} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
+          <label htmlFor="course-eligibility" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Eligibility</label>
+          <textarea id="course-eligibility" value={eligibility} onChange={(e) => setEligibility(e.target.value)} rows={4} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Syllabus <span className="font-normal text-navy-400">(one per line)</span></label>
-          <textarea value={syllabus} onChange={(e) => setSyllabus(e.target.value)} rows={4} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
+          <label htmlFor="course-syllabus" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Syllabus <span className="font-normal text-navy-400">(one per line)</span></label>
+          <textarea id="course-syllabus" value={syllabus} onChange={(e) => setSyllabus(e.target.value)} rows={4} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Outcomes <span className="font-normal text-navy-400">(one per line)</span></label>
-          <textarea value={outcomes} onChange={(e) => setOutcomes(e.target.value)} rows={4} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
+          <label htmlFor="course-outcomes" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Outcomes <span className="font-normal text-navy-400">(one per line)</span></label>
+          <textarea id="course-outcomes" value={outcomes} onChange={(e) => setOutcomes(e.target.value)} rows={4} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Weekly Practice</label>
-          <input type="text" value={weeklyPractice} onChange={(e) => setWeeklyPractice(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
+          <label htmlFor="course-weekly-practice" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Weekly Practice</label>
+          <input id="course-weekly-practice" type="text" value={weeklyPractice} onChange={(e) => setWeeklyPractice(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Assignments</label>
-          <input type="text" value={assignmentsSummary} onChange={(e) => setAssignmentsSummary(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
+          <label htmlFor="course-assignments-summary" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Assignments</label>
+          <input id="course-assignments-summary" type="text" value={assignmentsSummary} onChange={(e) => setAssignmentsSummary(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Mock Tests</label>
-          <input type="text" value={mockTestsSummary} onChange={(e) => setMockTestsSummary(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
+          <label htmlFor="course-mock-tests-summary" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Mock Tests</label>
+          <input id="course-mock-tests-summary" type="text" value={mockTestsSummary} onChange={(e) => setMockTestsSummary(e.target.value)} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Certificate</label>
-          <select value={certificateStatus} onChange={(e) => setCertificateStatus(e.target.value as "available" | "coming-soon")} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white">
+          <label htmlFor="course-certificate-status" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Certificate</label>
+          <select id="course-certificate-status" value={certificateStatus} onChange={(e) => setCertificateStatus(e.target.value as "available" | "coming-soon")} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white">
             <option value="coming-soon">Coming Soon</option>
             <option value="available">Available</option>
           </select>
@@ -238,17 +238,17 @@ export function CourseForm({ existing }: { existing?: AdminCourseRecord }) {
           </label>
         </div>
 
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Pricing</label>
+        <fieldset className="m-0 border-0 p-0">
+          <legend className="mb-1.5 text-sm font-semibold text-navy-800 dark:text-navy-100">Pricing</legend>
           <div className="flex gap-2">
-            <button type="button" onClick={() => setIsFree(true)} className={`rounded-full border px-3 py-2 text-xs font-semibold ${isFree ? "border-gold-500 bg-gold-600 text-navy-900" : "border-navy-200 text-navy-700 dark:border-navy-600 dark:text-navy-200"}`}>Free</button>
-            <button type="button" onClick={() => setIsFree(false)} className={`rounded-full border px-3 py-2 text-xs font-semibold ${!isFree ? "border-gold-500 bg-gold-600 text-navy-900" : "border-navy-200 text-navy-700 dark:border-navy-600 dark:text-navy-200"}`}>Paid</button>
+            <button type="button" aria-pressed={isFree} onClick={() => setIsFree(true)} className={`rounded-full border px-3 py-2 text-xs font-semibold ${isFree ? "border-gold-500 bg-gold-600 text-navy-900" : "border-navy-200 text-navy-700 dark:border-navy-600 dark:text-navy-200"}`}>Free</button>
+            <button type="button" aria-pressed={!isFree} onClick={() => setIsFree(false)} className={`rounded-full border px-3 py-2 text-xs font-semibold ${!isFree ? "border-gold-500 bg-gold-600 text-navy-900" : "border-navy-200 text-navy-700 dark:border-navy-600 dark:text-navy-200"}`}>Paid</button>
           </div>
-        </div>
+        </fieldset>
         {!isFree && (
           <div>
-            <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Price (₹ INR)</label>
-            <input type="number" min={0} value={priceInr} onChange={(e) => setPriceInr(Number(e.target.value))} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
+            <label htmlFor="course-price-inr" className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Price (₹ INR)</label>
+            <input id="course-price-inr" type="number" min={0} value={priceInr} onChange={(e) => setPriceInr(Number(e.target.value))} className="w-full rounded-lg border border-navy-200 bg-white px-4 py-3 text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white" />
           </div>
         )}
       </div>

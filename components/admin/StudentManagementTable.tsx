@@ -32,6 +32,7 @@ export function StudentManagementTable({ students }: { students: StudentRow[] })
 
   return (
     <div className="overflow-hidden rounded-lg border border-navy-100 shadow-card dark:border-navy-700">
+      <div className="overflow-x-auto">
       <table className="w-full border-collapse text-left text-sm">
         <thead>
           <tr className="bg-navy-800 text-white">
@@ -70,6 +71,7 @@ export function StudentManagementTable({ students }: { students: StudentRow[] })
           })}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

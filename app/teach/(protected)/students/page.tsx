@@ -17,6 +17,7 @@ export default async function StudentListPage() {
         <EmptyState className="mt-8" icon="🧑‍🎓" title="No students yet" body="Students who register on the site will appear here automatically." />
       ) : (
         <div className="mt-8 overflow-hidden rounded-lg border border-navy-100 shadow-card dark:border-navy-700">
+          <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left text-sm">
             <thead>
               <tr className="bg-navy-800 text-white">
@@ -44,6 +45,7 @@ export default async function StudentListPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

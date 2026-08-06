@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { safeJsonLd } from "@/lib/utils";
 
 interface Crumb {
   label: string;
@@ -24,7 +25,7 @@ export function Breadcrumbs({ crumbs }: { crumbs: Crumb[] }) {
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <div className="mx-auto flex max-w-8xl flex-wrap items-center gap-1.5 px-5 text-xs font-medium text-navy-500 dark:text-navy-400 sm:px-8 lg:px-12">
         {crumbs.map((c, i) => (

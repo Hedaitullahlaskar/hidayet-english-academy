@@ -15,6 +15,7 @@ export default async function AdminAuditLogsPage() {
         <EmptyState className="mt-8" icon="📜" title="No audit events yet" body="This log fills in automatically as admin actions happen — nothing to show until then." />
       ) : (
         <div className="mt-8 overflow-hidden rounded-lg border border-navy-100 shadow-card dark:border-navy-700">
+          <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left text-sm">
             <thead><tr className="bg-navy-800 text-white"><th className="p-4">Action</th><th className="p-4">By</th><th className="p-4">When</th></tr></thead>
             <tbody>
@@ -27,6 +28,7 @@ export default async function AdminAuditLogsPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

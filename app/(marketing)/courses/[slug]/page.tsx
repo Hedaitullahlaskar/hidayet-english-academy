@@ -8,6 +8,7 @@ import { CourseDetailSampleLesson } from "@/components/courses/detail/CourseDeta
 import { CourseDetailFAQ } from "@/components/courses/detail/CourseDetailFAQ";
 import { CourseDetailCTA } from "@/components/courses/detail/CourseDetailCTA";
 import { getAllCourseSlugs, getCourseBySlug } from "@/lib/courses/repository";
+import { safeJsonLd } from "@/lib/utils";
 
 const SITE_URL = "https://www.hidayetenglishacademy.com";
 
@@ -81,12 +82,12 @@ export default async function CourseDetailPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(courseJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(courseJsonLd) }}
       />
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }}
       />
       <Breadcrumbs
         crumbs={[

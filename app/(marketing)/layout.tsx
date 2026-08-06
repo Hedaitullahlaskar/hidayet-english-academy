@@ -3,6 +3,7 @@ import { Header } from "@/components/shared/Header";
 import { Footer } from "@/components/shared/Footer";
 import { WhatsAppButton } from "@/components/shared/WhatsAppButton";
 import { faqs } from "@/content/site-data";
+import { safeJsonLd } from "@/lib/utils";
 
 // Moved here from the root layout: this setting is only correct for the
 // genuinely static marketing pages. It was previously on the root layout,
@@ -41,7 +42,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }}
       />
       <AnnouncementBar />
       <Header />

@@ -8,6 +8,7 @@ import { MethodJourney } from "@/components/method/MethodJourney";
 import { MethodFAQ } from "@/components/method/MethodFAQ";
 import { MethodFinalCTA } from "@/components/method/MethodFinalCTA";
 import { methodFaqs } from "@/content/method-data";
+import { safeJsonLd } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Our Teaching Method — Why It Works",
@@ -37,7 +38,7 @@ export default function MethodPage() {
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }}
       />
       <MethodHero />
       <PsychologyOfLearning />
