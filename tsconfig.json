@@ -17,7 +17,7 @@
     "module": "esnext",
     "esModuleInterop": true,
     "moduleResolution": "bundler",
-    "ignoreDeprecations": "5.0",
+    "ignoreDeprecations": "6.0",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
