@@ -118,11 +118,11 @@ export async function getPendingAssessmentsBreakdown() {
         supabase.from("test_attempts").select("id, tests(title)").is("score", null).not("submitted_at", "is", null),
       ]);
       return {
-        assignments: (ungradedSubmissions ?? []).map((s: { id: string; assignments: { title: string } | null }) => ({
+        assignments: ((ungradedSubmissions as Array<{ id: string; assignments?: { title?: string } | null }> | null) ?? []).map((s) => ({
           id: s.id,
           label: s.assignments?.title ?? "Assignment",
         })),
-        tests: (ungradedAttempts ?? []).map((a: { id: string; tests: { title: string } | null }) => ({
+        tests: ((ungradedAttempts as Array<{ id: string; tests?: { title?: string } | null }> | null) ?? []).map((a) => ({
           id: a.id,
           label: a.tests?.title ?? "Test",
         })),
@@ -199,7 +199,7 @@ export async function getEnrolledStudentsForClass(liveClassId: string) {
     const { data: existingAttendance } = await supabase.from("attendance").select("student_id, status").eq("live_class_id", liveClassId);
     const attendanceMap = new Map((existingAttendance ?? []).map((a: { student_id: string; status: "present" | "absent" | "excused" }) => [a.student_id, a.status]));
 
-    return (enrollments ?? []).map((e: { student_id: string; profiles: { id: string; full_name: string; avatar_url: string | null } | null }) => ({
+    return (enrollments ?? []).map((e: any) => ({
       studentId: e.student_id,
       fullName: e.profiles?.full_name ?? "Student",
       avatarUrl: e.profiles?.avatar_url ?? null,
@@ -310,12 +310,13 @@ export async function gradeSubmission(
     .single();
 
   if (!error && submission) {
+    const assignmentTitle = (submission as { assignments?: { title?: string } | null }).assignments?.title;
     // Real "result published" notification — not just a data update the
     // student has to happen to notice on their own.
     await supabase.from("notifications").insert({
       student_id: submission.student_id,
       title: "Assignment Graded",
-      body: `Your submission for "${submission.assignments?.title ?? "an assignment"}" has been graded: ${score} points.`,
+      body: `Your submission for "${assignmentTitle ?? "an assignment"}" has been graded: ${score} points.`,
     });
   }
 
