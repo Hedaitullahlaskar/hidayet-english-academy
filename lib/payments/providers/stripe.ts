@@ -20,7 +20,7 @@ export const stripeProvider: PaymentProvider = {
 
   async createCheckoutSession(request: CheckoutRequest): Promise<CheckoutSession> {
     const client = getClient();
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.hidayetenglishacademy.com";
 
     // Stripe Checkout is a real hosted payment page — we never collect
     // card details ourselves, which keeps this app out of PCI-DSS scope

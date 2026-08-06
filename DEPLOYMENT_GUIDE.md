@@ -22,8 +22,9 @@ was; this document is about *getting it running*.
    `handle_new_user()` trigger, and all three Storage buckets.
 3. Go to **Authentication → Providers**: enable Email and Google.
 4. Go to **Authentication → URL Configuration**: set the **Site URL** and
-   **Redirect URLs** to your real deployed domain — not `localhost`. If
-   you don't have a domain yet, use your Vercel-provided URL and update
+  **Redirect URLs** to your real deployed domain (for example,
+  `https://www.hidayetenglishacademy.com`). If you don't have a domain
+  yet, use your Vercel-provided URL and update
    this later.
 5. Go to **Authentication → Email Templates → SMTP Settings**: replace
    Supabase's default sender with a real SMTP provider (Resend works
@@ -76,11 +77,11 @@ names. In summary, by category:
 ## 6. Payment gateway webhooks (configured in each gateway's own dashboard)
 
 - **Razorpay**: add a webhook pointing to
-  `https://yourdomain.com/api/payments/webhook/razorpay`, subscribed to
-  `payment.captured` and `payment.failed`.
+  `https://www.hidayetenglishacademy.com/api/payments/webhook/razorpay`,
+  subscribed to `payment.captured` and `payment.failed`.
 - **Stripe**: add a webhook pointing to
-  `https://yourdomain.com/api/payments/webhook/stripe`, subscribed to
-  `checkout.session.completed`.
+  `https://www.hidayetenglishacademy.com/api/payments/webhook/stripe`,
+  subscribed to `checkout.session.completed`.
 
 Neither of these can be done from within this codebase — they're
 dashboard configuration on the gateway's own side.

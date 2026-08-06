@@ -54,6 +54,9 @@ export const navLinks: NavLink[] = [
   { label: "Our Method", href: "/method" },
   { label: "Founder", href: "/#founder" },
   { label: "FAQ", href: "/#faq" },
+  { label: "Student Login", href: "/login" },
+  { label: "Teacher Login", href: "/teach/login" },
+  { label: "Admin Login", href: "/admin/login" },
 ];
 
 export const heroTrustPoints = [

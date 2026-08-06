@@ -72,7 +72,16 @@ export default async function LessonDetailPage({ params }: LessonPageParams) {
       {quiz && quiz.test_questions?.length > 0 && (
         <div className="mt-10">
           <h2 className="mb-4 font-display text-lg font-semibold text-navy-900 dark:text-white">Quick Quiz</h2>
-          <LessonQuiz testId={quiz.id} totalMarks={quiz.total_marks} questions={quiz.test_questions} />
+          {/* correct_answer is stripped here, before this becomes a client
+              prop — grading happens server-side in submitLessonQuizAttempt. */}
+          <LessonQuiz
+            testId={quiz.id}
+            totalMarks={quiz.total_marks}
+            questions={quiz.test_questions.map((tq: { questions: Record<string, unknown>; [key: string]: unknown }) => {
+              const { correct_answer, ...safeQuestion } = tq.questions;
+              return { ...tq, questions: safeQuestion };
+            })}
+          />
         </div>
       )}
 

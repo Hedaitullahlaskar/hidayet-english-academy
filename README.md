@@ -12,7 +12,7 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:3000`.
+Visit `http://localhost:3000` for local development, or `https://www.hidayetenglishacademy.com` for the production site.
 
 ## What's in this phase
 

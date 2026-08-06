@@ -9,10 +9,13 @@ export function GoogleSignInButton({ redirectTo = "/dashboard" }: { redirectTo?:
   async function handleClick() {
     setLoading(true);
     const supabase = createClient();
+    const origin = (process.env.NEXT_PUBLIC_SITE_URL && process.env.NEXT_PUBLIC_SITE_URL !== "http://localhost:3000")
+      ? process.env.NEXT_PUBLIC_SITE_URL
+      : window.location.origin;
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
+        redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
       },
     });
     // No setLoading(false) on success — the browser navigates away to Google.

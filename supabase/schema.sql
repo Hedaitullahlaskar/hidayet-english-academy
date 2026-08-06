@@ -54,6 +54,15 @@ create policy "Staff can view all profiles"
   on profiles for select
   using (is_staff(auth.uid()));
 
+-- SECURITY: "Users can update their own profile" above has no per-column
+-- restriction — RLS alone would let a logged-in student run
+-- `update profiles set role = 'admin' where id = auth.uid()` (or flip
+-- is_suspended back to false) directly through the anon key, since
+-- auth.uid() = id is satisfied for their own row regardless of which
+-- columns change. is_admin() doesn't exist yet at this point in the file
+-- (defined later, for Module 7), so this trigger is added once at the end
+-- of the schema instead — see "PROTECT PRIVILEGED PROFILE COLUMNS" below.
+
 -- ---------------------------------------------------------------------------
 -- THE MISSING PIECE — until this trigger existed, signUp() created a row in
 -- auth.users but NOTHING ever created the matching row in public.profiles.
@@ -203,6 +212,30 @@ create policy "Staff manage all submissions"
   on submissions for all
   using (is_staff(auth.uid()));
 
+-- SECURITY: "Students manage their own submissions" above has no
+-- column-level restriction, so without this trigger a student could set
+-- their own homework score/feedback directly (`update submissions set
+-- score = 100 where id = ...`) instead of waiting for a teacher to grade
+-- it. Grading (lib/teacher/repository.ts's gradeSubmission) always runs
+-- under a staff session, so is_staff(auth.uid()) is sufficient here — no
+-- service-role client is needed for the legitimate path.
+create or replace function protect_submission_grade() returns trigger as $$
+begin
+  if (new.score is distinct from old.score
+      or new.feedback is distinct from old.feedback
+      or new.graded_at is distinct from old.graded_at)
+     and not is_staff(auth.uid()) then
+    raise exception 'Only staff can grade a submission.';
+  end if;
+  return new;
+end;
+$$ language plpgsql security definer;
+
+drop trigger if exists trg_protect_submission_grade on submissions;
+create trigger trg_protect_submission_grade
+  before update on submissions
+  for each row execute function protect_submission_grade();
+
 -- ---------------------------------------------------------------------------
 -- TESTS (weekly tests + mock exams share one table, distinguished by test_type)
 -- ---------------------------------------------------------------------------
@@ -248,6 +281,38 @@ create policy "Students manage their own attempts"
 create policy "Staff view all attempts"
   on test_attempts for select
   using (is_staff(auth.uid()));
+
+-- SECURITY: "Students manage their own attempts" has no column-level
+-- restriction, so without this trigger a student could set their own
+-- test score directly instead of it being computed from the real answer
+-- key. The app's grading (lib/assessments/repository.ts's
+-- submitTestAttempt, lib/lessons/repository.ts's submitLessonQuizAttempt)
+-- writes the score via the service-role client (lib/supabase/admin.ts)
+-- after computing it server-side and independently verifying attempt
+-- ownership — auth.role() = 'service_role' is what lets that legitimate
+-- write through; a teacher's manual override (updateTestAttemptScore) runs
+-- under a staff session, covered by is_staff(auth.uid()).
+-- Covers both INSERT and UPDATE: lib/lessons/repository.ts's
+-- submitLessonQuizAttempt uses an upsert, which is a plain INSERT the
+-- first time a student takes a given lesson quiz — a BEFORE UPDATE-only
+-- trigger would never see that first write, so a student could otherwise
+-- set an arbitrary score simply by taking the quiz once.
+create or replace function protect_test_attempt_score() returns trigger as $$
+begin
+  if (tg_op = 'UPDATE' and new.score is distinct from old.score
+      or tg_op = 'INSERT' and new.score is not null)
+     and not is_staff(auth.uid())
+     and auth.role() <> 'service_role' then
+    raise exception 'Score can only be set by the grading process or staff.';
+  end if;
+  return new;
+end;
+$$ language plpgsql security definer;
+
+drop trigger if exists trg_protect_test_attempt_score on test_attempts;
+create trigger trg_protect_test_attempt_score
+  before insert or update on test_attempts
+  for each row execute function protect_test_attempt_score();
 
 -- ---------------------------------------------------------------------------
 -- LIVE CLASSES & ATTENDANCE
@@ -536,6 +601,35 @@ create policy "Staff can delete lesson content"
 create or replace function is_admin(uid uuid) returns boolean as $$
   select exists (select 1 from profiles where id = uid and role = 'admin');
 $$ language sql security definer;
+
+-- ---------------------------------------------------------------------------
+-- PROTECT PRIVILEGED PROFILE COLUMNS — closes the gap left by "Users can
+-- update their own profile" (defined much earlier, before is_admin()
+-- existed). That policy only checks auth.uid() = id; it never restricts
+-- which columns a user can change on their own row. Without this trigger,
+-- any authenticated student could call
+--   supabase.from('profiles').update({ role: 'admin' }).eq('id', user.id)
+-- directly from the browser and RLS would allow it — a full account
+-- takeover requiring no server-side bug at all, just the anon key every
+-- visitor already has. Same issue for is_suspended (a suspended student
+-- could just un-suspend themselves). This trigger makes role and
+-- is_suspended changes stick only when the actor is already an admin,
+-- regardless of which client/policy path the update came through.
+-- ---------------------------------------------------------------------------
+create or replace function protect_privileged_profile_columns() returns trigger as $$
+begin
+  if (new.role is distinct from old.role or new.is_suspended is distinct from old.is_suspended)
+     and not is_admin(auth.uid()) then
+    raise exception 'Only admins can change role or suspension status.';
+  end if;
+  return new;
+end;
+$$ language plpgsql security definer;
+
+drop trigger if exists trg_protect_privileged_profile_columns on profiles;
+create trigger trg_protect_privileged_profile_columns
+  before update on profiles
+  for each row execute function protect_privileged_profile_columns();
 
 -- ---------------------------------------------------------------------------
 -- AUDIT LOGS — every sensitive admin action writes here. Referenced in the

@@ -29,8 +29,11 @@ export function ResetPasswordRequestForm() {
     }
 
     const supabase = createClient();
+    const origin = (process.env.NEXT_PUBLIC_SITE_URL && process.env.NEXT_PUBLIC_SITE_URL !== "http://localhost:3000")
+      ? process.env.NEXT_PUBLIC_SITE_URL
+      : window.location.origin;
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: `${window.location.origin}/auth/callback?next=/reset-password/confirm`,
+      redirectTo: `${origin}/auth/callback?next=/reset-password/confirm`,
     });
 
     // Deliberately show the same success message whether or not the email

@@ -13,7 +13,8 @@ interface QuizQuestion {
     question_text: string;
     question_type: "mcq" | "fill_blank" | "short_answer";
     options: { label: string; text: string }[] | null;
-    correct_answer: string;
+    // No correct_answer — grading happens server-side in
+    // submitLessonQuizAttempt, which fetches the real answer key itself.
   };
 }
 
@@ -31,16 +32,9 @@ export function LessonQuiz({ testId, totalMarks, questions }: LessonQuizProps) {
 
   async function handleSubmit() {
     setSaving(true);
-    let earned = 0;
-    questions.forEach((q) => {
-      const given = (answers[q.questions.id] ?? "").trim().toLowerCase();
-      const correct = q.questions.correct_answer.trim().toLowerCase();
-      if (given === correct) earned += q.marks;
-    });
-
-    const result = await submitLessonQuizAttempt(testId, earned);
+    const result = await submitLessonQuizAttempt(testId, answers);
     if (result.success) {
-      setScore(earned);
+      setScore(result.score ?? 0);
       setSubmitted(true);
     }
     setSaving(false);

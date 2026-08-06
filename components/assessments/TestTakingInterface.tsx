@@ -17,12 +17,15 @@ interface TestQuestion {
     question_text: string;
     question_type: "mcq" | "fill_blank" | "short_answer";
     options: { label: string; text: string }[] | null;
-    correct_answer: string;
+    // Deliberately no correct_answer here — it must never reach the
+    // browser while a test is in progress. Grading happens server-side
+    // in submitTestAttempt, which re-fetches the real answer key itself.
   };
 }
 
 interface TestTakingInterfaceProps {
   attemptId: string;
+  testId: string;
   totalMarks: number;
   passPercentage: number;
   durationMinutes: number;
@@ -32,6 +35,7 @@ interface TestTakingInterfaceProps {
 
 export function TestTakingInterface({
   attemptId,
+  testId,
   totalMarks,
   passPercentage,
   durationMinutes,
@@ -50,15 +54,12 @@ export function TestTakingInterface({
     if (submitting || result) return;
     setSubmitting(true);
 
-    let earned = 0;
-    questions.forEach((q) => {
-      const given = (answers[q.questions.id] ?? "").trim().toLowerCase();
-      const correct = q.questions.correct_answer.trim().toLowerCase();
-      if (given === correct) earned += q.marks;
-    });
-
+    // The score is computed server-side (submitTestAttempt re-fetches the
+    // real answer key) — the client only ever sends what the student
+    // answered, never a score it graded itself.
+    const outcome = await submitTestAttempt(attemptId, testId, answers);
+    const earned = outcome.score ?? 0;
     const percentage = totalMarks > 0 ? (earned / totalMarks) * 100 : 0;
-    await submitTestAttempt(attemptId, earned);
     setResult({ score: earned, passed: percentage >= passPercentage });
     setSubmitting(false);
   }

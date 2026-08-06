@@ -35,10 +35,16 @@ export function OtpLoginForm({ onBack }: { onBack: () => void }) {
     }
 
     const supabase = createClient();
+    const origin = (process.env.NEXT_PUBLIC_SITE_URL && process.env.NEXT_PUBLIC_SITE_URL !== "http://localhost:3000")
+      ? process.env.NEXT_PUBLIC_SITE_URL
+      : window.location.origin;
+
+    const redirectTo = `${origin}/auth/callback?next=/dashboard`;
+
     const { error: otpError } =
       mode === "email"
-        ? await supabase.auth.signInWithOtp({ email: contact.trim() })
-        : await supabase.auth.signInWithOtp({ phone: contact.trim() });
+        ? await supabase.auth.signInWithOtp({ email: contact.trim(), options: { emailRedirectTo: redirectTo } })
+        : await supabase.auth.signInWithOtp({ phone: contact.trim(), options: { smsRedirectTo: redirectTo } });
 
     if (otpError) {
       setStatus("error");

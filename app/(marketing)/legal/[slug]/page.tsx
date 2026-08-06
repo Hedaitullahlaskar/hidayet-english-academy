@@ -18,7 +18,7 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   if (!policy) return {};
 
   return {
-    title: `${policy.title} | Hidayet English Academy`,
+    title: policy.title,
     description: policy.shortDescription,
     alternates: { canonical: `${SITE_URL}/legal/${policy.slug}` },
     openGraph: {

@@ -6,7 +6,7 @@ import { ScholarshipTeaser } from "@/components/courses/ScholarshipTeaser";
 const SITE_URL = "https://www.hidayetenglishacademy.com";
 
 export const metadata: Metadata = {
-  title: "Free English Program for Madhyamik Students | Hidayet English Academy",
+  title: "Free English Program for Madhyamik Students",
   description:
     "A 100% free spoken-English program built around the Madhyamik syllabus — live classes, an AI Study Assistant, and a real certificate, at no cost to Class 10 students.",
   alternates: { canonical: `${SITE_URL}/programs/madhyamik` },

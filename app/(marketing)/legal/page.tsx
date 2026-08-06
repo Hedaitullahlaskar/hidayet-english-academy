@@ -8,7 +8,7 @@ import { allPolicies } from "@/content/legal";
 const SITE_URL = "https://www.hidayetenglishacademy.com";
 
 export const metadata: Metadata = {
-  title: "Legal Center | Hidayet English Academy",
+  title: "Legal Center",
   description:
     "Every HEA policy in one place — Terms, Privacy, Payments, Live Class Rules, AI Usage, Child Safety, and more. Search or browse by category.",
   alternates: { canonical: `${SITE_URL}/legal` },

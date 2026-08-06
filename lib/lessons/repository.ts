@@ -1,6 +1,7 @@
 "use server";
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 async function safeQuery<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
   try {
@@ -211,20 +212,49 @@ export async function getLessonQuiz(lessonId: string) {
   }, null);
 }
 
-export async function submitLessonQuizAttempt(testId: string, score: number): Promise<MutationResult> {
+/**
+ * Grades server-side from the real answer key, same reasoning as
+ * lib/assessments/repository.ts's submitTestAttempt — the client sends
+ * raw answers, never a self-computed score.
+ */
+export async function submitLessonQuizAttempt(
+  testId: string,
+  answers: Record<string, string>
+): Promise<MutationResult & { score?: number }> {
   const supabase = createServerSupabaseClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { success: false, error: "Not logged in." };
 
-  const { error } = await supabase
+  const { data: test } = await supabase
+    .from("tests")
+    .select("test_questions(id, marks, questions(id, correct_answer))")
+    .eq("id", testId)
+    .single();
+
+  if (!test) return { success: false, error: "Quiz not found." };
+
+  let earned = 0;
+  for (const tq of (test as { test_questions?: { marks: number; questions: { id: string; correct_answer: string | null } }[] }).test_questions ?? []) {
+    const given = (answers[tq.questions.id] ?? "").trim().toLowerCase();
+    const correct = (tq.questions.correct_answer ?? "").trim().toLowerCase();
+    if (given === correct) earned += tq.marks;
+  }
+
+  // Written via the service-role client — schema.sql's
+  // trg_protect_test_attempt_score trigger rejects any INSERT/UPDATE that
+  // sets a score unless it's from staff or the service role. student_id is
+  // always this authenticated user's own id, so bypassing RLS here can't
+  // be used to touch anyone else's attempt.
+  const admin = createAdminClient();
+  const { error } = await admin
     .from("test_attempts")
     .upsert(
-      { test_id: testId, student_id: user.id, submitted_at: new Date().toISOString(), score },
+      { test_id: testId, student_id: user.id, submitted_at: new Date().toISOString(), score: earned },
       { onConflict: "test_id,student_id" }
     );
-  return error ? { success: false, error: error.message } : { success: true };
+  return error ? { success: false, error: error.message } : { success: true, score: earned };
 }
 
 // ---------------------------------------------------------------------------

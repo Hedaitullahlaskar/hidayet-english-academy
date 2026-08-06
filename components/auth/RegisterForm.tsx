@@ -34,6 +34,10 @@ export function RegisterForm() {
     setStatus("submitting");
     const supabase = createClient();
 
+    const origin = (process.env.NEXT_PUBLIC_SITE_URL && process.env.NEXT_PUBLIC_SITE_URL !== "http://localhost:3000")
+      ? process.env.NEXT_PUBLIC_SITE_URL
+      : window.location.origin;
+
     const { error: signUpError } = await supabase.auth.signUp({
       email: email.trim(),
       password,
@@ -44,6 +48,7 @@ export function RegisterForm() {
           guardian_name: isMinor ? guardianName.trim() : null,
           guardian_contact: isMinor ? guardianContact.trim() : null,
         },
+        redirectTo: `${origin}/auth/callback?next=/dashboard`,
       },
     });
 

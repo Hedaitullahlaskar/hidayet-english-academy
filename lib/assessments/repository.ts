@@ -1,6 +1,7 @@
 "use server";
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 async function safeQuery<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
   try {
@@ -55,13 +56,64 @@ export async function startTestAttempt(testId: string, attemptNumber: number): P
   return error ? null : { attemptId: data.id };
 }
 
-export async function submitTestAttempt(attemptId: string, score: number): Promise<MutationResult> {
+/**
+ * Grades and submits a test attempt entirely server-side. The client only
+ * ever sends the student's raw answers, never a score — correct_answer is
+ * fetched fresh here, on the server, and never shipped to the browser (see
+ * app/dashboard/tests/[testId]/take/page.tsx, which strips it before
+ * passing question data to the client component). Trusting a client-
+ * supplied score would let any student grade their own test as 100%; this
+ * closes that gap by recomputing the score from the real answer key on
+ * every submission.
+ *
+ * The final write uses the service-role client, not the student's own
+ * session — schema.sql's trg_protect_test_attempt_score trigger rejects
+ * any score change that isn't from staff or the service role, so this is
+ * what makes that DB-level protection actually compatible with a
+ * student-initiated submission. Ownership is verified explicitly first
+ * since the admin client bypasses RLS.
+ */
+export async function submitTestAttempt(
+  attemptId: string,
+  testId: string,
+  answers: Record<string, string>
+): Promise<MutationResult & { score?: number }> {
   const supabase = createServerSupabaseClient();
-  const { error } = await supabase
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { success: false, error: "Not logged in." };
+
+  const { data: test } = await supabase
+    .from("tests")
+    .select("test_questions(id, marks, questions(id, correct_answer))")
+    .eq("id", testId)
+    .single();
+
+  if (!test) return { success: false, error: "Test not found." };
+
+  let earned = 0;
+  for (const tq of (test as { test_questions?: { marks: number; questions: { id: string; correct_answer: string | null } }[] }).test_questions ?? []) {
+    const given = (answers[tq.questions.id] ?? "").trim().toLowerCase();
+    const correct = (tq.questions.correct_answer ?? "").trim().toLowerCase();
+    if (given === correct) earned += tq.marks;
+  }
+
+  const admin = createAdminClient();
+  const { data: attempt } = await admin
     .from("test_attempts")
-    .update({ score, submitted_at: new Date().toISOString() })
+    .select("id")
+    .eq("id", attemptId)
+    .eq("student_id", user.id)
+    .maybeSingle();
+  if (!attempt) return { success: false, error: "Attempt not found." };
+
+  const { error } = await admin
+    .from("test_attempts")
+    .update({ score: earned, submitted_at: new Date().toISOString() })
     .eq("id", attemptId);
-  return error ? { success: false, error: error.message } : { success: true };
+
+  return error ? { success: false, error: error.message } : { success: true, score: earned };
 }
 
 /**
