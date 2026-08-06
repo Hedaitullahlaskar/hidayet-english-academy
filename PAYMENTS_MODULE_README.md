@@ -73,16 +73,21 @@ no-op, not a double-granted enrollment.
   which was always the honest state, just not yet reflected in the UI
   after this pass.
 
-## The one deliberate gap: no entry point on the public course pages yet
+## Closed in the session-completion pass: a real entry point on public course pages
 
-`/checkout/[courseSlug]` is fully functional and reachable by direct URL,
-but the public course detail pages (Module 4, approved and frozen) still
-route their "Enroll Now" button to WhatsApp. This wasn't an oversight —
-it's the same pattern as every previous module's flagged integration
-point (Doubts in Module 6, Scholarship applications and CMS content in
-Module 7): I don't silently rewire an already-approved page's behavior.
-Wiring the real "Buy Now" button into those pages is a small, clearly
-scoped follow-up, not done here without your sign-off.
+The gap noted above — no path from a public course page into real
+checkout — is closed. `BuyNowButton` (in `CourseDetailCTA`) checks real
+pricing availability client-side via the public `/api/courses/[slug]/pricing`
+route and only renders when checkout would actually work, linking straight
+into `/checkout/[courseSlug]`. See `SESSION_COMPLETION_README.md`.
+
+The hero section's separate "WhatsApp Inquiry" button (pre-purchase
+questions) is intentionally still WhatsApp-routed — that's a different,
+conversational CTA, not a second checkout entry point. Its sibling button
+was previously labeled "Enroll Now" while also only opening WhatsApp,
+which promised an action it didn't perform; relabeled to "Ask About
+Enrolling" for accuracy now that a real "Enroll Now" action exists
+elsewhere on the same page.
 
 ## Schema additions
 

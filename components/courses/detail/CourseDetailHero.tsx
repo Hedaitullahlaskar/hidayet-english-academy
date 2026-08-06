@@ -68,7 +68,7 @@ export function CourseDetailHero({ course }: { course: CourseDetail }) {
               size="lg"
               className="text-white hover:bg-white/10"
             >
-              Enroll Now
+              Ask About Enrolling
             </Button>
           )}
         </div>
