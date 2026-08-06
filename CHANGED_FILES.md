@@ -9,9 +9,9 @@ Files changed by automatic fix:
 Additional auth fixes applied:
 
 - `components/auth/GoogleSignInButton.tsx` — prefer `NEXT_PUBLIC_SITE_URL` for OAuth `redirectTo`
-- `components/auth/ResetPasswordRequestForm.tsx` — prefer `NEXT_PUBLIC_SITE_URL` for password reset links
-- `components/auth/RegisterForm.tsx` — include `redirectTo` in `signUp` call to avoid localhost links
-- `components/auth/OtpLoginForm.tsx` — include `redirectTo` in OTP requests to avoid localhost links
+- `components/auth/ResetPasswordRequestForm.tsx` — removed unsupported `redirectTo` option; rely on Supabase Auth URL configuration
+- `components/auth/RegisterForm.tsx` — removed unsupported `redirectTo` option from `signUp` call
+- `components/auth/OtpLoginForm.tsx` — removed unused `origin`/`redirectTo` variables and updated OTP calls to match SDK signatures
 
 Next steps to commit, redeploy, and verify (run locally or in CI):
 
