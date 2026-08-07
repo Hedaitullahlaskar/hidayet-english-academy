@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Menu } from "lucide-react";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { Avatar } from "@/components/dashboard/Avatar";
 import { createClient } from "@/lib/supabase/client";
@@ -24,10 +25,10 @@ export function AdminHeader({ adminName, avatarUrl, onMenuToggle }: AdminHeaderP
   }
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between border-b border-navy-100 bg-white px-5 py-3 dark:border-navy-800 dark:bg-navy-950">
+    <header className="sticky top-0 z-30 flex items-center justify-between border-b border-navy-100/80 bg-white/90 px-5 py-3 backdrop-blur-md dark:border-navy-800/80 dark:bg-navy-950/90">
       <div className="flex items-center gap-3">
         <button onClick={onMenuToggle} className="flex h-9 w-9 items-center justify-center rounded-full text-navy-800 dark:text-white lg:hidden" aria-label="Toggle menu">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth={2} strokeLinecap="round" /></svg>
+          <Menu className="h-[22px] w-[22px]" strokeWidth={2} aria-hidden="true" />
         </button>
         <Link href="/admin" className="flex items-center gap-2">
           <Image src="/images/hea-logo.png" alt="HEA" width={36} height={36} className="h-9 w-9 rounded-full" />

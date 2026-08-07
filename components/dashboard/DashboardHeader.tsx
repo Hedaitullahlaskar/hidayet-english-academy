@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Menu, Bell } from "lucide-react";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { Avatar } from "@/components/dashboard/Avatar";
 import { LanguageSwitch } from "@/components/dashboard/LanguageSwitch";
@@ -41,16 +42,14 @@ export function DashboardHeader({ studentName, avatarUrl, notifications, onMenuT
   }
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between border-b border-navy-100 bg-white px-5 py-3 dark:border-navy-800 dark:bg-navy-950">
+    <header className="sticky top-0 z-30 flex items-center justify-between border-b border-navy-100/80 bg-white/90 px-5 py-3 backdrop-blur-md dark:border-navy-800/80 dark:bg-navy-950/90">
       <div className="flex items-center gap-3">
         <button
           onClick={onMenuToggle}
           className="flex h-9 w-9 items-center justify-center rounded-full text-navy-800 dark:text-white lg:hidden"
           aria-label="Toggle menu"
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
-          </svg>
+          <Menu className="h-[22px] w-[22px]" strokeWidth={2} aria-hidden="true" />
         </button>
         <Link href="/dashboard" className="flex items-center gap-2">
           <Image src="/images/hea-logo.png" alt="HEA" width={36} height={36} className="h-9 w-9 rounded-full" />
@@ -71,7 +70,7 @@ export function DashboardHeader({ studentName, avatarUrl, notifications, onMenuT
             aria-label={`${t("notifications")}${unreadCount > 0 ? ` (${unreadCount})` : ""}`}
             aria-expanded={open}
           >
-            🔔
+            <Bell className="h-[18px] w-[18px]" strokeWidth={2} aria-hidden="true" />
             {unreadCount > 0 && (
               <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-error text-[10px] font-bold text-white">
                 {unreadCount > 9 ? "9+" : unreadCount}

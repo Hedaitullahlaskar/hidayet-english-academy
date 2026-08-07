@@ -24,11 +24,11 @@ export function AdminShell({ adminName, avatarUrl, children }: AdminShellProps) 
           <SidebarLegalLink />
         </aside>
         <div
-          className={cn("fixed inset-0 z-40 bg-black/40 transition-opacity lg:hidden", mobileOpen ? "opacity-100" : "pointer-events-none opacity-0")}
+          className={cn("fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 ease-premium lg:hidden", mobileOpen ? "opacity-100" : "pointer-events-none opacity-0")}
           onClick={() => setMobileOpen(false)}
         >
           <aside
-            className={cn("h-full w-72 overflow-y-auto bg-white p-4 shadow-elevated transition-transform dark:bg-navy-950", mobileOpen ? "translate-x-0" : "-translate-x-full")}
+            className={cn("h-full w-72 overflow-y-auto bg-white p-4 shadow-elevated transition-transform duration-300 ease-premium dark:bg-navy-950", mobileOpen ? "translate-x-0" : "-translate-x-full")}
             onClick={(e) => e.stopPropagation()}
           >
             <AdminSidebar />

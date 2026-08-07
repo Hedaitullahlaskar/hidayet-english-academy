@@ -32,14 +32,14 @@ export function TeacherShell({ teacherName, avatarUrl, openDoubtsCount, children
 
         <div
           className={cn(
-            "fixed inset-0 z-40 bg-black/40 transition-opacity lg:hidden",
+            "fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 ease-premium lg:hidden",
             mobileOpen ? "opacity-100" : "pointer-events-none opacity-0"
           )}
           onClick={() => setMobileOpen(false)}
         >
           <aside
             className={cn(
-              "h-full w-64 bg-white p-4 shadow-elevated transition-transform dark:bg-navy-950",
+              "h-full w-64 bg-white p-4 shadow-elevated transition-transform duration-300 ease-premium dark:bg-navy-950",
               mobileOpen ? "translate-x-0" : "-translate-x-full"
             )}
             onClick={(e) => e.stopPropagation()}
