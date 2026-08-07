@@ -6,8 +6,24 @@ import { FounderPortrait } from "@/components/ui/FounderPortrait";
 import { CheckIcon } from "@/components/ui/icons";
 import { learningLoop, site, heroTrustPoints } from "@/content/site-data";
 import { whatsappLink, whatsappMessages } from "@/lib/whatsapp";
+import { getCmsContentMap } from "@/lib/settings/repository";
 
-export function Hero() {
+// Every field below has a real, honest fallback — the exact copy that
+// shipped before this became editable, not placeholder text. An admin who
+// hasn't touched the Homepage Hero CMS section yet sees exactly what
+// visitors always saw; the moment they save a field, that field (and only
+// that field) switches over. See WEBSITE_CMS_README.md.
+export async function Hero() {
+  const content = await getCmsContentMap("homepage");
+  const badgeText = content.hero_badge_text || `${site.founder.experience} · Bengali Speakers Worldwide`;
+  const titleLine1 = content.hero_title_line1 || "Learn English,";
+  const titleLine2 = content.hero_title_line2 || "Build Your Future.";
+  const subtitleBn = content.hero_subtitle_bn || "ইংরেজি শিখুন, গড়ুন আপনার উজ্জ্বল ভবিষ্যৎ";
+  const heroBody =
+    content.hero_body ||
+    "Structured grammar, real spoken confidence, and practical English for real life — from Hidayet Sir, welcoming Bengali-speaking learners in India, Bangladesh, the Middle East, Europe, North America, and beyond for over a decade.";
+  const ctaText = content.hero_cta_text || "Join Free Class →";
+
   return (
     <section
       id="hero"
@@ -21,32 +37,29 @@ export function Hero() {
         {/* Left: message */}
         <div className="text-center lg:text-left">
           <Badge tone="gold" className="animate-fade-up">
-            {site.founder.experience} · Bengali Speakers Worldwide
+            {badgeText}
           </Badge>
 
           <h1 className="mt-6 animate-fade-up text-balance font-display text-4xl font-semibold leading-[1.1] text-white sm:text-5xl lg:text-6xl [animation-delay:80ms]">
-            Learn English,
+            {titleLine1}
             <br />
-            <span className="text-gold-400">Build Your Future.</span>
+            <span className="text-gold-400">{titleLine2}</span>
           </h1>
 
           <p
             lang="bn"
             className="mt-4 animate-fade-up text-balance text-xl font-medium text-navy-200 [animation-delay:140ms] sm:text-2xl"
           >
-            ইংরেজি শিখুন, গড়ুন আপনার উজ্জ্বল ভবিষ্যৎ
+            {subtitleBn}
           </p>
 
           <p className="mx-auto mt-6 max-w-xl animate-fade-up text-balance text-base leading-relaxed text-navy-300 [animation-delay:200ms] sm:text-lg lg:mx-0">
-            Structured grammar, real spoken confidence, and practical English
-            for real life — from Hidayet Sir, welcoming Bengali-speaking
-            learners in India, Bangladesh, the Middle East, Europe, North
-            America, and beyond for over a decade.
+            {heroBody}
           </p>
 
           <div className="mt-8 flex animate-fade-up flex-col items-center gap-4 [animation-delay:260ms] sm:flex-row sm:justify-center lg:justify-start">
             <Button href="/#enroll" size="lg">
-              Join Free Class →
+              {ctaText}
             </Button>
             <Button
               href={whatsappLink(whatsappMessages.general)}

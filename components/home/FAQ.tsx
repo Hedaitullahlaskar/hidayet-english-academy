@@ -4,11 +4,13 @@ import { useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ChevronPlusIcon } from "@/components/ui/icons";
-import { faqs } from "@/content/site-data";
 import { cn } from "@/lib/utils";
+import type { PublicFaq } from "@/lib/settings/repository";
 
-export function FAQ() {
+export function FAQ({ faqs }: { faqs: PublicFaq[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  if (faqs.length === 0) return null;
 
   return (
     <section id="faq" className="bg-paper-100 py-20 dark:bg-navy-900 sm:py-28">

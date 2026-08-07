@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
-import { navLinks, site } from "@/content/site-data";
+import { navLinks } from "@/content/site-data";
 import { allPolicies } from "@/content/legal";
+import type { SiteSettings } from "@/lib/settings/repository";
 
 const socialIcons: Record<string, JSX.Element> = {
   facebook: (
@@ -22,30 +23,38 @@ const socialIcons: Record<string, JSX.Element> = {
   ),
 };
 
-export function Footer() {
+export function Footer({ settings }: { settings: SiteSettings }) {
+  const socialLinks = [
+    { key: "facebook", url: settings.facebookUrl },
+    { key: "youtube", url: settings.youtubeUrl },
+    { key: "instagram", url: settings.instagramUrl },
+  ].filter((s): s is { key: string; url: string } => Boolean(s.url));
+
   return (
     <footer className="bg-navy-950 text-navy-200">
       <Container className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <div className="flex items-center gap-3">
             <Image
-              src="/images/hea-logo.png"
-              alt="Hidayet English Academy logo"
+              src={settings.logoUrl ?? "/images/hea-logo.png"}
+              alt={`${settings.academyName} logo`}
               width={44}
               height={44}
               className="h-11 w-11 rounded-full"
             />
             <span className="font-display text-lg font-semibold text-white">
-              {site.name}
+              {settings.academyName}
             </span>
           </div>
           <p className="mt-4 text-sm leading-relaxed text-navy-300">
-            {site.subTagline}. Guiding Bengali-speaking students toward English
+            {settings.subTagline}. Guiding Bengali-speaking students toward English
             fluency and a brighter future.
           </p>
-          <p className="mt-4 font-display italic text-gold-400">
-            &ldquo;{site.footerTagline}&rdquo;
-          </p>
+          {settings.footerTagline && (
+            <p className="mt-4 font-display italic text-gold-400">
+              &ldquo;{settings.footerTagline}&rdquo;
+            </p>
+          )}
         </div>
 
         <div>
@@ -68,16 +77,20 @@ export function Footer() {
             Contact
           </h3>
           <ul className="space-y-3 text-sm">
-            <li>
-              <a href={`tel:${site.phone}`} className="hover:text-gold-400">
-                📞 {site.phoneDisplay}
-              </a>
-            </li>
-            <li>
-              <a href={`mailto:${site.email}`} className="hover:text-gold-400">
-                ✉️ {site.email}
-              </a>
-            </li>
+            {settings.phone && (
+              <li>
+                <a href={`tel:${settings.phone}`} className="hover:text-gold-400">
+                  📞 {settings.phoneDisplay ?? settings.phone}
+                </a>
+              </li>
+            )}
+            {settings.email && (
+              <li>
+                <a href={`mailto:${settings.email}`} className="hover:text-gold-400">
+                  ✉️ {settings.email}
+                </a>
+              </li>
+            )}
           </ul>
         </div>
 
@@ -86,7 +99,7 @@ export function Footer() {
             Follow Us
           </h3>
           <div className="flex gap-3">
-            {Object.entries(site.social).map(([key, url]) => (
+            {socialLinks.map(({ key, url }) => (
               <a
                 key={key}
                 href={url}

@@ -1284,9 +1284,121 @@ create policy "Staff view and update all doubts" on doubts for all using (can_ma
 -- write path is separately protected by protect_test_attempt_score()).
 
 -- ============================================================================
+-- WEBSITE CMS, PHASE 1 — CORE CONTENT (see WEBSITE_CMS_README.md)
+-- Site-wide settings, homepage hero copy, FAQ, and the photo gallery move
+-- from hardcoded files (content/site-data.ts, content/about-data.ts) into
+-- real, admin-editable tables. cms_content (Module 7) already existed for
+-- exactly this purpose — homepage hero copy uses it as designed. Fixed,
+-- site-wide fields (name, contact info, social links) get their own
+-- singleton table instead, since they're scalar, not a growing list.
+-- ============================================================================
+
+-- Singleton: `id integer primary key default 1 check (id = 1)` is the
+-- standard Postgres pattern for "exactly one row, always" — every write is
+-- an update against id=1, never an insert of a second row.
+create table if not exists site_settings (
+  id integer primary key default 1 check (id = 1),
+  academy_name text not null default 'Hidayet English Academy',
+  tagline_en text,
+  tagline_bn text,
+  sub_tagline text,
+  footer_tagline text,
+  phone text,
+  phone_display text,
+  whatsapp_number text,
+  email text,
+  address text,
+  logo_url text,
+  facebook_url text,
+  youtube_url text,
+  instagram_url text,
+  google_map_url text,
+  updated_by uuid references profiles(id),
+  updated_at timestamptz not null default now()
+);
+alter table site_settings enable row level security;
+-- Public site info — every visitor's browser needs this to render the
+-- header/footer, logged in or not.
+create policy "Anyone can read site settings" on site_settings for select using (true);
+create policy "Staff manage site settings" on site_settings for all using (is_staff(auth.uid()));
+
+insert into site_settings (id, academy_name, tagline_en, tagline_bn, sub_tagline, footer_tagline, phone, phone_display, whatsapp_number, email, address, logo_url, facebook_url, youtube_url, instagram_url)
+values (1, 'Hidayet English Academy', 'Learn English, Build Your Future', 'ইংরেজি শিখুন, গড়ুন আপনার ভবিষ্যৎ', 'English Learning for Bengali Speakers Worldwide', 'Learn Today, Lead Tomorrow', '6290056461', '+91 62900 56461', '916290056461', 'hidayetenglishacademy@gmail.com', null, '/images/hea-logo.png', 'https://facebook.com/hidayetenglishacademy', 'https://youtube.com/@hidayetenglishacademy', 'https://instagram.com/hidayetenglishacademy')
+on conflict (id) do nothing;
+
+create table if not exists faqs (
+  id uuid primary key default gen_random_uuid(),
+  question text not null unique,
+  answer text not null,
+  order_index integer not null default 0,
+  is_published boolean not null default true,
+  created_at timestamptz not null default now()
+);
+alter table faqs enable row level security;
+create policy "Anyone can read published FAQs" on faqs for select using (is_published = true);
+create policy "Staff manage FAQs" on faqs for all using (is_staff(auth.uid()));
+
+insert into faqs (question, answer, order_index) values
+('Do you teach students outside India and Bangladesh?', 'Yes. HEA teaches Bengali-speaking learners everywhere online — including the Middle East, Europe, North America, Southeast Asia, and Australia. All you need is an internet connection; class timings are arranged to work across time zones.', 0),
+('Is the Madhyamik English Program really 100% free?', 'Yes. The complete English program for Class 10 (Madhyamik) students is 100% free, with no admission fee and no hidden charges.', 1),
+('What is the medium of instruction?', 'Classes are taught bilingually — grammar rules and difficult concepts are explained in Bengali, with practice conducted in English so you build real speaking confidence.', 2),
+('How long are the Basic, Intermediate, and Advanced courses?', 'Basic is 6 months, Intermediate is 1 year, and Advanced is 2 years — each building on the last, from foundational grammar to complete fluency.', 3),
+('Are classes live or recorded?', 'Classes are live and interactive, with regular practice sessions, doubt-solving, and personal feedback from your teacher.', 4),
+('How do I join the WhatsApp community?', 'Scan the QR code on our promotional materials or tap "Join WhatsApp Group" on this site to connect directly with the academy for updates and support.', 5),
+('How do I enroll?', 'Tap "Join Free Class," fill in your details, or simply message us on WhatsApp — our team will guide you through enrollment.', 6)
+on conflict (question) do nothing;
+
+create table if not exists gallery_images (
+  id uuid primary key default gen_random_uuid(),
+  image_url text not null unique,
+  alt_text text not null default '',
+  caption text,
+  order_index integer not null default 0,
+  is_published boolean not null default true,
+  created_at timestamptz not null default now()
+);
+alter table gallery_images enable row level security;
+create policy "Anyone can view published gallery images" on gallery_images for select using (is_published = true);
+create policy "Staff manage gallery images" on gallery_images for all using (is_staff(auth.uid()));
+
+insert into gallery_images (image_url, alt_text, caption, order_index) values
+('/images/hea-logo.png', 'The Hidayet English Academy crest', 'Our Emblem', 0),
+('/images/founder-hidayet-sir.jpg', 'Hidayet Sir, Founder of Hidayet English Academy', 'Hidayet Sir, Founder', 1),
+('/images/resource-present-perfect.jpg', 'A sample bilingual grammar lesson', 'Our Grammar Teaching Style', 2),
+('/images/gallery/gallery-teaching-techniques.jpg', 'HEA''s modern child-learning teaching techniques', 'Our Teaching Techniques', 3),
+('/images/gallery/gallery-free-classes-campaign.jpg', 'Join Free English Classes campaign', 'Free Classes Campaign', 4),
+('/images/gallery/gallery-brochure.jpg', 'Hidayet English Academy brochure', 'Our Brochure', 5)
+on conflict (image_url) do nothing;
+
+-- ---------------------------------------------------------------------------
+-- STORAGE — general site-content images (hero backgrounds, gallery photos,
+-- future CMS-managed images). Public read (it's marketing imagery),
+-- staff-only write — same pattern as the lesson-content bucket.
+-- ---------------------------------------------------------------------------
+insert into storage.buckets (id, name, public)
+values ('site-content', 'site-content', true)
+on conflict (id) do nothing;
+
+create policy "Site content images are publicly viewable"
+  on storage.objects for select
+  using (bucket_id = 'site-content');
+
+create policy "Staff can upload site content images"
+  on storage.objects for insert
+  with check (bucket_id = 'site-content' and is_staff(auth.uid()));
+
+create policy "Staff can update site content images"
+  on storage.objects for update
+  using (bucket_id = 'site-content' and is_staff(auth.uid()));
+
+create policy "Staff can delete site content images"
+  on storage.objects for delete
+  using (bucket_id = 'site-content' and is_staff(auth.uid()));
+
+-- ============================================================================
 -- End of schema. See COURSES_MODULE_README.md, LMS_MODULE_README.md,
 -- TEACHER_MODULE_README.md, ADMIN_MODULE_README.md, AUTH_MODULE_README.md,
 -- AI_LESSON_PLAYER_README.md, PAYMENTS_MODULE_README.md,
--- LIVE_CLASS_MODULE_README.md, and ASSESSMENT_MODULE_README.md for how the
--- app layer talks to these tables.
+-- LIVE_CLASS_MODULE_README.md, ASSESSMENT_MODULE_README.md, and
+-- WEBSITE_CMS_README.md for how the app layer talks to these tables.
 -- ============================================================================

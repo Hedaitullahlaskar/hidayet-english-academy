@@ -3,7 +3,6 @@ import type {
   Program,
   LearningStage,
   TeachingPillar,
-  FaqItem,
   Testimonial,
   NavLink,
 } from "@/types";
@@ -318,40 +317,7 @@ export const offerHighlights = [
   "Board Exam Focused Preparation",
 ];
 
-export const faqs: FaqItem[] = [
-  {
-    question: "Do you teach students outside India and Bangladesh?",
-    answer:
-      "Yes. HEA teaches Bengali-speaking learners everywhere online — including the Middle East, Europe, North America, Southeast Asia, and Australia. All you need is an internet connection; class timings are arranged to work across time zones.",
-  },
-  {
-    question: "Is the Madhyamik English Program really 100% free?",
-    answer:
-      "Yes. The complete English program for Class 10 (Madhyamik) students is 100% free, with no admission fee and no hidden charges.",
-  },
-  {
-    question: "What is the medium of instruction?",
-    answer:
-      "Classes are taught bilingually — grammar rules and difficult concepts are explained in Bengali, with practice conducted in English so you build real speaking confidence.",
-  },
-  {
-    question: "How long are the Basic, Intermediate, and Advanced courses?",
-    answer:
-      "Basic is 6 months, Intermediate is 1 year, and Advanced is 2 years — each building on the last, from foundational grammar to complete fluency.",
-  },
-  {
-    question: "Are classes live or recorded?",
-    answer:
-      "Classes are live and interactive, with regular practice sessions, doubt-solving, and personal feedback from your teacher.",
-  },
-  {
-    question: "How do I join the WhatsApp community?",
-    answer:
-      "Scan the QR code on our promotional materials or tap \"Join WhatsApp Group\" on this site to connect directly with the academy for updates and support.",
-  },
-  {
-    question: "How do I enroll?",
-    answer:
-      "Tap \"Join Free Class,\" fill in your details, or simply message us on WhatsApp — our team will guide you through enrollment.",
-  },
-];
+// FAQs migrated to the database (Website CMS, Phase 1) — see the `faqs`
+// table in schema.sql and lib/settings/repository.ts's getFaqs(). This
+// static array was the seed source and is no longer read anywhere; kept
+// out of this file to avoid a second, driftable copy of the same content.

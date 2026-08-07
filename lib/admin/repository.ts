@@ -418,6 +418,117 @@ export async function toggleBanner(id: string, active: boolean): Promise<Mutatio
   return error ? { success: false, error: error.message } : { success: true };
 }
 
+export interface SiteSettingsInput {
+  academy_name: string;
+  tagline_en?: string;
+  tagline_bn?: string;
+  sub_tagline?: string;
+  footer_tagline?: string;
+  phone?: string;
+  phone_display?: string;
+  whatsapp_number?: string;
+  email?: string;
+  address?: string;
+  logo_url?: string;
+  facebook_url?: string;
+  youtube_url?: string;
+  instagram_url?: string;
+  google_map_url?: string;
+}
+
+// site_settings is a singleton (id = 1 always) — this is always an update
+// against that one row, never an insert of a new one.
+export async function updateSiteSettings(input: SiteSettingsInput): Promise<MutationResult> {
+  const supabase = createServerSupabaseClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { error } = await supabase
+    .from("site_settings")
+    .update({ ...input, updated_by: user?.id, updated_at: new Date().toISOString() })
+    .eq("id", 1);
+  if (!error) await logAction("site_settings_updated", "site_settings", "1");
+  return error ? { success: false, error: error.message } : { success: true };
+}
+
+export async function getAllFaqsAdmin() {
+  return safeQuery(async () => {
+    const supabase = createServerSupabaseClient();
+    const { data } = await supabase.from("faqs").select("*").order("order_index", { ascending: true });
+    return data ?? [];
+  }, []);
+}
+
+export async function createFaq(input: { question: string; answer: string }): Promise<MutationResult> {
+  const supabase = createServerSupabaseClient();
+  const { data: existing } = await supabase.from("faqs").select("order_index").order("order_index", { ascending: false }).limit(1).maybeSingle();
+  const nextOrder = (existing?.order_index ?? -1) + 1;
+  const { error } = await supabase.from("faqs").insert({ ...input, order_index: nextOrder });
+  return error ? { success: false, error: error.message } : { success: true };
+}
+
+export async function updateFaq(id: string, input: { question: string; answer: string }): Promise<MutationResult> {
+  const supabase = createServerSupabaseClient();
+  const { error } = await supabase.from("faqs").update(input).eq("id", id);
+  return error ? { success: false, error: error.message } : { success: true };
+}
+
+export async function toggleFaqPublish(id: string, publish: boolean): Promise<MutationResult> {
+  const supabase = createServerSupabaseClient();
+  const { error } = await supabase.from("faqs").update({ is_published: publish }).eq("id", id);
+  return error ? { success: false, error: error.message } : { success: true };
+}
+
+export async function reorderFaq(id: string, direction: "up" | "down"): Promise<MutationResult> {
+  const supabase = createServerSupabaseClient();
+  const { data: all } = await supabase.from("faqs").select("id, order_index").order("order_index", { ascending: true });
+  if (!all) return { success: false, error: "Could not load FAQ order." };
+  const index = all.findIndex((f: { id: string }) => f.id === id);
+  const swapWith = direction === "up" ? index - 1 : index + 1;
+  if (index === -1 || swapWith < 0 || swapWith >= all.length) return { success: true };
+  const a = all[index];
+  const b = all[swapWith];
+  const [err1, err2] = await Promise.all([
+    supabase.from("faqs").update({ order_index: b.order_index }).eq("id", a.id).then((r) => r.error),
+    supabase.from("faqs").update({ order_index: a.order_index }).eq("id", b.id).then((r) => r.error),
+  ]);
+  return err1 || err2 ? { success: false, error: (err1 ?? err2)!.message } : { success: true };
+}
+
+export async function deleteFaq(id: string): Promise<MutationResult> {
+  const supabase = createServerSupabaseClient();
+  const { error } = await supabase.from("faqs").delete().eq("id", id);
+  return error ? { success: false, error: error.message } : { success: true };
+}
+
+export async function getAllGalleryImagesAdmin() {
+  return safeQuery(async () => {
+    const supabase = createServerSupabaseClient();
+    const { data } = await supabase.from("gallery_images").select("*").order("order_index", { ascending: true });
+    return data ?? [];
+  }, []);
+}
+
+export async function createGalleryImage(input: { image_url: string; alt_text: string; caption?: string }): Promise<MutationResult> {
+  const supabase = createServerSupabaseClient();
+  const { data: existing } = await supabase.from("gallery_images").select("order_index").order("order_index", { ascending: false }).limit(1).maybeSingle();
+  const nextOrder = (existing?.order_index ?? -1) + 1;
+  const { error } = await supabase.from("gallery_images").insert({ ...input, order_index: nextOrder });
+  return error ? { success: false, error: error.message } : { success: true };
+}
+
+export async function toggleGalleryImagePublish(id: string, publish: boolean): Promise<MutationResult> {
+  const supabase = createServerSupabaseClient();
+  const { error } = await supabase.from("gallery_images").update({ is_published: publish }).eq("id", id);
+  return error ? { success: false, error: error.message } : { success: true };
+}
+
+export async function deleteGalleryImage(id: string): Promise<MutationResult> {
+  const supabase = createServerSupabaseClient();
+  const { error } = await supabase.from("gallery_images").delete().eq("id", id);
+  return error ? { success: false, error: error.message } : { success: true };
+}
+
 // ---------------------------------------------------------------------------
 // Payment Management
 // ---------------------------------------------------------------------------

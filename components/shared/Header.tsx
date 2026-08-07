@@ -7,11 +7,12 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Avatar } from "@/components/dashboard/Avatar";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
-import { navLinks, site } from "@/content/site-data";
+import { navLinks } from "@/content/site-data";
 import { createClient } from "@/lib/supabase/client";
 import { dashboardPathFor, type UserRole } from "@/lib/auth/permissions";
 import { cn } from "@/lib/utils";
 import { PhoneIcon } from "@/components/ui/icons";
+import type { SiteSettings } from "@/lib/settings/repository";
 
 interface SessionInfo {
   fullName: string;
@@ -19,7 +20,7 @@ interface SessionInfo {
   role: UserRole;
 }
 
-export function Header() {
+export function Header({ settings }: { settings: SiteSettings }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [lang, setLang] = useState<"en" | "bn">("en");
@@ -128,10 +129,10 @@ export function Header() {
         <Link
           href="/"
           className="group flex items-center gap-3"
-          aria-label={`${site.name} home`}
+          aria-label={`${settings.academyName} home`}
         >
           <Image
-            src="/images/hea-logo.png"
+            src={settings.logoUrl ?? "/images/hea-logo.png"}
             alt="Hidayet English Academy logo — gold laurel crest on navy"
             width={48}
             height={48}
@@ -171,13 +172,15 @@ export function Header() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <a
-            href={`tel:${site.phone}`}
-            className="flex items-center gap-1.5 text-sm font-semibold text-navy-600 hover:text-gold-800 dark:text-navy-300 dark:hover:text-gold-400"
-          >
-            <PhoneIcon className="h-4 w-4" />
-            {site.phoneDisplay}
-          </a>
+          {settings.phone && (
+            <a
+              href={`tel:${settings.phone}`}
+              className="flex items-center gap-1.5 text-sm font-semibold text-navy-600 hover:text-gold-800 dark:text-navy-300 dark:hover:text-gold-400"
+            >
+              <PhoneIcon className="h-4 w-4" />
+              {settings.phoneDisplay ?? settings.phone}
+            </a>
+          )}
           <ThemeToggle />
           <button
             onClick={() => setLang((l) => (l === "en" ? "bn" : "en"))}
@@ -253,10 +256,10 @@ export function Header() {
             </Link>
           ))}
           <a
-            href={`tel:${site.phone}`}
+            href={`tel:${settings.phone}`}
             className="flex items-center gap-2 rounded-md px-3 py-3 text-base font-semibold text-navy-800 hover:bg-navy-50 dark:text-white dark:hover:bg-navy-900"
           >
-            <PhoneIcon className="h-4 w-4" /> {site.phoneDisplay}
+            <PhoneIcon className="h-4 w-4" /> {settings.phoneDisplay ?? settings.phone}
           </a>
           {session ? (
             <Link

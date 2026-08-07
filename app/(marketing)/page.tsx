@@ -13,6 +13,7 @@ import { FreeResource } from "@/components/home/FreeResource";
 import { ContactSection } from "@/components/home/ContactSection";
 import { FAQ } from "@/components/home/FAQ";
 import { FinalCTA } from "@/components/home/FinalCTA";
+import { getFaqs } from "@/lib/settings/repository";
 
 // Note: MadhyamikOffer.tsx is intentionally not rendered here anymore.
 // Madhyamik is now presented as one of seven flagship Programs (see below),
@@ -21,7 +22,9 @@ import { FinalCTA } from "@/components/home/FinalCTA";
 // it's pre-built content for the dedicated /programs/madhyamik landing page
 // planned in the roadmap (Module 4).
 
-export default function HomePage() {
+export default async function HomePage() {
+  const faqs = await getFaqs();
+
   return (
     <>
       <Hero />
@@ -37,7 +40,7 @@ export default function HomePage() {
       <WhatsAppCommunity />
       <FreeResource />
       <ContactSection />
-      <FAQ />
+      <FAQ faqs={faqs} />
       <FinalCTA />
     </>
   );

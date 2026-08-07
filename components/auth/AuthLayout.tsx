@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Header } from "@/components/shared/Header";
+import { getSiteSettings } from "@/lib/settings/repository";
 
-export function AuthLayout({
+export async function AuthLayout({
   title,
   subtitle,
   children,
@@ -11,9 +12,10 @@ export function AuthLayout({
   subtitle: string;
   children: React.ReactNode;
 }) {
+  const settings = await getSiteSettings();
   return (
     <>
-      <Header />
+      <Header settings={settings} />
       <main id="main-content" className="flex min-h-[70vh] items-center bg-paper-100 py-16 dark:bg-navy-900">
         <Container className="max-w-md">
           <div className="text-center">
