@@ -1,3 +1,4 @@
+import { KeyRound } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { RoleManagementTable } from "@/components/admin/RoleManagementTable";
 import { getAllUsersForRoles, getCurrentAdminProfile } from "@/lib/admin/repository";
@@ -14,7 +15,7 @@ export default async function AdminRolesPage() {
         Three roles govern the whole platform — student, teacher, admin — enforced at the database level, not just hidden in the UI.
       </p>
       {users.length === 0 ? (
-        <EmptyState className="mt-8" icon="🔑" title="No users yet" body="Registered users will appear here for role management." />
+        <EmptyState className="mt-8" icon={<KeyRound className="h-6 w-6" strokeWidth={1.75} />} title="No users yet" body="Registered users will appear here for role management." />
       ) : (
         <div className="mt-8">
           <RoleManagementTable users={users} currentAdminId={admin?.id ?? ""} />

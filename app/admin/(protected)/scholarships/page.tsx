@@ -1,3 +1,4 @@
+import { Award } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { ScholarshipReviewList } from "@/components/admin/ScholarshipReviewList";
 import { getScholarshipApplications } from "@/lib/admin/repository";
@@ -18,7 +19,7 @@ export default async function AdminScholarshipsPage() {
       </div>
 
       {applications.length === 0 ? (
-        <EmptyState className="mt-8" icon="🎗️" title="No applications yet" body="Scholarship applications will appear here for review." />
+        <EmptyState className="mt-8" icon={<Award className="h-6 w-6" strokeWidth={1.75} />} title="No applications yet" body="Scholarship applications will appear here for review." />
       ) : (
         <div className="mt-8">
           <ScholarshipReviewList applications={applications} />

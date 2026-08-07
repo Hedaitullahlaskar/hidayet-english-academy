@@ -1,3 +1,4 @@
+import { GraduationCap, UserCog, ShoppingCart, Video, IndianRupee } from "lucide-react";
 import { StatWidget } from "@/components/dashboard/StatWidget";
 import { getGlobalStats } from "@/lib/admin/repository";
 
@@ -12,11 +13,11 @@ export default async function AdminReportsPage() {
       <p className="mt-1 text-navy-600 dark:text-navy-300">Platform-wide numbers, genuinely computed — not illustrative.</p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <StatWidget icon="🧑‍🎓" label="Total Students" value={String(stats.totalStudents)} />
-        <StatWidget icon="👨‍🏫" label="Teachers" value={String(stats.teacherCount)} />
-        <StatWidget icon="🛒" label="Total Enrollments" value={String(stats.courseSales)} />
-        <StatWidget icon="📹" label="Upcoming Live Classes" value={String(stats.upcomingLiveClasses)} />
-        <StatWidget icon="💰" label="Revenue" value={`₹${stats.revenue}`} tone="gold" />
+        <StatWidget icon={<GraduationCap className="h-5 w-5" strokeWidth={1.75} />} label="Total Students" value={String(stats.totalStudents)} />
+        <StatWidget icon={<UserCog className="h-5 w-5" strokeWidth={1.75} />} label="Teachers" value={String(stats.teacherCount)} />
+        <StatWidget icon={<ShoppingCart className="h-5 w-5" strokeWidth={1.75} />} label="Total Enrollments" value={String(stats.courseSales)} />
+        <StatWidget icon={<Video className="h-5 w-5" strokeWidth={1.75} />} label="Upcoming Live Classes" value={String(stats.upcomingLiveClasses)} />
+        <StatWidget icon={<IndianRupee className="h-5 w-5" strokeWidth={1.75} />} label="Revenue" value={`₹${stats.revenue}`} tone="gold" />
       </div>
 
       <p className="mt-6 text-sm text-navy-500 dark:text-navy-400">

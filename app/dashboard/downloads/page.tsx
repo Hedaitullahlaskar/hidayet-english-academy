@@ -1,3 +1,4 @@
+import { Download, FileText } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { getMyDownloads } from "@/lib/dashboard/repository";
 import { getAllCourses } from "@/lib/courses/repository";
@@ -20,7 +21,7 @@ export default async function DownloadsPage() {
       {isEmpty ? (
         <EmptyState
           className="mt-8"
-          icon="⬇️"
+          icon={<Download className="h-6 w-6" strokeWidth={1.75} />}
           title="Nothing to download yet"
           body="Lesson notes and live-class materials will appear here as your teachers add them."
         />
@@ -38,7 +39,7 @@ export default async function DownloadsPage() {
                     rel="noopener noreferrer"
                     className="flex items-start gap-3 rounded-lg border border-navy-100 bg-white p-4 shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elevated dark:border-navy-700 dark:bg-navy-800"
                   >
-                    <span className="text-xl" aria-hidden="true">📄</span>
+                    <FileText className="h-5 w-5 shrink-0 text-gold-700 dark:text-gold-400" strokeWidth={1.75} aria-hidden="true" />
                     <div>
                       <p className="text-sm font-semibold text-navy-900 dark:text-white">{l.title}</p>
                       <p className="mt-0.5 text-xs text-navy-500 dark:text-navy-400">

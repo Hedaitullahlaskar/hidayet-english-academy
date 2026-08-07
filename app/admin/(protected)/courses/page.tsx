@@ -1,3 +1,4 @@
+import { BookOpen } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { CreateCourseForm, CourseListWithPublishToggle } from "@/components/admin/CourseManagementForms";
 import { getAdminCourses } from "@/lib/admin/repository";
@@ -22,7 +23,7 @@ export default async function AdminCoursesPage() {
         <div>
           <h2 className="mb-4 font-display text-lg font-semibold text-navy-900 dark:text-white">All Courses ({courses.length})</h2>
           {courses.length === 0 ? (
-            <EmptyState icon="📚" title="No admin-managed courses yet" body="Courses you create here are draft by default — publish when ready." />
+            <EmptyState icon={<BookOpen className="h-6 w-6" strokeWidth={1.75} />} title="No admin-managed courses yet" body="Courses you create here are draft by default — publish when ready." />
           ) : (
             <CourseListWithPublishToggle courses={courses} />
           )}

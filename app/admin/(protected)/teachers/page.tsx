@@ -1,3 +1,4 @@
+import { UserCog } from "lucide-react";
 import { Avatar } from "@/components/dashboard/Avatar";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { PromoteTeacherForm, AddTeacherNoteForm } from "@/components/admin/TeacherManagementForms";
@@ -36,7 +37,7 @@ export default async function AdminTeachersPage() {
 
       <h2 className="mb-4 mt-10 font-display text-lg font-semibold text-navy-900 dark:text-white">All Teachers</h2>
       {teachers.length === 0 ? (
-        <EmptyState icon="👨‍🏫" title="No teachers yet" body="Promote a registered student account to teacher using the form above." />
+        <EmptyState icon={<UserCog className="h-6 w-6" strokeWidth={1.75} />} title="No teachers yet" body="Promote a registered student account to teacher using the form above." />
       ) : (
         <div className="space-y-4">
           {teachers.map((t) => {

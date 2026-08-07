@@ -1,3 +1,4 @@
+import { FileEdit, Trash2 } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { TeacherApplicationReview, DeletionRequestReview } from "@/components/admin/UserRequestReview";
 import { getTeacherApplications, getAccountDeletionRequests } from "@/lib/admin/repository";
@@ -15,7 +16,7 @@ export default async function AdminUserRequestsPage() {
       <section className="mt-8">
         <h2 className="mb-3 font-display text-lg font-semibold text-navy-900 dark:text-white">Teacher Applications</h2>
         {applications.length === 0 ? (
-          <EmptyState icon="📝" title="No applications yet" body="Applications submitted via /register/teacher will appear here." />
+          <EmptyState icon={<FileEdit className="h-6 w-6" strokeWidth={1.75} />} title="No applications yet" body="Applications submitted via /register/teacher will appear here." />
         ) : (
           <TeacherApplicationReview applications={applications} />
         )}
@@ -24,7 +25,7 @@ export default async function AdminUserRequestsPage() {
       <section className="mt-10">
         <h2 className="mb-3 font-display text-lg font-semibold text-error">Account Deletion Requests</h2>
         {deletionRequests.length === 0 ? (
-          <EmptyState icon="🗑️" title="No pending deletion requests" body="Requests from any user's Account Security page will appear here." />
+          <EmptyState icon={<Trash2 className="h-6 w-6" strokeWidth={1.75} />} title="No pending deletion requests" body="Requests from any user's Account Security page will appear here." />
         ) : (
           <DeletionRequestReview requests={deletionRequests} />
         )}

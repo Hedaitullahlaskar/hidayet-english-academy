@@ -1,3 +1,4 @@
+import { BarChart3, BookOpen, CheckCircle2, Calendar, Target } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { StatWidget } from "@/components/dashboard/StatWidget";
 import { AnimatedProgressBar } from "@/components/dashboard/AnimatedProgressBar";
@@ -13,7 +14,7 @@ export default async function ProgressReportsPage() {
       <div>
         <h1 className="font-display text-2xl font-semibold text-navy-900 dark:text-white">Progress Reports</h1>
         <p className="mt-1 text-navy-600 dark:text-navy-300">Your overall performance across every course, once you&apos;re enrolled in one.</p>
-        <EmptyState className="mt-8" icon="📊" title="No performance data yet" body="Enroll in a course to start building a real performance picture here." />
+        <EmptyState className="mt-8" icon={<BarChart3 className="h-6 w-6" strokeWidth={1.75} />} title="No performance data yet" body="Enroll in a course to start building a real performance picture here." />
       </div>
     );
   }
@@ -24,15 +25,15 @@ export default async function ProgressReportsPage() {
       <p className="mt-1 text-navy-600 dark:text-navy-300">Your overall performance, genuinely computed from real activity — not a projection.</p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatWidget icon="📚" label="Active Courses" value={String(performance.enrolledCourseCount)} />
-        <StatWidget icon="✅" label="Lessons Completed" value={String(performance.totalLessonsCompleted)} />
+        <StatWidget icon={<BookOpen className="h-5 w-5" strokeWidth={1.75} />} label="Active Courses" value={String(performance.enrolledCourseCount)} />
+        <StatWidget icon={<CheckCircle2 className="h-5 w-5" strokeWidth={1.75} />} label="Lessons Completed" value={String(performance.totalLessonsCompleted)} />
         <StatWidget
-          icon="📅"
+          icon={<Calendar className="h-5 w-5" strokeWidth={1.75} />}
           label="Attendance"
           value={performance.attendancePercent !== null ? `${performance.attendancePercent}%` : "No data yet"}
         />
         <StatWidget
-          icon="🎯"
+          icon={<Target className="h-5 w-5" strokeWidth={1.75} />}
           label="Avg. Quiz Score"
           value={performance.avgQuizPercent !== null ? `${performance.avgQuizPercent}%` : "No data yet"}
           tone="gold"

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BookOpen } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { getMyEnrollments } from "@/lib/dashboard/repository";
 
@@ -15,7 +16,7 @@ export default async function MyCoursesPage() {
       {enrollments.length === 0 ? (
         <EmptyState
           className="mt-8"
-          icon="📚"
+          icon={<BookOpen className="h-6 w-6" strokeWidth={1.75} />}
           title="You're not enrolled in anything yet"
           body="Browse the course catalog and join a free class to get started."
         />

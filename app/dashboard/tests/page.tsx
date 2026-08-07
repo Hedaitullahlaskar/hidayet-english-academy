@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CheckCircle2, ClipboardList } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { getMyTestsWithHistory } from "@/lib/assessments/repository";
@@ -68,7 +69,7 @@ export default async function TestsPage() {
         <div>
           <h2 className="font-display text-lg font-semibold text-navy-900 dark:text-white">Weekly Tests</h2>
           {weekly.length === 0 ? (
-            <EmptyState className="mt-4" icon="✅" title="No weekly tests scheduled" body="Your next weekly test will appear here once scheduled." />
+            <EmptyState className="mt-4" icon={<CheckCircle2 className="h-6 w-6" strokeWidth={1.75} />} title="No weekly tests scheduled" body="Your next weekly test will appear here once scheduled." />
           ) : (
             <div className="mt-4 space-y-3">{weekly.map((t: TestWithHistory) => <TestCard key={t.id} test={t} />)}</div>
           )}
@@ -76,7 +77,7 @@ export default async function TestsPage() {
         <div>
           <h2 className="font-display text-lg font-semibold text-navy-900 dark:text-white">Mock Exams</h2>
           {mock.length === 0 ? (
-            <EmptyState className="mt-4" icon="📋" title="No mock exams scheduled" body="Full-length mock exams will appear here as they're scheduled." />
+            <EmptyState className="mt-4" icon={<ClipboardList className="h-6 w-6" strokeWidth={1.75} />} title="No mock exams scheduled" body="Full-length mock exams will appear here as they're scheduled." />
           ) : (
             <div className="mt-4 space-y-3">{mock.map((t: TestWithHistory) => <TestCard key={t.id} test={t} />)}</div>
           )}

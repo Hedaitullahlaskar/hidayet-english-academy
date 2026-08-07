@@ -1,3 +1,4 @@
+import { GraduationCap, BarChart3, ClipboardList } from "lucide-react";
 import { StatWidget } from "@/components/dashboard/StatWidget";
 import { getCourseAnalytics, getCoursesForTeacher } from "@/lib/teacher/repository";
 
@@ -26,9 +27,9 @@ export default async function AnalyticsPage() {
             <div key={c.slug} className="rounded-lg border border-navy-100 bg-white p-5 shadow-card dark:border-navy-700 dark:bg-navy-800">
               <p className="font-display font-semibold text-navy-900 dark:text-white">{c.name}</p>
               <div className="mt-4 space-y-3">
-                <StatWidget icon="🧑‍🎓" label="Enrolled" value={String(a?.enrolledCount ?? 0)} />
-                <StatWidget icon="📊" label="Avg. Test Score" value={a?.avgTestScore != null ? `${a.avgTestScore}%` : "No data yet"} />
-                <StatWidget icon="📝" label="Submissions" value={String(a?.totalSubmissions ?? 0)} />
+                <StatWidget icon={<GraduationCap className="h-5 w-5" strokeWidth={1.75} />} label="Enrolled" value={String(a?.enrolledCount ?? 0)} />
+                <StatWidget icon={<BarChart3 className="h-5 w-5" strokeWidth={1.75} />} label="Avg. Test Score" value={a?.avgTestScore != null ? `${a.avgTestScore}%` : "No data yet"} />
+                <StatWidget icon={<ClipboardList className="h-5 w-5" strokeWidth={1.75} />} label="Submissions" value={String(a?.totalSubmissions ?? 0)} />
               </div>
             </div>
           );

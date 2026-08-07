@@ -1,3 +1,4 @@
+import { Video } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { CancelClassButton } from "@/components/admin/CancelClassButton";
@@ -15,7 +16,7 @@ export default async function AdminLiveClassesPage() {
       <p className="mt-1 text-navy-600 dark:text-navy-300">Every live class across every teacher, in one view. Creating classes happens in the Teacher Dashboard.</p>
 
       {classes.length === 0 ? (
-        <EmptyState className="mt-8" icon="📹" title="No live classes scheduled" body="Classes scheduled by any teacher will appear here." />
+        <EmptyState className="mt-8" icon={<Video className="h-6 w-6" strokeWidth={1.75} />} title="No live classes scheduled" body="Classes scheduled by any teacher will appear here." />
       ) : (
         <div className="mt-8 space-y-3">
           {classes.map((c: { id: string; title: string; course_slug: string; scheduled_at: string; platform: string; status: string; auto_generated: boolean }) => {

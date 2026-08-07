@@ -1,3 +1,4 @@
+import { MessageCircle } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { DoubtCard } from "@/components/teacher/DoubtCard";
 import { getAllDoubts, getCurrentTeacherProfile } from "@/lib/teacher/repository";
@@ -18,7 +19,7 @@ export default async function DoubtsPage() {
       </div>
 
       {doubts.length === 0 ? (
-        <EmptyState className="mt-8" icon="💬" title="No doubts yet" body="Questions students ask will appear here for you to answer." />
+        <EmptyState className="mt-8" icon={<MessageCircle className="h-6 w-6" strokeWidth={1.75} />} title="No doubts yet" body="Questions students ask will appear here for you to answer." />
       ) : (
         <div className="mt-8 space-y-4">
           {doubts.map((d: { id: string; question: string; status: string; course_slug: string; profiles: { full_name: string } | null; doubt_replies: { id: string; reply: string }[] }) => (

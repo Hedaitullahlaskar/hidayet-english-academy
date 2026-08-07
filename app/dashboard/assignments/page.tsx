@@ -1,3 +1,4 @@
+import { ClipboardList } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { LessonHomeworkPanel } from "@/components/lessons/LessonHomeworkPanel";
 import { getPendingAssignments } from "@/lib/dashboard/repository";
@@ -30,7 +31,7 @@ export default async function AssignmentsPage() {
       {assignments.length === 0 ? (
         <EmptyState
           className="mt-8"
-          icon="📝"
+          icon={<ClipboardList className="h-6 w-6" strokeWidth={1.75} />}
           title="No assignments yet"
           body="Your teacher hasn't assigned any homework yet. Check back after your next class."
         />

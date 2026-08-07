@@ -1,3 +1,4 @@
+import { CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { CreateTestForm } from "@/components/teacher/CreateTestForm";
@@ -21,7 +22,7 @@ export default async function TestsPage() {
         <div>
           <h2 className="mb-4 font-display text-lg font-semibold text-navy-900 dark:text-white">All Tests</h2>
           {tests.length === 0 ? (
-            <EmptyState icon="✅" title="No tests created yet" body="Weekly tests and mock exams you create will appear here." />
+            <EmptyState icon={<CheckCircle2 className="h-6 w-6" strokeWidth={1.75} />} title="No tests created yet" body="Weekly tests and mock exams you create will appear here." />
           ) : (
             <div className="space-y-3">
               {tests.map((t: { id: string; title: string; test_type: string; course_slug: string }) => (

@@ -1,3 +1,4 @@
+import { BookOpen, MessageCircle } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { AskDoubtForm } from "@/components/dashboard/AskDoubtForm";
@@ -19,7 +20,7 @@ export default async function StudentDoubtsPage() {
 
       <div className="mt-8">
         {myCourses.length === 0 ? (
-          <EmptyState icon="📚" title="Enroll in a course first" body="Once you're enrolled in a course, you can ask your teacher questions about it here." />
+          <EmptyState icon={<BookOpen className="h-6 w-6" strokeWidth={1.75} />} title="Enroll in a course first" body="Once you're enrolled in a course, you can ask your teacher questions about it here." />
         ) : (
           <AskDoubtForm courses={myCourses} />
         )}
@@ -27,7 +28,7 @@ export default async function StudentDoubtsPage() {
 
       <h2 className="mb-4 mt-10 font-display text-lg font-semibold text-navy-900 dark:text-white">Your Questions</h2>
       {doubts.length === 0 ? (
-        <EmptyState icon="💬" title="No questions yet" body="Questions you ask will appear here, along with your teacher's replies." />
+        <EmptyState icon={<MessageCircle className="h-6 w-6" strokeWidth={1.75} />} title="No questions yet" body="Questions you ask will appear here, along with your teacher's replies." />
       ) : (
         <div className="space-y-4">
           {doubts.map((d: { id: string; question: string; course_slug: string; status: string; doubt_replies: { id: string; reply: string }[] }) => (

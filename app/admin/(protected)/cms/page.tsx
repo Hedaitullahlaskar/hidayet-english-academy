@@ -1,3 +1,4 @@
+import { HelpCircle, MessageCircle, Megaphone } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import {
   CreateTestimonialForm,
@@ -69,7 +70,7 @@ export default async function AdminCmsPage() {
         <section>
           <h2 className="mb-4 font-display text-lg font-semibold text-navy-900 dark:text-white">FAQ</h2>
           {faqs.length === 0 ? (
-            <EmptyState icon="❓" title="No FAQs yet" body="Questions you add will appear on the homepage FAQ section." />
+            <EmptyState icon={<HelpCircle className="h-6 w-6" strokeWidth={1.75} />} title="No FAQs yet" body="Questions you add will appear on the homepage FAQ section." />
           ) : (
             <FaqManager faqs={faqs} />
           )}
@@ -85,7 +86,7 @@ export default async function AdminCmsPage() {
           <CreateTestimonialForm />
           <div className="mt-6">
             {testimonials.length === 0 ? (
-              <EmptyState icon="💬" title="No testimonials yet" body="Real, consented student testimonials you add will appear here as drafts until published." />
+              <EmptyState icon={<MessageCircle className="h-6 w-6" strokeWidth={1.75} />} title="No testimonials yet" body="Real, consented student testimonials you add will appear here as drafts until published." />
             ) : (
               <TestimonialList testimonials={testimonials} />
             )}
@@ -96,7 +97,7 @@ export default async function AdminCmsPage() {
           <h2 className="mb-4 font-display text-lg font-semibold text-navy-900 dark:text-white">Site Banners</h2>
           <CreateBannerForm />
           {banners.length === 0 ? (
-            <EmptyState className="mt-6" icon="📣" title="No banners yet" body="Promotional banners you add will appear here, toggleable on/off." />
+            <EmptyState className="mt-6" icon={<Megaphone className="h-6 w-6" strokeWidth={1.75} />} title="No banners yet" body="Promotional banners you add will appear here, toggleable on/off." />
           ) : (
             <BannerList banners={banners} />
           )}

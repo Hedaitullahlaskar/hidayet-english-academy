@@ -1,3 +1,4 @@
+import { Calendar, GraduationCap } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { AttendanceMarkingList } from "@/components/teacher/AttendanceMarkingList";
 import { getTodaysLiveClasses, getEnrolledStudentsForClass } from "@/lib/teacher/repository";
@@ -34,7 +35,7 @@ export default async function AttendancePage() {
       {classes.length === 0 ? (
         <EmptyState
           className="mt-8"
-          icon="📅"
+          icon={<Calendar className="h-6 w-6" strokeWidth={1.75} />}
           title="No classes scheduled today"
           body="Once a live class is scheduled for today, you'll be able to mark attendance for it here."
         />
@@ -49,7 +50,7 @@ export default async function AttendancePage() {
                 {roster.length === 0 ? (
                   <EmptyState
                     className="mt-4"
-                    icon="🧑‍🎓"
+                    icon={<GraduationCap className="h-6 w-6" strokeWidth={1.75} />}
                     title="No enrolled students yet"
                     body="Once students enroll in this course, they'll appear here to mark present/absent."
                   />

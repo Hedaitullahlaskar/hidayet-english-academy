@@ -1,3 +1,4 @@
+import { Award } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { getAllCertificatesAdmin } from "@/lib/admin/repository";
 
@@ -12,7 +13,7 @@ export default async function AdminCertificatesPage() {
       <p className="mt-1 text-navy-600 dark:text-navy-300">Every certificate ever issued, across every teacher. Issuing happens in the Teacher Dashboard.</p>
 
       {certificates.length === 0 ? (
-        <EmptyState className="mt-8" icon="🎓" title="No certificates issued yet" body="Certificates issued by any teacher will appear here, searchable by verification code." />
+        <EmptyState className="mt-8" icon={<Award className="h-6 w-6" strokeWidth={1.75} />} title="No certificates issued yet" body="Certificates issued by any teacher will appear here, searchable by verification code." />
       ) : (
         <div className="mt-8 overflow-hidden rounded-lg border border-navy-100 shadow-card dark:border-navy-700">
           <div className="overflow-x-auto">

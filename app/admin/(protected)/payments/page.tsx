@@ -1,3 +1,4 @@
+import { Tag, Undo2 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { CreateCouponForm, CouponList, RefundRequestList } from "@/components/admin/PaymentForms";
@@ -80,7 +81,7 @@ export default async function AdminPaymentsPage() {
           <h2 className="mb-3 font-display text-lg font-semibold text-navy-900 dark:text-white">Coupons</h2>
           <CreateCouponForm />
           {coupons.length === 0 ? (
-            <EmptyState className="mt-4" icon="🏷️" title="No coupons yet" body="Discount codes you create will appear here." />
+            <EmptyState className="mt-4" icon={<Tag className="h-6 w-6" strokeWidth={1.75} />} title="No coupons yet" body="Discount codes you create will appear here." />
           ) : (
             <CouponList coupons={coupons} />
           )}
@@ -89,7 +90,7 @@ export default async function AdminPaymentsPage() {
         <div>
           <h2 className="mb-3 font-display text-lg font-semibold text-navy-900 dark:text-white">Refund Requests</h2>
           {refunds.length === 0 ? (
-            <EmptyState icon="↩️" title="No refund requests" body="Requests will appear here, and approving one now genuinely calls the gateway's refund API." />
+            <EmptyState icon={<Undo2 className="h-6 w-6" strokeWidth={1.75} />} title="No refund requests" body="Requests will appear here, and approving one now genuinely calls the gateway's refund API." />
           ) : (
             <RefundRequestList refunds={refunds} />
           )}

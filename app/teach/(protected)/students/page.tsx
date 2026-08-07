@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { GraduationCap } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { Avatar } from "@/components/dashboard/Avatar";
 import { getAllStudents } from "@/lib/teacher/repository";
@@ -14,7 +15,7 @@ export default async function StudentListPage() {
       <p className="mt-1 text-navy-600 dark:text-navy-300">Every registered student, in one place.</p>
 
       {students.length === 0 ? (
-        <EmptyState className="mt-8" icon="🧑‍🎓" title="No students yet" body="Students who register on the site will appear here automatically." />
+        <EmptyState className="mt-8" icon={<GraduationCap className="h-6 w-6" strokeWidth={1.75} />} title="No students yet" body="Students who register on the site will appear here automatically." />
       ) : (
         <div className="mt-8 overflow-hidden rounded-lg border border-navy-100 shadow-card dark:border-navy-700">
           <div className="overflow-x-auto">

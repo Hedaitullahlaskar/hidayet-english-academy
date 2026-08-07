@@ -1,3 +1,4 @@
+import { Megaphone } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { getAnnouncements } from "@/lib/dashboard/repository";
 
@@ -12,7 +13,7 @@ export default async function AnnouncementsPage() {
       <p className="mt-1 text-navy-600 dark:text-navy-300">Updates from HEA and your teachers.</p>
 
       {announcements.length === 0 ? (
-        <EmptyState className="mt-8" icon="📢" title="No announcements yet" body="Course and academy-wide updates will appear here." />
+        <EmptyState className="mt-8" icon={<Megaphone className="h-6 w-6" strokeWidth={1.75} />} title="No announcements yet" body="Course and academy-wide updates will appear here." />
       ) : (
         <div className="mt-8 space-y-4">
           {announcements.map((a: { id: string; title: string; body: string; published_at: string }) => (

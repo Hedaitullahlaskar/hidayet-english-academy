@@ -1,3 +1,4 @@
+import { Video } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { Badge } from "@/components/ui/Badge";
 import { CreateLiveClassForm } from "@/components/teacher/CreateLiveClassForm";
@@ -24,7 +25,7 @@ export default async function LiveClassSchedulePage() {
         <div>
           <h2 className="mb-4 font-display text-lg font-semibold text-navy-900 dark:text-white">All Classes</h2>
           {classes.length === 0 ? (
-            <EmptyState icon="📹" title="Nothing scheduled yet" body="Classes you schedule will appear here for students immediately." />
+            <EmptyState icon={<Video className="h-6 w-6" strokeWidth={1.75} />} title="Nothing scheduled yet" body="Classes you schedule will appear here for students immediately." />
           ) : (
             <div className="space-y-3">
               {classes.map((c: { id: string; title: string; course_slug: string; scheduled_at: string; platform: string; auto_generated: boolean; recording_url: string | null }) => {

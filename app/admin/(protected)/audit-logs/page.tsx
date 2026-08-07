@@ -1,3 +1,4 @@
+import { ScrollText } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { getRecentActivity } from "@/lib/admin/repository";
 
@@ -12,7 +13,7 @@ export default async function AdminAuditLogsPage() {
       <p className="mt-1 text-navy-600 dark:text-navy-300">Every sensitive action — role changes, suspensions, refunds — traceable to who did it and when.</p>
 
       {logs.length === 0 ? (
-        <EmptyState className="mt-8" icon="📜" title="No audit events yet" body="This log fills in automatically as admin actions happen — nothing to show until then." />
+        <EmptyState className="mt-8" icon={<ScrollText className="h-6 w-6" strokeWidth={1.75} />} title="No audit events yet" body="This log fills in automatically as admin actions happen — nothing to show until then." />
       ) : (
         <div className="mt-8 overflow-hidden rounded-lg border border-navy-100 shadow-card dark:border-navy-700">
           <div className="overflow-x-auto">

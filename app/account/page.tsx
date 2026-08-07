@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Clock, Monitor } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { SetPasswordForm } from "@/components/auth/SetPasswordForm";
 import { LoginHistoryList, DeviceSessionList } from "@/components/account/AccountSecurityPanels";
@@ -47,7 +48,7 @@ export default async function AccountSecurityPage() {
       <section className="mt-10">
         <h2 className="mb-3 font-display text-lg font-semibold text-navy-900 dark:text-white">Login History</h2>
         {loginHistory.length === 0 ? (
-          <EmptyState icon="🕐" title="No login history yet" body="Your recent logins will appear here." />
+          <EmptyState icon={<Clock className="h-6 w-6" strokeWidth={1.75} />} title="No login history yet" body="Your recent logins will appear here." />
         ) : (
           <LoginHistoryList history={loginHistory} />
         )}
@@ -56,7 +57,7 @@ export default async function AccountSecurityPage() {
       <section className="mt-10">
         <h2 className="mb-3 font-display text-lg font-semibold text-navy-900 dark:text-white">Active Devices</h2>
         {sessions.length === 0 ? (
-          <EmptyState icon="💻" title="No active sessions on record" body="Devices you've logged in from will appear here, with the ability to sign each one out remotely." />
+          <EmptyState icon={<Monitor className="h-6 w-6" strokeWidth={1.75} />} title="No active sessions on record" body="Devices you've logged in from will appear here, with the ability to sign each one out remotely." />
         ) : (
           <DeviceSessionList sessions={sessions} />
         )}

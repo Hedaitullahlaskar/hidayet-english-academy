@@ -1,3 +1,4 @@
+import { Target } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 
 export const metadata = { robots: { index: false, follow: false } };
@@ -12,7 +13,7 @@ export default function PracticePage() {
       </p>
       <EmptyState
         className="mt-8"
-        icon="🎯"
+        icon={<Target className="h-6 w-6" strokeWidth={1.75} />}
         title="Practice sets appear here once you're enrolled in a course"
         body="Your teacher builds practice exercises from your course content. Nothing has been assigned yet."
       />

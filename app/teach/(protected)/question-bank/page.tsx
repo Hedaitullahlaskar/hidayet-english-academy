@@ -1,3 +1,4 @@
+import { FolderOpen } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { CreateQuestionForm } from "@/components/teacher/CreateQuestionForm";
@@ -21,7 +22,7 @@ export default async function QuestionBankPage() {
         <div>
           <h2 className="mb-4 font-display text-lg font-semibold text-navy-900 dark:text-white">Question Bank ({questions.length})</h2>
           {questions.length === 0 ? (
-            <EmptyState icon="🗂️" title="No questions yet" body="Questions you add will be available to attach to any quiz or mock test." />
+            <EmptyState icon={<FolderOpen className="h-6 w-6" strokeWidth={1.75} />} title="No questions yet" body="Questions you add will be available to attach to any quiz or mock test." />
           ) : (
             <div className="space-y-3">
               {questions.map((q: { id: string; question_text: string; question_type: string; difficulty: string }) => (

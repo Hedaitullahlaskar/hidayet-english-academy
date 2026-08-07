@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Video, FileText, Headphones, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/dashboard/EmptyState";
@@ -53,7 +54,7 @@ export default async function CourseLessonListPage({ params }: { params: { slug:
   const percent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
   const nextClass = liveClasses[0];
   const studentTimezone = profile?.timezone ?? "Asia/Kolkata";
-  const typeIcon = { video: "🎬", pdf: "📄", audio: "🎧" } as const;
+  const typeIcon = { video: Video, pdf: FileText, audio: Headphones } as const;
 
   return (
     <div>
@@ -65,7 +66,7 @@ export default async function CourseLessonListPage({ params }: { params: { slug:
       {totalCount === 0 ? (
         <EmptyState
           className="mt-8"
-          icon="🎬"
+          icon={<Video className="h-6 w-6" strokeWidth={1.75} />}
           title="No lessons uploaded yet"
           body="Your teacher hasn't added video, PDF, or audio content for this course yet — check back soon."
         />
@@ -89,14 +90,16 @@ export default async function CourseLessonListPage({ params }: { params: { slug:
                 <div key={moduleTitle}>
                   <h2 className="font-display text-lg font-semibold text-navy-900 dark:text-white">{moduleTitle}</h2>
                   <div className="mt-3 space-y-2">
-                    {moduleLessons.map((lesson) => (
+                    {moduleLessons.map((lesson) => {
+                      const LessonIcon = typeIcon[lesson.lesson_type];
+                      return (
                       <Link
                         key={lesson.id}
                         href={`/dashboard/courses/${params.slug}/learn/${lesson.id}`}
                         className="flex items-center justify-between rounded-lg border border-navy-100 bg-white p-4 shadow-card transition-colors hover:border-gold-300 dark:border-navy-700 dark:bg-navy-800"
                       >
                         <div className="flex items-center gap-3">
-                          <span aria-hidden="true">{typeIcon[lesson.lesson_type]}</span>
+                          <LessonIcon className="h-4 w-4 text-navy-500 dark:text-navy-400" strokeWidth={1.75} aria-hidden="true" />
                           <span className="text-sm font-medium text-navy-800 dark:text-navy-100">{lesson.title}</span>
                         </div>
                         {completedIds.has(lesson.id) ? (
@@ -105,7 +108,8 @@ export default async function CourseLessonListPage({ params }: { params: { slug:
                           <span className="text-xs font-semibold text-gold-800 dark:text-gold-400">Start →</span>
                         )}
                       </Link>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               ))}
@@ -125,7 +129,7 @@ export default async function CourseLessonListPage({ params }: { params: { slug:
                         Join Class ({nextClass.platform === "zoom" ? "Zoom" : "Google Meet"}) →
                       </a>
                       <a href={`/api/live-classes/${nextClass.id}/calendar`} className="inline-flex items-center gap-1 rounded-full border border-navy-200 px-4 py-2 text-sm font-semibold text-navy-700 dark:border-navy-600 dark:text-navy-200">
-                        📅 Add to Calendar
+                        <Calendar className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" /> Add to Calendar
                       </a>
                     </div>
                   </>
