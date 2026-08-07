@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { GripVertical } from "lucide-react";
+import { GripVertical, ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/Modal";
@@ -495,6 +495,24 @@ export function GalleryManager({ images: initialImages }: { images: GalleryImage
     if (result.success) router.refresh();
   }
 
+  function commitOrder(reordered: GalleryImageRow[]) {
+    setImages(reordered);
+    setSavingOrder(true);
+    reorderGalleryImages(reordered.map((i) => i.id)).then((result) => {
+      setSavingOrder(false);
+      if (result.success) router.refresh();
+      else setImages(initialImages); // roll back an optimistic reorder the server rejected
+    });
+  }
+
+  function moveImage(from: number, to: number) {
+    if (to < 0 || to >= images.length || from === to) return;
+    const reordered = [...images];
+    const [moved] = reordered.splice(from, 1);
+    reordered.splice(to, 0, moved);
+    commitOrder(reordered);
+  }
+
   function handleDrop(targetId: string) {
     setDragOverId(null);
     if (!draggedId || draggedId === targetId) {
@@ -503,22 +521,9 @@ export function GalleryManager({ images: initialImages }: { images: GalleryImage
     }
     const from = images.findIndex((i) => i.id === draggedId);
     const to = images.findIndex((i) => i.id === targetId);
-    if (from === -1 || to === -1) {
-      setDraggedId(null);
-      return;
-    }
-    const reordered = [...images];
-    const [moved] = reordered.splice(from, 1);
-    reordered.splice(to, 0, moved);
-    setImages(reordered);
     setDraggedId(null);
-
-    setSavingOrder(true);
-    reorderGalleryImages(reordered.map((i) => i.id)).then((result) => {
-      setSavingOrder(false);
-      if (result.success) router.refresh();
-      else setImages(initialImages); // roll back an optimistic reorder the server rejected
-    });
+    if (from === -1 || to === -1) return;
+    moveImage(from, to);
   }
 
   return (
@@ -545,11 +550,11 @@ export function GalleryManager({ images: initialImages }: { images: GalleryImage
 
       <p className="mt-6 flex items-center gap-2 text-xs font-medium text-navy-500 dark:text-navy-400">
         <GripVertical className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
-        Drag a photo by its handle to reorder the gallery.
+        Drag a photo by its handle to reorder the gallery, or use the arrow buttons on each photo.
         {savingOrder && <span className="font-semibold text-gold-800 dark:text-gold-400">Saving order…</span>}
       </p>
       <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {images.map((img) => (
+        {images.map((img, index) => (
           <div
             key={img.id}
             draggable
@@ -578,6 +583,26 @@ export function GalleryManager({ images: initialImages }: { images: GalleryImage
           >
             <div className="mb-1.5 flex items-center justify-between">
               <GripVertical className="h-4 w-4 text-navy-300 dark:text-navy-600" strokeWidth={2} aria-hidden="true" />
+              <div className="flex gap-0.5">
+                <button
+                  type="button"
+                  disabled={index === 0 || savingOrder}
+                  onClick={() => moveImage(index, index - 1)}
+                  aria-label={`Move "${img.caption ?? img.alt_text}" earlier (currently position ${index + 1} of ${images.length})`}
+                  className="rounded p-1 text-navy-400 transition-colors hover:bg-navy-100 hover:text-navy-800 disabled:pointer-events-none disabled:opacity-30 dark:text-navy-500 dark:hover:bg-white/10 dark:hover:text-white"
+                >
+                  <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.25} />
+                </button>
+                <button
+                  type="button"
+                  disabled={index === images.length - 1 || savingOrder}
+                  onClick={() => moveImage(index, index + 1)}
+                  aria-label={`Move "${img.caption ?? img.alt_text}" later (currently position ${index + 1} of ${images.length})`}
+                  className="rounded p-1 text-navy-400 transition-colors hover:bg-navy-100 hover:text-navy-800 disabled:pointer-events-none disabled:opacity-30 dark:text-navy-500 dark:hover:bg-white/10 dark:hover:text-white"
+                >
+                  <ChevronRight className="h-3.5 w-3.5" strokeWidth={2.25} />
+                </button>
+              </div>
             </div>
             {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary uploaded/seeded URL */}
             <img src={img.image_url} alt={img.alt_text} className="aspect-[4/3] w-full rounded-md object-cover" draggable={false} />
