@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { ConfirmDialog } from "@/components/ui/Modal";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import {
   createTestimonial,
@@ -322,6 +323,7 @@ export function FaqManager({ faqs }: { faqs: FaqRow[] }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   async function handleAdd(e: FormEvent) {
     e.preventDefault();
@@ -344,10 +346,10 @@ export function FaqManager({ faqs }: { faqs: FaqRow[] }) {
   }
 
   async function handleDelete(id: string) {
-    if (!window.confirm("Delete this FAQ entry?")) return;
     setBusyId(id);
     const result = await deleteFaq(id);
     setBusyId(null);
+    setPendingDeleteId(null);
     if (result.success) router.refresh();
   }
 
@@ -412,11 +414,22 @@ export function FaqManager({ faqs }: { faqs: FaqRow[] }) {
               <button disabled={busyId === f.id} onClick={() => handleToggle(f.id, !f.is_published)} className="text-gold-800 underline dark:text-gold-400">
                 {f.is_published ? "Unpublish" : "Publish"}
               </button>
-              <button disabled={busyId === f.id} onClick={() => handleDelete(f.id)} className="text-error underline">Delete</button>
+              <button disabled={busyId === f.id} onClick={() => setPendingDeleteId(f.id)} className="text-error underline">Delete</button>
             </div>
           </div>
         ))}
       </div>
+
+      <ConfirmDialog
+        open={pendingDeleteId !== null}
+        onClose={() => setPendingDeleteId(null)}
+        onConfirm={() => pendingDeleteId && handleDelete(pendingDeleteId)}
+        title="Delete this FAQ?"
+        description="This removes it from the homepage FAQ section immediately. This can't be undone."
+        confirmLabel="Delete"
+        tone="danger"
+        loading={busyId === pendingDeleteId}
+      />
     </div>
   );
 }
@@ -436,6 +449,7 @@ export function GalleryManager({ images }: { images: GalleryImageRow[] }) {
   const [caption, setCaption] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   async function handleAdd(e: FormEvent) {
     e.preventDefault();
@@ -451,10 +465,10 @@ export function GalleryManager({ images }: { images: GalleryImageRow[] }) {
   }
 
   async function handleDelete(id: string) {
-    if (!window.confirm("Remove this image from the gallery?")) return;
     setBusyId(id);
     const result = await deleteGalleryImage(id);
     setBusyId(null);
+    setPendingDeleteId(null);
     if (result.success) router.refresh();
   }
 
@@ -499,12 +513,23 @@ export function GalleryManager({ images }: { images: GalleryImageRow[] }) {
                 <button disabled={busyId === img.id} onClick={() => handleToggle(img.id, !img.is_published)} className="text-gold-800 underline dark:text-gold-400">
                   {img.is_published ? "Hide" : "Show"}
                 </button>
-                <button disabled={busyId === img.id} onClick={() => handleDelete(img.id)} className="text-error underline">Delete</button>
+                <button disabled={busyId === img.id} onClick={() => setPendingDeleteId(img.id)} className="text-error underline">Delete</button>
               </div>
             </div>
           </div>
         ))}
       </div>
+
+      <ConfirmDialog
+        open={pendingDeleteId !== null}
+        onClose={() => setPendingDeleteId(null)}
+        onConfirm={() => pendingDeleteId && handleDelete(pendingDeleteId)}
+        title="Remove this image?"
+        description="This removes it from the public gallery immediately. This can't be undone."
+        confirmLabel="Remove"
+        tone="danger"
+        loading={busyId === pendingDeleteId}
+      />
     </div>
   );
 }

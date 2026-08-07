@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { ConfirmDialog } from "@/components/ui/Modal";
 import { createAdminCourse, updateAdminCourse, setCourseStatus, deleteAdminCourse, type AdminCourseInput } from "@/lib/admin/repository";
 
 const LEVELS = ["Beginner", "Intermediate", "Advanced", "All Levels"];
@@ -284,6 +285,7 @@ const STATUS_TONE = { draft: "outline", published: "success", archived: "navy" }
 export function CourseListWithPublishToggle({ courses }: { courses: AdminCourseListRow[] }) {
   const router = useRouter();
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<{ id: string; name: string } | null>(null);
 
   async function handleStatusChange(id: string, next: "draft" | "published" | "archived") {
     setBusyId(id);
@@ -292,11 +294,11 @@ export function CourseListWithPublishToggle({ courses }: { courses: AdminCourseL
     if (result.success) router.refresh();
   }
 
-  async function handleDelete(id: string, name: string) {
-    if (!window.confirm(`Delete "${name}" permanently? This cannot be undone.`)) return;
+  async function handleDelete(id: string) {
     setBusyId(id);
     const result = await deleteAdminCourse(id);
     setBusyId(null);
+    setPendingDelete(null);
     if (result.success) router.refresh();
   }
 
@@ -334,13 +336,24 @@ export function CourseListWithPublishToggle({ courses }: { courses: AdminCourseL
                   Restore to Draft
                 </button>
               )}
-              <button disabled={busyId === c.id} onClick={() => handleDelete(c.id, c.name)} className="text-sm font-semibold text-error underline">
+              <button disabled={busyId === c.id} onClick={() => setPendingDelete({ id: c.id, name: c.name })} className="text-sm font-semibold text-error underline">
                 Delete
               </button>
             </div>
           </div>
         </div>
       ))}
+
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        onClose={() => setPendingDelete(null)}
+        onConfirm={() => pendingDelete && handleDelete(pendingDelete.id)}
+        title={`Delete "${pendingDelete?.name ?? ""}"?`}
+        description="This permanently removes the course, including its pricing and lesson order. This cannot be undone."
+        confirmLabel="Delete Permanently"
+        tone="danger"
+        loading={busyId === pendingDelete?.id}
+      />
     </div>
   );
 }
