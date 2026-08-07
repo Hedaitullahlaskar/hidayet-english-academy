@@ -35,10 +35,12 @@ create table if not exists profiles (
 
 alter table profiles enable row level security;
 
+drop policy if exists "Users can view their own profile" on profiles;
 create policy "Users can view their own profile"
   on profiles for select
   using (auth.uid() = id);
 
+drop policy if exists "Users can update their own profile" on profiles;
 create policy "Users can update their own profile"
   on profiles for update
   using (auth.uid() = id);
@@ -50,6 +52,7 @@ create or replace function is_staff(uid uuid) returns boolean as $$
   );
 $$ language sql security definer;
 
+drop policy if exists "Staff can view all profiles" on profiles;
 create policy "Staff can view all profiles"
   on profiles for select
   using (is_staff(auth.uid()));
@@ -107,9 +110,11 @@ create table if not exists enrollments (
 );
 
 alter table enrollments enable row level security;
+drop policy if exists "Students manage their own enrollments" on enrollments;
 create policy "Students manage their own enrollments"
   on enrollments for all
   using (auth.uid() = student_id);
+drop policy if exists "Staff view all enrollments" on enrollments;
 create policy "Staff view all enrollments"
   on enrollments for select
   using (is_staff(auth.uid()));
@@ -131,6 +136,7 @@ create table if not exists lessons (
 );
 
 alter table lessons enable row level security;
+drop policy if exists "Enrolled students can view lessons" on lessons;
 create policy "Enrolled students can view lessons"
   on lessons for select
   using (
@@ -140,6 +146,7 @@ create policy "Enrolled students can view lessons"
       and enrollments.student_id = auth.uid()
     )
   );
+drop policy if exists "Staff manage lessons" on lessons;
 create policy "Staff manage lessons"
   on lessons for all
   using (is_staff(auth.uid()));
@@ -158,9 +165,11 @@ create table if not exists lesson_progress (
 );
 
 alter table lesson_progress enable row level security;
+drop policy if exists "Students manage their own progress" on lesson_progress;
 create policy "Students manage their own progress"
   on lesson_progress for all
   using (auth.uid() = student_id);
+drop policy if exists "Staff view all progress" on lesson_progress;
 create policy "Staff view all progress"
   on lesson_progress for select
   using (is_staff(auth.uid()));
@@ -179,6 +188,7 @@ create table if not exists assignments (
 );
 
 alter table assignments enable row level security;
+drop policy if exists "Enrolled students can view assignments" on assignments;
 create policy "Enrolled students can view assignments"
   on assignments for select
   using (
@@ -188,6 +198,7 @@ create policy "Enrolled students can view assignments"
       and enrollments.student_id = auth.uid()
     )
   );
+drop policy if exists "Staff manage assignments" on assignments;
 create policy "Staff manage assignments"
   on assignments for all
   using (is_staff(auth.uid()));
@@ -205,9 +216,11 @@ create table if not exists submissions (
 );
 
 alter table submissions enable row level security;
+drop policy if exists "Students manage their own submissions" on submissions;
 create policy "Students manage their own submissions"
   on submissions for all
   using (auth.uid() = student_id);
+drop policy if exists "Staff manage all submissions" on submissions;
 create policy "Staff manage all submissions"
   on submissions for all
   using (is_staff(auth.uid()));
@@ -251,6 +264,7 @@ create table if not exists tests (
 );
 
 alter table tests enable row level security;
+drop policy if exists "Enrolled students can view tests" on tests;
 create policy "Enrolled students can view tests"
   on tests for select
   using (
@@ -260,6 +274,7 @@ create policy "Enrolled students can view tests"
       and enrollments.student_id = auth.uid()
     )
   );
+drop policy if exists "Staff manage tests" on tests;
 create policy "Staff manage tests"
   on tests for all
   using (is_staff(auth.uid()));
@@ -275,9 +290,11 @@ create table if not exists test_attempts (
 );
 
 alter table test_attempts enable row level security;
+drop policy if exists "Students manage their own attempts" on test_attempts;
 create policy "Students manage their own attempts"
   on test_attempts for all
   using (auth.uid() = student_id);
+drop policy if exists "Staff view all attempts" on test_attempts;
 create policy "Staff view all attempts"
   on test_attempts for select
   using (is_staff(auth.uid()));
@@ -334,6 +351,7 @@ create table if not exists live_classes (
 );
 
 alter table live_classes enable row level security;
+drop policy if exists "Enrolled students can view live classes" on live_classes;
 create policy "Enrolled students can view live classes"
   on live_classes for select
   using (
@@ -343,6 +361,7 @@ create policy "Enrolled students can view live classes"
       and enrollments.student_id = auth.uid()
     )
   );
+drop policy if exists "Staff manage live classes" on live_classes;
 create policy "Staff manage live classes"
   on live_classes for all
   using (is_staff(auth.uid()));
@@ -357,9 +376,11 @@ create table if not exists attendance (
 );
 
 alter table attendance enable row level security;
+drop policy if exists "Students view their own attendance" on attendance;
 create policy "Students view their own attendance"
   on attendance for select
   using (auth.uid() = student_id);
+drop policy if exists "Staff manage attendance" on attendance;
 create policy "Staff manage attendance"
   on attendance for all
   using (is_staff(auth.uid()));
@@ -375,6 +396,7 @@ create table if not exists notes (
   created_at timestamptz not null default now()
 );
 alter table notes enable row level security;
+drop policy if exists "Students manage their own notes" on notes;
 create policy "Students manage their own notes" on notes for all using (auth.uid() = student_id);
 
 create table if not exists bookmarks (
@@ -385,6 +407,7 @@ create table if not exists bookmarks (
   created_at timestamptz not null default now()
 );
 alter table bookmarks enable row level security;
+drop policy if exists "Students manage their own bookmarks" on bookmarks;
 create policy "Students manage their own bookmarks" on bookmarks for all using (auth.uid() = student_id);
 
 create table if not exists vocabulary_entries (
@@ -397,6 +420,7 @@ create table if not exists vocabulary_entries (
   created_at timestamptz not null default now()
 );
 alter table vocabulary_entries enable row level security;
+drop policy if exists "Students manage their own vocabulary" on vocabulary_entries;
 create policy "Students manage their own vocabulary" on vocabulary_entries for all using (auth.uid() = student_id);
 
 -- ---------------------------------------------------------------------------
@@ -410,6 +434,7 @@ create table if not exists streaks (
   updated_at timestamptz not null default now()
 );
 alter table streaks enable row level security;
+drop policy if exists "Students manage their own streak" on streaks;
 create policy "Students manage their own streak" on streaks for all using (auth.uid() = student_id);
 
 -- ---------------------------------------------------------------------------
@@ -426,8 +451,11 @@ create table if not exists certificates (
   issued_at timestamptz not null default now()
 );
 alter table certificates enable row level security;
+drop policy if exists "Students view their own certificates" on certificates;
 create policy "Students view their own certificates" on certificates for select using (auth.uid() = student_id);
+drop policy if exists "Staff manage certificates" on certificates;
 create policy "Staff manage certificates" on certificates for all using (is_staff(auth.uid()));
+drop policy if exists "Anyone can verify a certificate by exact code" on certificates;
 create policy "Anyone can verify a certificate by exact code"
   on certificates for select
   using (true); -- app layer only ever queries by exact verification_code, never lists all rows
@@ -445,6 +473,7 @@ create table if not exists notifications (
   created_at timestamptz not null default now()
 );
 alter table notifications enable row level security;
+drop policy if exists "Students manage their own notifications" on notifications;
 create policy "Students manage their own notifications" on notifications for all using (auth.uid() = student_id);
 
 create table if not exists announcements (
@@ -456,9 +485,11 @@ create table if not exists announcements (
   published_at timestamptz not null default now()
 );
 alter table announcements enable row level security;
+drop policy if exists "Any authenticated user can read announcements" on announcements;
 create policy "Any authenticated user can read announcements"
   on announcements for select
   using (auth.role() = 'authenticated');
+drop policy if exists "Staff manage announcements" on announcements;
 create policy "Staff manage announcements" on announcements for all using (is_staff(auth.uid()));
 
 -- ============================================================================
@@ -468,14 +499,17 @@ insert into storage.buckets (id, name, public)
 values ('avatars', 'avatars', true)
 on conflict (id) do nothing;
 
+drop policy if exists "Avatar images are publicly viewable" on storage.objects;
 create policy "Avatar images are publicly viewable"
   on storage.objects for select
   using (bucket_id = 'avatars');
 
+drop policy if exists "Users can upload their own avatar" on storage.objects;
 create policy "Users can upload their own avatar"
   on storage.objects for insert
   with check (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
 
+drop policy if exists "Users can update their own avatar" on storage.objects;
 create policy "Users can update their own avatar"
   on storage.objects for update
   using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
@@ -497,6 +531,7 @@ create table if not exists questions (
 );
 
 alter table questions enable row level security;
+drop policy if exists "Staff manage the question bank" on questions;
 create policy "Staff manage the question bank" on questions for all using (is_staff(auth.uid()));
 
 create table if not exists test_questions (
@@ -509,6 +544,7 @@ create table if not exists test_questions (
 );
 
 alter table test_questions enable row level security;
+drop policy if exists "Enrolled students can view test questions" on test_questions;
 create policy "Enrolled students can view test questions"
   on test_questions for select
   using (
@@ -519,6 +555,7 @@ create policy "Enrolled students can view test questions"
       and enrollments.student_id = auth.uid()
     )
   );
+drop policy if exists "Staff manage test questions" on test_questions;
 create policy "Staff manage test questions" on test_questions for all using (is_staff(auth.uid()));
 
 -- ---------------------------------------------------------------------------
@@ -538,7 +575,9 @@ create table if not exists doubts (
 );
 
 alter table doubts enable row level security;
+drop policy if exists "Students manage their own doubts" on doubts;
 create policy "Students manage their own doubts" on doubts for all using (auth.uid() = student_id);
+drop policy if exists "Staff view and update all doubts" on doubts;
 create policy "Staff view and update all doubts" on doubts for all using (is_staff(auth.uid()));
 
 create table if not exists doubt_replies (
@@ -550,18 +589,21 @@ create table if not exists doubt_replies (
 );
 
 alter table doubt_replies enable row level security;
+drop policy if exists "Participants can view replies on their own doubt" on doubt_replies;
 create policy "Participants can view replies on their own doubt"
   on doubt_replies for select
   using (
     exists (select 1 from doubts where doubts.id = doubt_replies.doubt_id and doubts.student_id = auth.uid())
     or is_staff(auth.uid())
   );
+drop policy if exists "Students can reply on their own doubt" on doubt_replies;
 create policy "Students can reply on their own doubt"
   on doubt_replies for insert
   with check (
     auth.uid() = author_id
     and exists (select 1 from doubts where doubts.id = doubt_id and doubts.student_id = auth.uid())
   );
+drop policy if exists "Staff can reply on any doubt" on doubt_replies;
 create policy "Staff can reply on any doubt"
   on doubt_replies for insert
   with check (auth.uid() = author_id and is_staff(auth.uid()));
@@ -575,18 +617,22 @@ insert into storage.buckets (id, name, public)
 values ('lesson-content', 'lesson-content', true)
 on conflict (id) do nothing;
 
+drop policy if exists "Lesson content is publicly viewable" on storage.objects;
 create policy "Lesson content is publicly viewable"
   on storage.objects for select
   using (bucket_id = 'lesson-content');
 
+drop policy if exists "Staff can upload lesson content" on storage.objects;
 create policy "Staff can upload lesson content"
   on storage.objects for insert
   with check (bucket_id = 'lesson-content' and is_staff(auth.uid()));
 
+drop policy if exists "Staff can update lesson content" on storage.objects;
 create policy "Staff can update lesson content"
   on storage.objects for update
   using (bucket_id = 'lesson-content' and is_staff(auth.uid()));
 
+drop policy if exists "Staff can delete lesson content" on storage.objects;
 create policy "Staff can delete lesson content"
   on storage.objects for delete
   using (bucket_id = 'lesson-content' and is_staff(auth.uid()));
@@ -646,7 +692,9 @@ create table if not exists audit_logs (
   created_at timestamptz not null default now()
 );
 alter table audit_logs enable row level security;
+drop policy if exists "Admins can view audit logs" on audit_logs;
 create policy "Admins can view audit logs" on audit_logs for select using (is_admin(auth.uid()));
+drop policy if exists "Admins can write audit logs" on audit_logs;
 create policy "Admins can write audit logs" on audit_logs for insert with check (is_admin(auth.uid()));
 
 -- ---------------------------------------------------------------------------
@@ -671,7 +719,9 @@ create table if not exists admin_courses (
   created_at timestamptz not null default now()
 );
 alter table admin_courses enable row level security;
+drop policy if exists "Anyone can view published courses" on admin_courses;
 create policy "Anyone can view published courses" on admin_courses for select using (is_published = true);
+drop policy if exists "Staff manage courses" on admin_courses;
 create policy "Staff manage courses" on admin_courses for all using (is_staff(auth.uid()));
 
 -- ---------------------------------------------------------------------------
@@ -689,6 +739,7 @@ create table if not exists coupons (
   created_at timestamptz not null default now()
 );
 alter table coupons enable row level security;
+drop policy if exists "Admins manage coupons" on coupons;
 create policy "Admins manage coupons" on coupons for all using (is_admin(auth.uid()));
 
 -- ---------------------------------------------------------------------------
@@ -708,6 +759,7 @@ create table if not exists refund_requests (
   created_at timestamptz not null default now()
 );
 alter table refund_requests enable row level security;
+drop policy if exists "Admins manage refund requests" on refund_requests;
 create policy "Admins manage refund requests" on refund_requests for all using (is_admin(auth.uid()));
 
 -- ---------------------------------------------------------------------------
@@ -727,11 +779,13 @@ create table if not exists scholarship_applications (
   created_at timestamptz not null default now()
 );
 alter table scholarship_applications enable row level security;
+drop policy if exists "Admins manage scholarship applications" on scholarship_applications;
 create policy "Admins manage scholarship applications" on scholarship_applications for all using (is_admin(auth.uid()));
 -- The public /scholarship page has never required login (matching the
 -- WhatsApp-based flow it was built alongside in Module 4) — this policy
 -- lets an anonymous visitor submit exactly one row, write-only. They
 -- can't read back applications (that stays admin-only), only create one.
+drop policy if exists "Anyone can submit a scholarship application" on scholarship_applications;
 create policy "Anyone can submit a scholarship application"
   on scholarship_applications for insert
   with check (true);
@@ -754,7 +808,9 @@ create table if not exists cms_content (
   unique (section, content_key)
 );
 alter table cms_content enable row level security;
+drop policy if exists "Anyone can read CMS content" on cms_content;
 create policy "Anyone can read CMS content" on cms_content for select using (true);
+drop policy if exists "Staff manage CMS content" on cms_content;
 create policy "Staff manage CMS content" on cms_content for all using (is_staff(auth.uid()));
 
 create table if not exists testimonials (
@@ -767,7 +823,9 @@ create table if not exists testimonials (
   created_at timestamptz not null default now()
 );
 alter table testimonials enable row level security;
+drop policy if exists "Anyone can view published testimonials" on testimonials;
 create policy "Anyone can view published testimonials" on testimonials for select using (is_published = true);
+drop policy if exists "Staff manage testimonials" on testimonials;
 create policy "Staff manage testimonials" on testimonials for all using (is_staff(auth.uid()));
 
 create table if not exists site_banners (
@@ -780,7 +838,9 @@ create table if not exists site_banners (
   created_at timestamptz not null default now()
 );
 alter table site_banners enable row level security;
+drop policy if exists "Anyone can view active banners" on site_banners;
 create policy "Anyone can view active banners" on site_banners for select using (is_active = true);
+drop policy if exists "Staff manage banners" on site_banners;
 create policy "Staff manage banners" on site_banners for all using (is_staff(auth.uid()));
 
 -- ---------------------------------------------------------------------------
@@ -797,6 +857,7 @@ create table if not exists integration_settings (
   notes text
 );
 alter table integration_settings enable row level security;
+drop policy if exists "Admins manage integration settings" on integration_settings;
 create policy "Admins manage integration settings" on integration_settings for all using (is_admin(auth.uid()));
 
 -- ---------------------------------------------------------------------------
@@ -813,6 +874,7 @@ create table if not exists teacher_notes (
   created_at timestamptz not null default now()
 );
 alter table teacher_notes enable row level security;
+drop policy if exists "Only admins can access teacher notes" on teacher_notes;
 create policy "Only admins can access teacher notes" on teacher_notes for all using (is_admin(auth.uid()));
 
 -- ============================================================================
@@ -841,8 +903,11 @@ create table if not exists teacher_applications (
   created_at timestamptz not null default now()
 );
 alter table teacher_applications enable row level security;
+drop policy if exists "Applicants view their own application" on teacher_applications;
 create policy "Applicants view their own application" on teacher_applications for select using (auth.uid() = applicant_id);
+drop policy if exists "Applicants can submit one application" on teacher_applications;
 create policy "Applicants can submit one application" on teacher_applications for insert with check (auth.uid() = applicant_id);
+drop policy if exists "Admins manage all applications" on teacher_applications;
 create policy "Admins manage all applications" on teacher_applications for all using (is_admin(auth.uid()));
 
 -- ---------------------------------------------------------------------------
@@ -860,8 +925,11 @@ create table if not exists login_history (
   created_at timestamptz not null default now()
 );
 alter table login_history enable row level security;
+drop policy if exists "Users view their own login history" on login_history;
 create policy "Users view their own login history" on login_history for select using (auth.uid() = user_id);
+drop policy if exists "Anyone can insert their own login record" on login_history;
 create policy "Anyone can insert their own login record" on login_history for insert with check (auth.uid() = user_id or user_id is null);
+drop policy if exists "Admins view all login history" on login_history;
 create policy "Admins view all login history" on login_history for select using (is_admin(auth.uid()));
 
 create table if not exists user_sessions (
@@ -874,6 +942,7 @@ create table if not exists user_sessions (
   created_at timestamptz not null default now()
 );
 alter table user_sessions enable row level security;
+drop policy if exists "Users manage their own sessions" on user_sessions;
 create policy "Users manage their own sessions" on user_sessions for all using (auth.uid() = user_id);
 
 -- ---------------------------------------------------------------------------
@@ -891,7 +960,9 @@ create table if not exists account_deletion_requests (
   processed_at timestamptz
 );
 alter table account_deletion_requests enable row level security;
+drop policy if exists "Users manage their own deletion request" on account_deletion_requests;
 create policy "Users manage their own deletion request" on account_deletion_requests for all using (auth.uid() = user_id);
+drop policy if exists "Admins view all deletion requests" on account_deletion_requests;
 create policy "Admins view all deletion requests" on account_deletion_requests for select using (is_admin(auth.uid()));
 
 -- ---------------------------------------------------------------------------
@@ -906,6 +977,7 @@ create table if not exists rate_limit_events (
   created_at timestamptz not null default now()
 );
 alter table rate_limit_events enable row level security;
+drop policy if exists "Service role only" on rate_limit_events;
 create policy "Service role only" on rate_limit_events for all using (false);
 create index if not exists idx_rate_limit_lookup on rate_limit_events (identifier, action, created_at);
 
@@ -926,6 +998,7 @@ create table if not exists ai_conversations (
   updated_at timestamptz not null default now()
 );
 alter table ai_conversations enable row level security;
+drop policy if exists "Students manage their own AI conversations" on ai_conversations;
 create policy "Students manage their own AI conversations" on ai_conversations for all using (auth.uid() = student_id);
 
 create table if not exists ai_messages (
@@ -936,6 +1009,7 @@ create table if not exists ai_messages (
   created_at timestamptz not null default now()
 );
 alter table ai_messages enable row level security;
+drop policy if exists "Students manage messages in their own conversations" on ai_messages;
 create policy "Students manage messages in their own conversations"
   on ai_messages for all
   using (exists (select 1 from ai_conversations where ai_conversations.id = ai_messages.conversation_id and ai_conversations.student_id = auth.uid()));
@@ -962,14 +1036,17 @@ insert into storage.buckets (id, name, public)
 values ('submissions', 'submissions', false)
 on conflict (id) do nothing;
 
+drop policy if exists "Students can upload their own submissions" on storage.objects;
 create policy "Students can upload their own submissions"
   on storage.objects for insert
   with check (bucket_id = 'submissions' and (storage.foldername(name))[1] = auth.uid()::text);
 
+drop policy if exists "Students can view their own submissions" on storage.objects;
 create policy "Students can view their own submissions"
   on storage.objects for select
   using (bucket_id = 'submissions' and (storage.foldername(name))[1] = auth.uid()::text);
 
+drop policy if exists "Staff can view all submissions" on storage.objects;
 create policy "Staff can view all submissions"
   on storage.objects for select
   using (bucket_id = 'submissions' and is_staff(auth.uid()));
@@ -995,7 +1072,9 @@ create table if not exists course_prices (
   unique (admin_course_id, currency)
 );
 alter table course_prices enable row level security;
+drop policy if exists "Anyone can view course prices" on course_prices;
 create policy "Anyone can view course prices" on course_prices for select using (true);
+drop policy if exists "Staff manage course prices" on course_prices;
 create policy "Staff manage course prices" on course_prices for all using (is_staff(auth.uid()));
 
 -- ---------------------------------------------------------------------------
@@ -1018,12 +1097,15 @@ create table if not exists orders (
   updated_at timestamptz not null default now()
 );
 alter table orders enable row level security;
+drop policy if exists "Students view their own orders" on orders;
 create policy "Students view their own orders" on orders for select using (auth.uid() = student_id);
+drop policy if exists "Staff view all orders" on orders;
 create policy "Staff view all orders" on orders for select using (is_staff(auth.uid()));
 -- A student may create their own order, but only as 'pending' — the price
 -- itself is always computed server-side from course_prices before this
 -- insert happens (see /api/payments/checkout), so RLS here only needs to
 -- stop one student from creating an order attributed to someone else.
+drop policy if exists "Students can create their own pending order" on orders;
 create policy "Students can create their own pending order"
   on orders for insert
   with check (auth.uid() = student_id and status = 'pending');
@@ -1031,6 +1113,7 @@ create policy "Students can create their own pending order"
 -- actions) or the service-role webhook handler (which bypasses RLS
 -- entirely) can ever transition an order to 'paid' — a student's browser
 -- session must never be able to mark its own payment successful.
+drop policy if exists "Staff can update orders" on orders;
 create policy "Staff can update orders" on orders for update using (is_staff(auth.uid()));
 
 alter table refund_requests add column if not exists order_id uuid references orders(id);
@@ -1049,6 +1132,7 @@ alter table test_questions add column if not exists section_title text;
 -- and tracking which attempt number this is instead.
 alter table test_attempts drop constraint if exists test_attempts_test_id_student_id_key;
 alter table test_attempts add column if not exists attempt_number integer not null default 1;
+alter table test_attempts drop constraint if exists test_attempts_unique_attempt;
 alter table test_attempts add constraint test_attempts_unique_attempt unique (test_id, student_id, attempt_number);
 
 alter table assignments add column if not exists allow_late_submission boolean not null default true;
@@ -1133,6 +1217,7 @@ create policy "Anyone can view published courses" on admin_courses for select us
 -- further below. A teacher can't rename, reprice, or unpublish a course
 -- directly, even one they're assigned to.
 drop policy if exists "Staff manage courses" on admin_courses;
+drop policy if exists "Admins manage courses" on admin_courses;
 create policy "Admins manage courses" on admin_courses for all using (is_admin(auth.uid()));
 
 -- ---------------------------------------------------------------------------
@@ -1150,9 +1235,11 @@ create table if not exists teacher_course_assignments (
   unique (teacher_id, course_slug)
 );
 alter table teacher_course_assignments enable row level security;
+drop policy if exists "Teachers view their own assignments" on teacher_course_assignments;
 create policy "Teachers view their own assignments"
   on teacher_course_assignments for select
   using (auth.uid() = teacher_id);
+drop policy if exists "Admins manage teacher assignments" on teacher_course_assignments;
 create policy "Admins manage teacher assignments"
   on teacher_course_assignments for all
   using (is_admin(auth.uid()));
@@ -1319,7 +1406,9 @@ create table if not exists site_settings (
 alter table site_settings enable row level security;
 -- Public site info — every visitor's browser needs this to render the
 -- header/footer, logged in or not.
+drop policy if exists "Anyone can read site settings" on site_settings;
 create policy "Anyone can read site settings" on site_settings for select using (true);
+drop policy if exists "Staff manage site settings" on site_settings;
 create policy "Staff manage site settings" on site_settings for all using (is_staff(auth.uid()));
 
 insert into site_settings (id, academy_name, tagline_en, tagline_bn, sub_tagline, footer_tagline, phone, phone_display, whatsapp_number, email, address, logo_url, facebook_url, youtube_url, instagram_url)
@@ -1335,7 +1424,9 @@ create table if not exists faqs (
   created_at timestamptz not null default now()
 );
 alter table faqs enable row level security;
+drop policy if exists "Anyone can read published FAQs" on faqs;
 create policy "Anyone can read published FAQs" on faqs for select using (is_published = true);
+drop policy if exists "Staff manage FAQs" on faqs;
 create policy "Staff manage FAQs" on faqs for all using (is_staff(auth.uid()));
 
 insert into faqs (question, answer, order_index) values
@@ -1358,7 +1449,9 @@ create table if not exists gallery_images (
   created_at timestamptz not null default now()
 );
 alter table gallery_images enable row level security;
+drop policy if exists "Anyone can view published gallery images" on gallery_images;
 create policy "Anyone can view published gallery images" on gallery_images for select using (is_published = true);
+drop policy if exists "Staff manage gallery images" on gallery_images;
 create policy "Staff manage gallery images" on gallery_images for all using (is_staff(auth.uid()));
 
 insert into gallery_images (image_url, alt_text, caption, order_index) values
@@ -1379,18 +1472,22 @@ insert into storage.buckets (id, name, public)
 values ('site-content', 'site-content', true)
 on conflict (id) do nothing;
 
+drop policy if exists "Site content images are publicly viewable" on storage.objects;
 create policy "Site content images are publicly viewable"
   on storage.objects for select
   using (bucket_id = 'site-content');
 
+drop policy if exists "Staff can upload site content images" on storage.objects;
 create policy "Staff can upload site content images"
   on storage.objects for insert
   with check (bucket_id = 'site-content' and is_staff(auth.uid()));
 
+drop policy if exists "Staff can update site content images" on storage.objects;
 create policy "Staff can update site content images"
   on storage.objects for update
   using (bucket_id = 'site-content' and is_staff(auth.uid()));
 
+drop policy if exists "Staff can delete site content images" on storage.objects;
 create policy "Staff can delete site content images"
   on storage.objects for delete
   using (bucket_id = 'site-content' and is_staff(auth.uid()));
