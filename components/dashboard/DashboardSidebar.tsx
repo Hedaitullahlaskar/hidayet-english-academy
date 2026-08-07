@@ -45,7 +45,7 @@ export function DashboardSidebar({ className = "" }: { className?: string }) {
   const { t } = useLanguage();
 
   return (
-    <nav className={cn("space-y-1", className)} aria-label="Dashboard">
+    <nav className={cn("space-y-0.5", className)} aria-label="Dashboard">
       {navItems.map((item) => {
         const isActive = item.href === "/dashboard" ? pathname === item.href : pathname?.startsWith(item.href);
         const Icon = item.icon;
@@ -53,14 +53,20 @@ export function DashboardSidebar({ className = "" }: { className?: string }) {
           <Link
             key={item.href}
             href={item.href}
+            aria-current={isActive ? "page" : undefined}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors duration-200 ease-premium",
+              "relative flex items-center gap-3 rounded-lg py-2.5 pl-4 pr-3 text-sm font-medium transition-all duration-200 ease-premium",
               isActive
-                ? "bg-gold-600 text-navy-900"
-                : "text-navy-700 hover:bg-navy-100 dark:text-navy-200 dark:hover:bg-navy-800"
+                ? "bg-gold-500/10 text-navy-900 dark:bg-gold-400/10 dark:text-white"
+                : "text-navy-600 hover:bg-navy-100/70 hover:text-navy-900 dark:text-navy-300 dark:hover:bg-white/5 dark:hover:text-white"
             )}
           >
-            <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={2} aria-hidden="true" />
+            {isActive && <span className="absolute inset-y-1.5 left-0 w-[3px] rounded-full bg-gold-500" aria-hidden="true" />}
+            <Icon
+              className={cn("h-[18px] w-[18px] shrink-0", isActive ? "text-gold-600 dark:text-gold-400" : "text-navy-400 dark:text-navy-500")}
+              strokeWidth={2}
+              aria-hidden="true"
+            />
             {t(item.labelKey)}
             {item.badgeKey && (
               <span className="ml-auto rounded-full bg-navy-800 px-2 py-0.5 text-[10px] font-bold uppercase text-gold-300">

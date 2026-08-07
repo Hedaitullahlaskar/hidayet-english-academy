@@ -19,7 +19,7 @@ export function AdminShell({ adminName, avatarUrl, children }: AdminShellProps) 
     <div className="min-h-screen bg-paper-50 dark:bg-navy-900">
       <AdminHeader adminName={adminName} avatarUrl={avatarUrl} onMenuToggle={() => setMobileOpen((v) => !v)} />
       <div className="mx-auto flex max-w-8xl">
-        <aside className="hidden w-64 shrink-0 overflow-y-auto border-r border-navy-100 p-4 dark:border-navy-800 lg:block" style={{ maxHeight: "calc(100vh - 60px)", position: "sticky", top: "60px" }}>
+        <aside className="hidden w-64 shrink-0 overflow-y-auto border-r border-navy-100 bg-white/60 p-4 dark:border-navy-800 dark:bg-navy-950/40 lg:block" style={{ maxHeight: "calc(100vh - 60px)", position: "sticky", top: "60px" }}>
           <AdminSidebar />
           <SidebarLegalLink />
         </aside>
