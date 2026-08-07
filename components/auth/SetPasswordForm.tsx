@@ -79,7 +79,7 @@ export function SetPasswordForm({ mode, onSuccess }: SetPasswordFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className={mode === "change" ? "" : "rounded-xl border border-navy-100 bg-paper-100 p-6 shadow-card dark:border-navy-700 dark:bg-navy-900 sm:p-8"} noValidate>
+    <form onSubmit={handleSubmit} className={mode === "change" ? "" : "rounded-xl border border-navy-100 bg-paper-100 p-6 shadow-elevated dark:border-navy-700 dark:bg-navy-900 sm:p-8"} noValidate>
       {mode === "change" && (
         <div className="mb-4">
           <label className="mb-1.5 block text-sm font-semibold text-navy-800 dark:text-navy-100">Current Password</label>

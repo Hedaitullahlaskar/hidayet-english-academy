@@ -16,15 +16,16 @@ export async function AuthLayout({
   return (
     <>
       <Header settings={settings} />
-      <main id="main-content" className="flex min-h-[70vh] items-center bg-paper-100 py-16 dark:bg-navy-900">
-        <Container className="max-w-md">
+      <main id="main-content" className="relative flex min-h-[75vh] items-center overflow-hidden bg-paper-100 py-16 dark:bg-navy-900 sm:py-20">
+        <div className="bg-grid-navy pointer-events-none absolute inset-0 opacity-[0.03] dark:opacity-[0.06]" />
+        <Container className="relative max-w-md">
           <div className="text-center">
-            <h1 className="font-display text-3xl font-semibold text-navy-900 dark:text-white">
+            <h1 className="font-display text-3xl font-semibold text-navy-900 dark:text-white sm:text-4xl">
               {title}
             </h1>
-            <p className="mt-1.5 text-navy-600 dark:text-navy-300">{subtitle}</p>
+            <p className="mt-2 text-base text-navy-600 dark:text-navy-300">{subtitle}</p>
           </div>
-          <div className="mt-8">{children}</div>
+          <div className="mt-8 animate-fade-up [animation-delay:80ms]">{children}</div>
           <p className="mt-6 text-center text-xs text-navy-400 dark:text-navy-500">
             By continuing, you agree to HEA&apos;s{" "}
             <Link href="/legal/terms-and-conditions" className="underline hover:text-gold-800 dark:hover:text-gold-400">

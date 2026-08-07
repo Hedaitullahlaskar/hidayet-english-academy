@@ -74,7 +74,7 @@ export function TeacherApplicationForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-xl border border-navy-100 bg-paper-100 p-6 shadow-card dark:border-navy-700 dark:bg-navy-900 sm:p-8"
+      className="rounded-xl border border-navy-100 bg-paper-100 p-6 shadow-elevated dark:border-navy-700 dark:bg-navy-900 sm:p-8"
       noValidate
     >
       <div className="space-y-5">

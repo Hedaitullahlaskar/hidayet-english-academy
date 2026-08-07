@@ -8,7 +8,7 @@ export function CourseCard({ course }: { course: CourseDetail }) {
     <Link
       href={`/courses/${course.slug}`}
       className={cn(
-        "group flex h-full flex-col rounded-lg border p-6 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-elevated",
+        "group flex h-full flex-col rounded-lg border p-6 shadow-card transition-all duration-300 ease-premium hover:-translate-y-1.5 hover:shadow-elevated",
         course.featured
           ? "border-gold-400 bg-navy-800 text-white"
           : "border-navy-100 bg-white dark:border-navy-700 dark:bg-navy-900"
