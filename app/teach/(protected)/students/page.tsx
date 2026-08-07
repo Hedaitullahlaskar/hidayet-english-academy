@@ -17,20 +17,20 @@ export default async function StudentListPage() {
       {students.length === 0 ? (
         <EmptyState className="mt-8" icon={<GraduationCap className="h-6 w-6" strokeWidth={1.75} />} title="No students yet" body="Students who register on the site will appear here automatically." />
       ) : (
-        <div className="mt-8 overflow-hidden rounded-lg border border-navy-100 shadow-card dark:border-navy-700">
+        <div className="mt-8 overflow-hidden rounded-lg border border-navy-100 shadow-soft dark:border-navy-700">
           <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left text-sm">
             <thead>
-              <tr className="bg-navy-800 text-white">
-                <th className="p-4 font-display font-semibold">Student</th>
-                <th className="p-4 font-display font-semibold">Country</th>
-                <th className="p-4 font-display font-semibold">Joined</th>
-                <th className="p-4 font-display font-semibold" />
+              <tr className="border-b border-navy-100 bg-paper-100 dark:border-navy-700 dark:bg-navy-900/60">
+                <th className="p-4 text-xs font-bold uppercase tracking-wide text-navy-500 dark:text-navy-400">Student</th>
+                <th className="p-4 text-xs font-bold uppercase tracking-wide text-navy-500 dark:text-navy-400">Country</th>
+                <th className="p-4 text-xs font-bold uppercase tracking-wide text-navy-500 dark:text-navy-400">Joined</th>
+                <th className="p-4" />
               </tr>
             </thead>
             <tbody>
-              {students.map((s: { id: string; full_name: string; avatar_url: string | null; country: string | null; created_at: string }, i: number) => (
-                <tr key={s.id} className={i % 2 === 0 ? "bg-white dark:bg-navy-900" : "bg-paper-100 dark:bg-navy-800"}>
+              {students.map((s: { id: string; full_name: string; avatar_url: string | null; country: string | null; created_at: string }) => (
+                <tr key={s.id} className="border-b border-navy-50 bg-white transition-colors last:border-b-0 hover:bg-paper-50 dark:border-navy-800 dark:bg-navy-900 dark:hover:bg-white/[0.03]">
                   <td className="flex items-center gap-3 p-4">
                     <Avatar name={s.full_name} avatarUrl={s.avatar_url} size={32} />
                     <span className="font-medium text-navy-800 dark:text-navy-100">{s.full_name}</span>

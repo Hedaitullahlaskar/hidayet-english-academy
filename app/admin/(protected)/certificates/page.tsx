@@ -15,13 +15,20 @@ export default async function AdminCertificatesPage() {
       {certificates.length === 0 ? (
         <EmptyState className="mt-8" icon={<Award className="h-6 w-6" strokeWidth={1.75} />} title="No certificates issued yet" body="Certificates issued by any teacher will appear here, searchable by verification code." />
       ) : (
-        <div className="mt-8 overflow-hidden rounded-lg border border-navy-100 shadow-card dark:border-navy-700">
+        <div className="mt-8 overflow-hidden rounded-lg border border-navy-100 shadow-soft dark:border-navy-700">
           <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left text-sm">
-            <thead><tr className="bg-navy-800 text-white"><th className="p-4">Student</th><th className="p-4">Course</th><th className="p-4">Issued</th><th className="p-4">Verification Code</th></tr></thead>
+            <thead>
+              <tr className="border-b border-navy-100 bg-paper-100 dark:border-navy-700 dark:bg-navy-900/60">
+                <th className="p-4 text-xs font-bold uppercase tracking-wide text-navy-500 dark:text-navy-400">Student</th>
+                <th className="p-4 text-xs font-bold uppercase tracking-wide text-navy-500 dark:text-navy-400">Course</th>
+                <th className="p-4 text-xs font-bold uppercase tracking-wide text-navy-500 dark:text-navy-400">Issued</th>
+                <th className="p-4 text-xs font-bold uppercase tracking-wide text-navy-500 dark:text-navy-400">Verification Code</th>
+              </tr>
+            </thead>
             <tbody>
-              {certificates.map((c: { id: string; course_slug: string; issued_at: string; verification_code: string; profiles: { full_name: string } | null }, i: number) => (
-                <tr key={c.id} className={i % 2 === 0 ? "bg-white dark:bg-navy-900" : "bg-paper-100 dark:bg-navy-800"}>
+              {certificates.map((c: { id: string; course_slug: string; issued_at: string; verification_code: string; profiles: { full_name: string } | null }) => (
+                <tr key={c.id} className="border-b border-navy-50 bg-white transition-colors last:border-b-0 hover:bg-paper-50 dark:border-navy-800 dark:bg-navy-900 dark:hover:bg-white/[0.03]">
                   <td className="p-4 text-navy-800 dark:text-navy-100">{c.profiles?.full_name ?? "Student"}</td>
                   <td className="p-4 text-navy-600 dark:text-navy-300">{c.course_slug}</td>
                   <td className="p-4 text-navy-600 dark:text-navy-300">{new Date(c.issued_at).toLocaleDateString()}</td>
