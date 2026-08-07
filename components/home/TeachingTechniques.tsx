@@ -16,7 +16,7 @@ export function TeachingTechniques() {
         <div className="mt-16 grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
           {teachingPillars.map((pillar, i) => (
             <Reveal key={pillar.id} delay={i * 70}>
-              <div className="flex h-full flex-col rounded-lg border border-navy-100 bg-white p-6 shadow-card transition-shadow hover:shadow-elevated dark:border-navy-700 dark:bg-navy-800">
+              <div className="flex h-full flex-col rounded-lg border border-navy-100 bg-white p-6 shadow-card transition-all duration-300 ease-premium hover:-translate-y-1 hover:border-gold-300/60 hover:shadow-elevated dark:border-navy-700 dark:bg-navy-800">
                 <span className="font-display text-2xl font-semibold text-gold-800 dark:text-gold-400">
                   {pillar.number}
                 </span>

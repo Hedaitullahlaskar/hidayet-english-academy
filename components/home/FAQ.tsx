@@ -23,10 +23,13 @@ export function FAQ({ faqs }: { faqs: PublicFaq[] }) {
             return (
               <div
                 key={faq.question}
-                className="overflow-hidden rounded-lg border border-navy-100 bg-white shadow-card dark:border-navy-700 dark:bg-navy-800"
+                className={cn(
+                  "overflow-hidden rounded-lg border bg-white shadow-card transition-colors duration-300 dark:bg-navy-800",
+                  isOpen ? "border-gold-300 dark:border-gold-500/40" : "border-navy-100 dark:border-navy-700"
+                )}
               >
                 <button
-                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors duration-200 hover:bg-paper-100/60 dark:hover:bg-white/5"
                   onClick={() => setOpenIndex(isOpen ? null : i)}
                   aria-expanded={isOpen}
                   aria-controls={`faq-panel-${i}`}
@@ -36,7 +39,7 @@ export function FAQ({ faqs }: { faqs: PublicFaq[] }) {
                   </span>
                   <span
                     className={cn(
-                      "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold-100 text-gold-800 transition-transform duration-300 dark:bg-navy-700 dark:text-gold-400",
+                      "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold-100 text-gold-800 transition-transform duration-300 ease-premium dark:bg-navy-700 dark:text-gold-400",
                       isOpen && "rotate-45"
                     )}
                     aria-hidden="true"

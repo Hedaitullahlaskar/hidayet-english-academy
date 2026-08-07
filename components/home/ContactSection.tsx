@@ -49,9 +49,9 @@ export function ContactSection() {
               href={href}
               target={href.startsWith("http") ? "_blank" : undefined}
               rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-              className="group flex flex-col items-center gap-3 rounded-xl border border-navy-100 bg-white p-7 text-center shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-elevated dark:border-navy-700 dark:bg-navy-800"
+              className="group flex flex-col items-center gap-3 rounded-xl border border-navy-100 bg-white p-7 text-center shadow-card transition-all duration-300 ease-premium hover:-translate-y-1 hover:border-gold-300/60 hover:shadow-elevated dark:border-navy-700 dark:bg-navy-800"
             >
-              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gold-100 text-gold-800 transition-colors group-hover:bg-gold-600 group-hover:text-navy-900 dark:bg-navy-700 dark:text-gold-400">
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gold-100 text-gold-800 transition-all duration-300 ease-premium group-hover:scale-105 group-hover:bg-gold-600 group-hover:text-navy-900 dark:bg-navy-700 dark:text-gold-400">
                 <Icon className="h-6 w-6" />
               </span>
               <span className="text-sm font-bold uppercase tracking-wide text-navy-500 dark:text-navy-400">

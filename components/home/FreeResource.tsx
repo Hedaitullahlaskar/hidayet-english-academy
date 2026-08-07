@@ -11,7 +11,7 @@ export function FreeResource() {
       <Container>
         <Reveal>
           <div className="grid items-center gap-12 rounded-xl border border-navy-100 bg-paper-100 p-8 shadow-card dark:border-navy-700 dark:bg-navy-900 lg:grid-cols-2 lg:p-4">
-            <div className="overflow-hidden rounded-lg border border-navy-100 shadow-card dark:border-navy-700 lg:m-4">
+            <div className="group overflow-hidden rounded-lg border border-navy-100 shadow-card dark:border-navy-700 lg:m-4">
               <Image
                 src="/images/resource-present-perfect.jpg"
                 alt="Free HEA grammar guide preview — Present Perfect Tense explained in English and Bengali"
@@ -19,7 +19,7 @@ export function FreeResource() {
                 height={450}
                 placeholder="blur"
                 blurDataURL={GRAMMAR_BLUR}
-                className="h-auto w-full"
+                className="h-auto w-full transition-transform duration-500 ease-premium group-hover:scale-105"
                 sizes="(max-width: 1024px) 90vw, 500px"
               />
             </div>

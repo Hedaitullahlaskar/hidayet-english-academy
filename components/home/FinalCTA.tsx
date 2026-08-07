@@ -4,8 +4,10 @@ import { site } from "@/content/site-data";
 
 export function FinalCTA() {
   return (
-    <section className="relative overflow-hidden bg-navy-900 py-20 sm:py-24">
-      <div className="pointer-events-none absolute -bottom-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-gold-600/20 blur-3xl" />
+    <section className="relative overflow-hidden bg-gradient-navy py-20 sm:py-24">
+      <div className="bg-grid-navy pointer-events-none absolute inset-0 opacity-30" aria-hidden="true" />
+      <div className="pointer-events-none absolute -top-32 -left-24 h-80 w-80 rounded-full bg-navy-400/20 blur-3xl" aria-hidden="true" />
+      <div className="pointer-events-none absolute -bottom-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-gold-600/20 blur-3xl" aria-hidden="true" />
       <Container className="relative text-center">
         <h2 className="mx-auto max-w-2xl text-balance font-display text-3xl font-semibold text-white sm:text-4xl">
           One Step Today, Better English Tomorrow.

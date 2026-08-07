@@ -28,8 +28,8 @@ export function MadhyamikOffer() {
 
           <ul className="mt-7 space-y-3">
             {offerHighlights.map((item) => (
-              <li key={item} className="flex items-center gap-3 text-navy-800 dark:text-navy-100">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gold-100 text-gold-800 dark:bg-navy-800 dark:text-gold-400">
+              <li key={item} className="group flex items-center gap-3 text-navy-800 dark:text-navy-100">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gold-100 text-gold-800 transition-transform duration-300 ease-premium group-hover:scale-110 dark:bg-navy-800 dark:text-gold-400">
                   <CheckIcon className="h-3.5 w-3.5" />
                 </span>
                 <span className="font-medium">{item}</span>
@@ -52,7 +52,7 @@ export function MadhyamikOffer() {
         </Reveal>
 
         <Reveal className="order-1 mx-auto w-full max-w-sm lg:order-2" delay={120}>
-          <div className="overflow-hidden rounded-xl border border-navy-100 shadow-elevated dark:border-navy-700">
+          <div className="group overflow-hidden rounded-xl border border-navy-100 shadow-elevated dark:border-navy-700">
             <Image
               src="/images/madhyamik-offer.jpg"
               alt="Madhyamik students special offer — 100% free English program for Class 10 students at Hidayet English Academy"
@@ -60,7 +60,7 @@ export function MadhyamikOffer() {
               height={1050}
               placeholder="blur"
               blurDataURL={MADHYAMIK_BLUR}
-              className="h-auto w-full"
+              className="h-auto w-full transition-transform duration-500 ease-premium group-hover:scale-105"
               sizes="(max-width: 640px) 90vw, 400px"
             />
           </div>

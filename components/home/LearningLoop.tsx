@@ -22,8 +22,8 @@ export function LearningLoop() {
           />
           <ol className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 lg:gap-4">
             {learningLoop.map((stage, i) => (
-              <Reveal key={stage.id} as="li" delay={i * 70} className="relative flex flex-col items-center text-center">
-                <span className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full border-2 border-gold-500 bg-navy-800 font-display text-xl font-semibold text-gold-300 shadow-gold">
+              <Reveal key={stage.id} as="li" delay={i * 70} className="group relative flex flex-col items-center text-center">
+                <span className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full border-2 border-gold-500 bg-navy-800 font-display text-xl font-semibold text-gold-300 shadow-gold transition-transform duration-300 ease-premium group-hover:-translate-y-1 group-hover:scale-105">
                   {stage.step}
                 </span>
                 <h3 className="mt-4 font-display text-lg font-semibold text-navy-900 dark:text-white">

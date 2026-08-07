@@ -9,11 +9,12 @@ export function WhatsAppCommunity() {
     <section className="bg-navy-800 py-16 dark:bg-navy-900 sm:py-20">
       <Container>
         <Reveal>
-          <div className="flex flex-col items-center gap-8 rounded-xl bg-gradient-to-br from-navy-900 to-navy-800 p-10 text-center shadow-elevated sm:p-14">
-            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-whatsapp/15">
+          <div className="relative flex flex-col items-center gap-8 overflow-hidden rounded-xl bg-gradient-to-br from-navy-900 to-navy-800 p-10 text-center shadow-elevated sm:p-14">
+            <div className="bg-grid-navy pointer-events-none absolute inset-0 opacity-30" aria-hidden="true" />
+            <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-whatsapp/15 shadow-[0_0_0_8px_rgba(37,211,102,0.08)]">
               <WhatsAppIcon className="h-8 w-8 text-whatsapp" />
             </span>
-            <div>
+            <div className="relative">
               <h2 className="font-display text-2xl font-semibold text-white sm:text-3xl">
                 Join Our Official WhatsApp Community
               </h2>
@@ -23,7 +24,7 @@ export function WhatsAppCommunity() {
                 rely on.
               </p>
             </div>
-            <Button href={whatsappLink(whatsappMessages.joinCommunity)} size="lg">
+            <Button href={whatsappLink(whatsappMessages.joinCommunity)} size="lg" className="relative">
               Join WhatsApp Group →
             </Button>
           </div>

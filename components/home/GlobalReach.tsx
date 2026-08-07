@@ -19,7 +19,7 @@ export function GlobalReach() {
             {globalRegions.map((region) => (
               <span
                 key={region}
-                className="rounded-full border border-gold-300 bg-white px-4 py-1.5 text-sm font-semibold text-navy-800 dark:border-navy-600 dark:bg-navy-800 dark:text-navy-100"
+                className="rounded-full border border-gold-300 bg-white px-4 py-1.5 text-sm font-semibold text-navy-800 shadow-soft transition-all duration-300 ease-premium hover:-translate-y-0.5 hover:border-gold-500 hover:shadow-gold dark:border-navy-600 dark:bg-navy-800 dark:text-navy-100"
               >
                 {region}
               </span>
