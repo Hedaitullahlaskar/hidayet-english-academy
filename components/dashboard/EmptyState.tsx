@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export function EmptyState({
@@ -6,7 +7,7 @@ export function EmptyState({
   body,
   className,
 }: {
-  icon?: string;
+  icon?: ReactNode;
   title: string;
   body: string;
   className?: string;

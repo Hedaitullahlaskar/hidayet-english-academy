@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Users, Video, ClipboardCheck, MessageCircle, Upload, ClipboardList, GraduationCap, CheckCircle2 } from "lucide-react";
 import { StatWidget } from "@/components/dashboard/StatWidget";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import {
@@ -27,10 +28,10 @@ export default async function TeacherHomePage() {
   const firstName = profile?.full_name?.split(" ")[0] ?? "there";
 
   const quickActions = [
-    { icon: "📹", label: "Schedule a Live Class", href: "/teach/live-classes" },
-    { icon: "⬆️", label: "Upload a Lesson", href: "/teach/lessons/upload" },
-    { icon: "📝", label: "Create Homework", href: "/teach/homework" },
-    { icon: "🎓", label: "Issue a Certificate", href: "/teach/certificates" },
+    { icon: Video, label: "Schedule a Live Class", href: "/teach/live-classes" },
+    { icon: Upload, label: "Upload a Lesson", href: "/teach/lessons/upload" },
+    { icon: ClipboardList, label: "Create Homework", href: "/teach/homework" },
+    { icon: GraduationCap, label: "Issue a Certificate", href: "/teach/certificates" },
   ];
 
   return (
@@ -41,10 +42,10 @@ export default async function TeacherHomePage() {
       <p className="mt-1 text-navy-600 dark:text-navy-300">Here&apos;s what&apos;s happening across the academy today.</p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatWidget icon="🧑‍🎓" label="Total Students" value={String(students.length)} />
-        <StatWidget icon="📹" label="Classes Today" value={String(todaysClasses.length)} />
-        <StatWidget icon="📝" label="Pending Reviews" value={String(pendingCount)} tone="gold" />
-        <StatWidget icon="💬" label="Open Doubts" value={String(doubtsCount)} tone="gold" />
+        <StatWidget icon={<Users className="h-5 w-5" strokeWidth={1.75} />} label="Total Students" value={String(students.length)} />
+        <StatWidget icon={<Video className="h-5 w-5" strokeWidth={1.75} />} label="Classes Today" value={String(todaysClasses.length)} />
+        <StatWidget icon={<ClipboardCheck className="h-5 w-5" strokeWidth={1.75} />} label="Pending Reviews" value={String(pendingCount)} tone="gold" />
+        <StatWidget icon={<MessageCircle className="h-5 w-5" strokeWidth={1.75} />} label="Open Doubts" value={String(doubtsCount)} tone="gold" />
       </div>
 
       <div className="mt-8">
@@ -54,9 +55,9 @@ export default async function TeacherHomePage() {
             <Link
               key={a.label}
               href={a.href}
-              className="flex flex-col items-center rounded-lg border border-navy-100 bg-white p-5 text-center shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elevated dark:border-navy-700 dark:bg-navy-800"
+              className="flex flex-col items-center rounded-lg border border-navy-100 bg-white p-5 text-center shadow-card transition-all duration-300 ease-premium hover:-translate-y-0.5 hover:shadow-elevated dark:border-navy-700 dark:bg-navy-800"
             >
-              <span className="text-2xl" aria-hidden="true">{a.icon}</span>
+              <a.icon className="h-6 w-6 text-gold-700 dark:text-gold-400" strokeWidth={1.75} aria-hidden="true" />
               <span className="mt-2 text-xs font-semibold text-navy-800 dark:text-navy-100">{a.label}</span>
             </Link>
           ))}
@@ -69,7 +70,7 @@ export default async function TeacherHomePage() {
           <span className="text-xs font-semibold text-navy-500 dark:text-navy-400">{completedReviewsCount} reviews completed all-time</span>
         </div>
         {pendingBreakdown.assignments.length === 0 && pendingBreakdown.tests.length === 0 ? (
-          <EmptyState className="mt-4" icon="✅" title="Nothing pending" body="Every submission and test attempt has been reviewed." />
+          <EmptyState className="mt-4" icon={<CheckCircle2 className="h-6 w-6" strokeWidth={1.75} />} title="Nothing pending" body="Every submission and test attempt has been reviewed." />
         ) : (
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {pendingBreakdown.assignments.length > 0 && (
@@ -100,7 +101,7 @@ export default async function TeacherHomePage() {
         <div className="rounded-lg border border-navy-100 bg-white p-6 shadow-card dark:border-navy-700 dark:bg-navy-800">
           <h2 className="font-display text-lg font-semibold text-navy-900 dark:text-white">Today&apos;s Classes</h2>
           {todaysClasses.length === 0 ? (
-            <EmptyState className="mt-4" icon="📹" title="Nothing scheduled today" body="Classes you schedule will appear here." />
+            <EmptyState className="mt-4" icon={<Video className="h-6 w-6" strokeWidth={1.75} />} title="Nothing scheduled today" body="Classes you schedule will appear here." />
           ) : (
             <ul className="mt-4 space-y-3">
               {todaysClasses.map((c: { id: string; title: string; scheduled_at: string }) => (
@@ -115,7 +116,7 @@ export default async function TeacherHomePage() {
         <div className="rounded-lg border border-navy-100 bg-white p-6 shadow-card dark:border-navy-700 dark:bg-navy-800">
           <h2 className="font-display text-lg font-semibold text-navy-900 dark:text-white">Recently Joined Students</h2>
           {students.length === 0 ? (
-            <EmptyState className="mt-4" icon="🧑‍🎓" title="No students yet" body="Students who register will appear here." />
+            <EmptyState className="mt-4" icon={<Users className="h-6 w-6" strokeWidth={1.75} />} title="No students yet" body="Students who register will appear here." />
           ) : (
             <ul className="mt-4 space-y-2">
               {students.slice(0, 5).map((s: { id: string; full_name: string }) => (

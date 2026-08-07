@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export function StatWidget({
@@ -6,7 +7,7 @@ export function StatWidget({
   value,
   tone = "default",
 }: {
-  icon: string;
+  icon: ReactNode;
   label: string;
   value: string;
   tone?: "default" | "gold";

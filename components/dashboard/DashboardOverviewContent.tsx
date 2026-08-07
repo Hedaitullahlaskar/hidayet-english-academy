@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { BookOpen, Clock, ClipboardList, CheckSquare, GraduationCap, Flame, TrendingUp, CalendarClock, Sparkles } from "lucide-react";
 import { StatWidget } from "@/components/dashboard/StatWidget";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { ContinueLearningCard } from "@/components/dashboard/ContinueLearningCard";
@@ -53,15 +54,15 @@ export function DashboardOverviewContent({
 
       {/* Stat widgets */}
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatWidget icon="📚" label={t("activeCourses")} value={String(enrollments.length)} />
-        <StatWidget icon="⏱️" label={t("timeThisWeek")} value="0h" />
-        <StatWidget icon="📝" label={t("pendingHomework")} value={String(assignments.length)} />
-        <StatWidget icon="✅" label={t("upcomingTests")} value={String(tests.length)} />
-        <StatWidget icon="🎓" label={t("certificatesEarned")} value={String(certificates.length)} tone="gold" />
-        <StatWidget icon="🔥" label={t("dailyStreak")} value={streak ? `${streak.current_streak} ${t("days")}` : `0 ${t("days")}`} tone="gold" />
-        <StatWidget icon="📈" label={t("overallProgress")} value={enrollments.length > 0 ? "0%" : "—"} />
+        <StatWidget icon={<BookOpen className="h-5 w-5" strokeWidth={1.75} />} label={t("activeCourses")} value={String(enrollments.length)} />
+        <StatWidget icon={<Clock className="h-5 w-5" strokeWidth={1.75} />} label={t("timeThisWeek")} value="0h" />
+        <StatWidget icon={<ClipboardList className="h-5 w-5" strokeWidth={1.75} />} label={t("pendingHomework")} value={String(assignments.length)} />
+        <StatWidget icon={<CheckSquare className="h-5 w-5" strokeWidth={1.75} />} label={t("upcomingTests")} value={String(tests.length)} />
+        <StatWidget icon={<GraduationCap className="h-5 w-5" strokeWidth={1.75} />} label={t("certificatesEarned")} value={String(certificates.length)} tone="gold" />
+        <StatWidget icon={<Flame className="h-5 w-5" strokeWidth={1.75} />} label={t("dailyStreak")} value={streak ? `${streak.current_streak} ${t("days")}` : `0 ${t("days")}`} tone="gold" />
+        <StatWidget icon={<TrendingUp className="h-5 w-5" strokeWidth={1.75} />} label={t("overallProgress")} value={enrollments.length > 0 ? "0%" : "—"} />
         <StatWidget
-          icon="📅"
+          icon={<CalendarClock className="h-5 w-5" strokeWidth={1.75} />}
           label={t("nextLiveClass")}
           value={nextClass ? new Date(nextClass.scheduled_at).toLocaleDateString() : "—"}
         />
@@ -79,7 +80,7 @@ export function DashboardOverviewContent({
           {enrollments.length === 0 ? (
             <EmptyState
               className="mt-4"
-              icon="📚"
+              icon={<BookOpen className="h-6 w-6" strokeWidth={1.75} />}
               title={t("noCourseYet")}
               body="Once you enroll in a course, it'll show up here with your progress."
             />
@@ -108,7 +109,7 @@ export function DashboardOverviewContent({
           <h2 className="font-display text-lg font-semibold text-navy-900 dark:text-white">{t("recommendedNext")}</h2>
           <EmptyState
             className="mt-4"
-            icon="✨"
+            icon={<Sparkles className="h-6 w-6" strokeWidth={1.75} />}
             title="Nothing recommended yet"
             body="Enroll in a course and complete your first lesson — we'll start recommending what's next after that."
           />

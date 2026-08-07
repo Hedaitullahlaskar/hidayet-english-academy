@@ -1,3 +1,4 @@
+import { Award } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { getMyCertificates } from "@/lib/dashboard/repository";
 
@@ -14,7 +15,7 @@ export default async function CertificatesPage() {
       {certificates.length === 0 ? (
         <EmptyState
           className="mt-8"
-          icon="🎓"
+          icon={<Award className="h-6 w-6" strokeWidth={1.75} />}
           title="No certificates yet"
           body="Complete a course to earn your first certificate — each one comes with a public verification link."
         />
@@ -22,7 +23,7 @@ export default async function CertificatesPage() {
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {certificates.map((c: { id: string; course_slug: string; issued_at: string; verification_code: string }) => (
             <div key={c.id} className="rounded-lg border border-gold-400 bg-navy-800 p-5 text-white shadow-elevated">
-              <span className="text-2xl">🎓</span>
+              <Award className="h-6 w-6 text-gold-400" strokeWidth={1.75} aria-hidden="true" />
               <p className="mt-3 font-display font-semibold">{c.course_slug}</p>
               <p className="mt-1 text-xs text-navy-300">Issued {new Date(c.issued_at).toLocaleDateString()}</p>
               <div className="mt-3 flex flex-wrap gap-3">

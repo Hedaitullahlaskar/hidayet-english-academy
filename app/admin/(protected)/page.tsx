@@ -1,3 +1,4 @@
+import { Users, UserCog, IndianRupee, Video, ShoppingCart, Activity, ScrollText } from "lucide-react";
 import { StatWidget } from "@/components/dashboard/StatWidget";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { getGlobalStats, getRecentActivity, getSystemHealth, getCurrentAdminProfile } from "@/lib/admin/repository";
@@ -20,12 +21,12 @@ export default async function AdminGlobalDashboard() {
       <p className="mt-1 text-navy-600 dark:text-navy-300">The entire academy, at a glance.</p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-        <StatWidget icon="🧑‍🎓" label="Total Students" value={String(stats.totalStudents)} />
-        <StatWidget icon="🟢" label="Active Students" value={String(stats.activeStudents)} />
-        <StatWidget icon="👨‍🏫" label="Teachers" value={String(stats.teacherCount)} />
-        <StatWidget icon="💰" label="Revenue" value={`₹${stats.revenue}`} tone="gold" />
-        <StatWidget icon="📹" label="Live Classes" value={String(stats.upcomingLiveClasses)} />
-        <StatWidget icon="🛒" label="Course Sales" value={String(stats.courseSales)} tone="gold" />
+        <StatWidget icon={<Users className="h-5 w-5" strokeWidth={1.75} />} label="Total Students" value={String(stats.totalStudents)} />
+        <StatWidget icon={<Activity className="h-5 w-5" strokeWidth={1.75} />} label="Active Students" value={String(stats.activeStudents)} />
+        <StatWidget icon={<UserCog className="h-5 w-5" strokeWidth={1.75} />} label="Teachers" value={String(stats.teacherCount)} />
+        <StatWidget icon={<IndianRupee className="h-5 w-5" strokeWidth={1.75} />} label="Revenue" value={`₹${stats.revenue}`} tone="gold" />
+        <StatWidget icon={<Video className="h-5 w-5" strokeWidth={1.75} />} label="Live Classes" value={String(stats.upcomingLiveClasses)} />
+        <StatWidget icon={<ShoppingCart className="h-5 w-5" strokeWidth={1.75} />} label="Course Sales" value={String(stats.courseSales)} tone="gold" />
       </div>
 
       {stats.activeStudents === 0 && stats.totalStudents > 0 && (
@@ -43,7 +44,7 @@ export default async function AdminGlobalDashboard() {
         <div className="rounded-lg border border-navy-100 bg-white p-6 shadow-card dark:border-navy-700 dark:bg-navy-800">
           <h2 className="font-display text-lg font-semibold text-navy-900 dark:text-white">Recent Activity</h2>
           {activity.length === 0 ? (
-            <EmptyState className="mt-4" icon="📜" title="No activity yet" body="Sensitive admin actions (role changes, suspensions, refunds) will appear here as they happen." />
+            <EmptyState className="mt-4" icon={<ScrollText className="h-6 w-6" strokeWidth={1.75} />} title="No activity yet" body="Sensitive admin actions (role changes, suspensions, refunds) will appear here as they happen." />
           ) : (
             <ul className="mt-4 space-y-2">
               {activity.map((a: { id: string; action: string; created_at: string; profiles: { full_name: string } | null }) => (
