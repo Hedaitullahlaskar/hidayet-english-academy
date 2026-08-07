@@ -552,3 +552,48 @@ export async function getCourseAnalytics(courseSlug: string) {
     };
   }, { enrolledCount: 0, avgTestScore: null, totalSubmissions: 0 });
 }
+
+/** Real attendance rate for a course, computed from actual marked attendance records — null (not 0%) when no live class for this course has had attendance taken yet, so an honest "no data" reads differently from a genuinely poor turnout. */
+export async function getCourseAttendanceRate(courseSlug: string): Promise<number | null> {
+  return safeQuery(async () => {
+    const supabase = createServerSupabaseClient();
+    const { data } = await supabase
+      .from("attendance")
+      .select("status, live_classes!inner(course_slug)")
+      .eq("live_classes.course_slug", courseSlug);
+    const rows = (data ?? []) as { status: string }[];
+    if (rows.length === 0) return null;
+    const present = rows.filter((r) => r.status === "present").length;
+    return Math.round((present / rows.length) * 100);
+  }, null);
+}
+
+export interface RevenueByCurrency {
+  currency: string;
+  totalMinorUnits: number;
+}
+
+/**
+ * Real revenue across a set of courses — grouped by currency rather than
+ * summed into one number, because adding ₹500 and $10 together would
+ * produce a meaningless total. Only counts orders.status = 'paid'; a
+ * pending or failed order was never actually collected.
+ */
+export async function getRevenueForCourses(courseSlugs: string[]): Promise<RevenueByCurrency[]> {
+  return safeQuery(async () => {
+    if (courseSlugs.length === 0) return [];
+    const supabase = createServerSupabaseClient();
+    const { data } = await supabase
+      .from("orders")
+      .select("amount_minor_units, currency, admin_courses!inner(slug)")
+      .eq("status", "paid")
+      .in("admin_courses.slug", courseSlugs);
+
+    const rows = (data ?? []) as { amount_minor_units: number; currency: string }[];
+    const byCurrency = new Map<string, number>();
+    for (const row of rows) {
+      byCurrency.set(row.currency, (byCurrency.get(row.currency) ?? 0) + row.amount_minor_units);
+    }
+    return Array.from(byCurrency.entries()).map(([currency, totalMinorUnits]) => ({ currency, totalMinorUnits }));
+  }, []);
+}
