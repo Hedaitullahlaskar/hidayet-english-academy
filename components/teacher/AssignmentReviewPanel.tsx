@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ClipboardList, Inbox } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -39,7 +40,7 @@ export function AssignmentReviewPanel({ assignments }: { assignments: Assignment
 
   if (assignments.length === 0) {
     return (
-      <EmptyState icon="📝" title="No assignments to review yet" body="Create an assignment first — submissions will appear here for grading." />
+      <EmptyState icon={<ClipboardList className="h-6 w-6" strokeWidth={1.75} />} title="No assignments to review yet" body="Create an assignment first — submissions will appear here for grading." />
     );
   }
 
@@ -58,7 +59,7 @@ export function AssignmentReviewPanel({ assignments }: { assignments: Assignment
       {loading ? (
         <p className="mt-6 text-sm text-navy-500 dark:text-navy-400">Loading…</p>
       ) : submissions.length === 0 ? (
-        <EmptyState className="mt-6" icon="📭" title="No submissions yet" body="Nobody has submitted this assignment yet." />
+        <EmptyState className="mt-6" icon={<Inbox className="h-6 w-6" strokeWidth={1.75} />} title="No submissions yet" body="Nobody has submitted this assignment yet." />
       ) : (
         <div className="mt-6 space-y-4">
           {submissions.map((s) => (
