@@ -10,12 +10,15 @@ export default async function CheckoutPage({ params }: { params: { courseSlug: s
   if (!course) notFound();
 
   return (
-    <section className="flex min-h-[70vh] items-center justify-center bg-paper-100 py-16 dark:bg-navy-900">
-      <Container className="max-w-md">
-        <h1 className="mb-6 text-center font-display text-2xl font-semibold text-navy-900 dark:text-white">
+    <section className="relative flex min-h-[75vh] items-center justify-center overflow-hidden bg-paper-100 py-16 dark:bg-navy-900 sm:py-20">
+      <div className="bg-grid-navy pointer-events-none absolute inset-0 opacity-[0.03] dark:opacity-[0.06]" />
+      <Container className="relative max-w-md">
+        <h1 className="mb-6 text-center font-display text-3xl font-semibold text-navy-900 dark:text-white">
           Complete Your Enrollment
         </h1>
-        <CheckoutForm courseSlug={params.courseSlug} courseName={course.name} />
+        <div className="animate-fade-up">
+          <CheckoutForm courseSlug={params.courseSlug} courseName={course.name} />
+        </div>
       </Container>
     </section>
   );

@@ -24,7 +24,7 @@ export function CourseDetailHero({ course }: { course: CourseDetail }) {
           {course.featured && !course.comingSoon && <Badge tone="gold">Flagship Course</Badge>}
         </div>
 
-        <h1 className="mt-5 max-w-3xl text-balance font-display text-3xl font-semibold text-white sm:text-4xl lg:text-5xl">
+        <h1 className="mt-5 max-w-3xl text-balance font-display text-4xl font-semibold text-white sm:text-5xl lg:text-6xl">
           {course.name}
         </h1>
         <p lang="bn" className="mt-2 text-lg font-medium text-navy-300">
@@ -36,7 +36,10 @@ export function CourseDetailHero({ course }: { course: CourseDetail }) {
 
         <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {facts.map((f) => (
-            <div key={f.label} className="rounded-lg border border-white/10 bg-navy-800/60 p-4 backdrop-blur-sm">
+            <div
+              key={f.label}
+              className="rounded-lg border border-white/10 bg-navy-800/60 p-4 backdrop-blur-sm transition-colors duration-300 ease-premium hover:border-gold-400/40"
+            >
               <p className="text-xs font-bold uppercase tracking-wide text-gold-400">{f.label}</p>
               <p className="mt-1 text-sm font-semibold text-white">{f.value}</p>
             </div>

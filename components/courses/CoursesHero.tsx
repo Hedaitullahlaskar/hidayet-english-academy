@@ -9,7 +9,7 @@ export function CoursesHero() {
       <Container className="relative">
         <Reveal className="mx-auto max-w-2xl text-center">
           <Badge tone="gold">All Courses</Badge>
-          <h1 className="mt-6 text-balance font-display text-3xl font-semibold text-white sm:text-4xl lg:text-5xl">
+          <h1 className="mt-6 text-balance font-display text-4xl font-semibold text-white sm:text-5xl lg:text-6xl">
             Find the Right Course for Exactly Where You Are
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-balance leading-relaxed text-navy-300 sm:text-lg">

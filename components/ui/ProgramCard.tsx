@@ -12,7 +12,7 @@ export function ProgramCard({ program }: { program: Program }) {
     <div
       id={program.id === "madhyamik" ? "madhyamik" : undefined}
       className={cn(
-        "flex h-full scroll-mt-24 flex-col rounded-lg border p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-elevated",
+        "flex h-full scroll-mt-24 flex-col rounded-lg border p-7 shadow-card transition-all duration-300 ease-premium hover:-translate-y-1.5 hover:shadow-elevated",
         program.featured
           ? "border-gold-400 bg-navy-800 text-white"
           : "border-navy-100 bg-white dark:border-navy-700 dark:bg-navy-900"

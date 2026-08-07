@@ -46,7 +46,7 @@ export function CheckoutForm({ courseSlug, courseName }: CheckoutFormProps) {
   }
 
   return (
-    <div className="rounded-xl border border-navy-100 bg-white p-6 shadow-card dark:border-navy-700 dark:bg-navy-800">
+    <div className="rounded-xl border border-navy-100 bg-white p-6 shadow-elevated dark:border-navy-700 dark:bg-navy-800 sm:p-8">
       <p className="font-display text-lg font-semibold text-navy-900 dark:text-white">{courseName}</p>
 
       <div className="mt-5 flex items-center justify-between">
