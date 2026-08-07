@@ -4,7 +4,7 @@ import { Reveal } from "@/components/ui/Reveal";
 
 export function AboutFinalCTA() {
   return (
-    <section className="relative overflow-hidden bg-navy-900 py-20 text-center sm:py-24">
+    <section className="relative overflow-hidden bg-gradient-navy py-20 text-center sm:py-24">
       <div className="pointer-events-none absolute -bottom-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-gold-600/20 blur-3xl" />
       <Container className="relative">
         <Reveal>

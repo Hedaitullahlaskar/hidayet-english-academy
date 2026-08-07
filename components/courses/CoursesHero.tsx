@@ -4,7 +4,7 @@ import { Reveal } from "@/components/ui/Reveal";
 
 export function CoursesHero() {
   return (
-    <section className="relative overflow-hidden bg-navy-900 py-20 sm:py-24">
+    <section className="relative overflow-hidden bg-gradient-navy py-20 sm:py-24">
       <div className="bg-grid-navy pointer-events-none absolute inset-0 opacity-40" />
       <Container className="relative">
         <Reveal className="mx-auto max-w-2xl text-center">

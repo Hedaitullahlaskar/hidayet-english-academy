@@ -6,7 +6,7 @@ import { learningLoop } from "@/content/site-data";
 
 export function TeachingPhilosophySummary() {
   return (
-    <section className="bg-navy-900 py-20 sm:py-28">
+    <section className="bg-gradient-navy py-20 sm:py-28">
       <Container className="text-center">
         <Reveal>
           <Badge tone="gold">Our Teaching Philosophy</Badge>

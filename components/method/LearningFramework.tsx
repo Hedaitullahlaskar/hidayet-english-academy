@@ -5,7 +5,7 @@ import { learningFramework } from "@/content/method-data";
 
 export function LearningFramework() {
   return (
-    <section id="framework" className="bg-navy-900 py-20 sm:py-28">
+    <section id="framework" className="bg-gradient-navy py-20 sm:py-28">
       <Container>
         <SectionHeading
           eyebrow="Our Step-by-Step Learning Framework"

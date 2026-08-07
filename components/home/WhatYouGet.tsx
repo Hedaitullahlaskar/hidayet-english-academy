@@ -8,7 +8,7 @@ const icons = ["📖", "🔤", "🗣️", "🎧", "📅", "❓", "🌟"];
 
 export function WhatYouGet() {
   return (
-    <section className="bg-navy-900 py-20 sm:py-28">
+    <section className="bg-gradient-navy py-20 sm:py-28">
       <Container>
         <SectionHeading
           eyebrow="What You Will Get"

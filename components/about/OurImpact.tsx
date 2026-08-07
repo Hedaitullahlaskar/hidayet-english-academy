@@ -5,7 +5,7 @@ import { ourImpact } from "@/content/about-data";
 
 export function OurImpact() {
   return (
-    <section className="bg-navy-900 py-20 sm:py-28">
+    <section className="bg-gradient-navy py-20 sm:py-28">
       <Container className="max-w-3xl text-center">
         <Reveal>
           <Badge tone="gold">{ourImpact.title}</Badge>

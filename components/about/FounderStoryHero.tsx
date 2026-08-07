@@ -6,7 +6,7 @@ import { founderStory } from "@/content/about-data";
 
 export function FounderStoryHero() {
   return (
-    <section className="relative overflow-hidden bg-navy-900 py-20 sm:py-28">
+    <section className="relative overflow-hidden bg-gradient-navy py-20 sm:py-28">
       <div className="bg-grid-navy pointer-events-none absolute inset-0 opacity-40" />
       <div className="pointer-events-none absolute -top-32 left-0 h-96 w-96 rounded-full bg-gold-600/20 blur-3xl" />
 
