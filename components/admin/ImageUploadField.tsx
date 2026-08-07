@@ -1,15 +1,18 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { FolderOpen } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { Modal } from "@/components/ui/Modal";
+import { MediaManager } from "@/components/admin/MediaManager";
 
 /**
  * Uploads to the public `site-content` storage bucket (see schema.sql) and
  * reports back the resulting public URL — the one basic upload primitive
  * every Website CMS field that needs an image (hero background, logo,
- * gallery photo) is built on. Not the full "professional media library"
- * (folders, search, compression, restore) requested for a later phase —
- * just a working upload-and-use control, honest about what it is.
+ * gallery photo) is built on. "Browse Library" opens the full Media
+ * Manager (components/admin/MediaManager.tsx) as a picker, so reusing an
+ * already-uploaded image no longer means re-uploading a duplicate.
  */
 export function ImageUploadField({
   label,
@@ -24,6 +27,7 @@ export function ImageUploadField({
 }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const [libraryOpen, setLibraryOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -57,18 +61,37 @@ export function ImageUploadField({
           <img src={value} alt="" className="h-16 w-16 shrink-0 rounded-lg border border-navy-200 object-cover dark:border-navy-600" />
         )}
         <div className="flex-1">
-          <input
-            ref={inputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            disabled={uploading}
-            className="w-full rounded-lg border border-navy-200 bg-white px-4 py-2.5 text-sm text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white"
-          />
+          <div className="flex gap-2">
+            <input
+              ref={inputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              disabled={uploading}
+              className="w-full rounded-lg border border-navy-200 bg-white px-4 py-2.5 text-sm text-navy-900 outline-none focus:border-gold-500 dark:border-navy-600 dark:bg-navy-900 dark:text-white"
+            />
+            <button
+              type="button"
+              onClick={() => setLibraryOpen(true)}
+              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-navy-200 px-3.5 py-2.5 text-xs font-semibold text-navy-700 transition-colors hover:border-gold-400 hover:text-gold-800 dark:border-navy-600 dark:text-navy-200 dark:hover:text-gold-400"
+            >
+              <FolderOpen className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+              Browse Library
+            </button>
+          </div>
           {uploading && <p className="mt-1 text-xs text-navy-500 dark:text-navy-400">Uploading…</p>}
           {error && <p className="mt-1 text-xs text-error">{error}</p>}
         </div>
       </div>
+
+      <Modal open={libraryOpen} onClose={() => setLibraryOpen(false)} title="Media Library" description="Pick an existing image, or upload a new one here." size="lg">
+        <MediaManager
+          onSelect={(url) => {
+            onChange(url);
+            setLibraryOpen(false);
+          }}
+        />
+      </Modal>
     </div>
   );
 }

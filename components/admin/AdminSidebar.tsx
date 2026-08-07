@@ -10,6 +10,7 @@ import {
   KeyRound,
   BookOpen,
   PenSquare,
+  ImageIcon,
   Video,
   GraduationCap,
   CreditCard,
@@ -43,6 +44,7 @@ const navGroups: { label: string; items: { href: string; label: string; icon: Lu
     items: [
       { href: "/admin/courses", label: "Courses", icon: BookOpen },
       { href: "/admin/cms", label: "Website CMS", icon: PenSquare },
+      { href: "/admin/media", label: "Media Library", icon: ImageIcon },
       { href: "/admin/live-classes", label: "Live Classes", icon: Video },
       { href: "/admin/certificates", label: "Certificates", icon: GraduationCap },
     ],

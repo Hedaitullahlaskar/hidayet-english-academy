@@ -12,7 +12,7 @@ interface ModalProps {
   description?: string;
   children?: ReactNode;
   footer?: ReactNode;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
   /** Marks the action as destructive — swaps the accent from gold to the error tone. */
   tone?: "default" | "danger";
 }
@@ -21,6 +21,7 @@ const sizes = {
   sm: "max-w-sm",
   md: "max-w-md",
   lg: "max-w-lg",
+  xl: "max-w-4xl",
 };
 
 export function Modal({ open, onClose, title, description, children, footer, size = "md", tone = "default" }: ModalProps) {
@@ -62,7 +63,7 @@ export function Modal({ open, onClose, title, description, children, footer, siz
         aria-describedby={description ? "modal-description" : undefined}
         tabIndex={-1}
         className={cn(
-          "glass glass-border relative w-full animate-scale-in rounded-xl p-6 shadow-popover outline-none",
+          "glass glass-border relative max-h-[85vh] w-full overflow-y-auto animate-scale-in rounded-xl p-6 shadow-popover outline-none",
           sizes[size]
         )}
       >
