@@ -523,6 +523,19 @@ export async function toggleGalleryImagePublish(id: string, publish: boolean): P
   return error ? { success: false, error: error.message } : { success: true };
 }
 
+// Batch reorder (as opposed to reorderFaq's adjacent-swap) because a drag
+// gesture in GalleryManager can move an image anywhere in the grid, not
+// just up or down by one slot — the client sends the full ordered id list
+// after a drop, and this writes each row's order_index to its new index.
+export async function reorderGalleryImages(orderedIds: string[]): Promise<MutationResult> {
+  const supabase = createServerSupabaseClient();
+  const results = await Promise.all(
+    orderedIds.map((id, index) => supabase.from("gallery_images").update({ order_index: index }).eq("id", id).then((r) => r.error))
+  );
+  const firstError = results.find((e) => e);
+  return firstError ? { success: false, error: firstError.message } : { success: true };
+}
+
 export async function deleteGalleryImage(id: string): Promise<MutationResult> {
   const supabase = createServerSupabaseClient();
   const { error } = await supabase.from("gallery_images").delete().eq("id", id);

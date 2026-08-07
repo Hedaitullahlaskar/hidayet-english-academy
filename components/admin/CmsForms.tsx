@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { GripVertical } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/Modal";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { cn } from "@/lib/utils";
 import {
   createTestimonial,
   togglePublishTestimonial,
@@ -21,6 +23,7 @@ import {
   deleteFaq,
   createGalleryImage,
   toggleGalleryImagePublish,
+  reorderGalleryImages,
   deleteGalleryImage,
 } from "@/lib/admin/repository";
 
@@ -442,14 +445,27 @@ interface GalleryImageRow {
   is_published: boolean;
 }
 
-export function GalleryManager({ images }: { images: GalleryImageRow[] }) {
+export function GalleryManager({ images: initialImages }: { images: GalleryImageRow[] }) {
   const router = useRouter();
+  const [images, setImages] = useState(initialImages);
   const [imageUrl, setImageUrl] = useState("");
   const [altText, setAltText] = useState("");
   const [caption, setCaption] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
+  const [savingOrder, setSavingOrder] = useState(false);
+
+  // Resync to fresh server data on every refresh (toggle/add/delete all
+  // change `initialImages`'s identity) — except mid-drag or while an
+  // optimistic reorder is still saving, where overwriting local state
+  // would either fight the drag gesture or flash back to the pre-drop order.
+  useEffect(() => {
+    if (draggedId === null && !savingOrder) setImages(initialImages);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialImages]);
 
   async function handleAdd(e: FormEvent) {
     e.preventDefault();
@@ -479,6 +495,32 @@ export function GalleryManager({ images }: { images: GalleryImageRow[] }) {
     if (result.success) router.refresh();
   }
 
+  function handleDrop(targetId: string) {
+    setDragOverId(null);
+    if (!draggedId || draggedId === targetId) {
+      setDraggedId(null);
+      return;
+    }
+    const from = images.findIndex((i) => i.id === draggedId);
+    const to = images.findIndex((i) => i.id === targetId);
+    if (from === -1 || to === -1) {
+      setDraggedId(null);
+      return;
+    }
+    const reordered = [...images];
+    const [moved] = reordered.splice(from, 1);
+    reordered.splice(to, 0, moved);
+    setImages(reordered);
+    setDraggedId(null);
+
+    setSavingOrder(true);
+    reorderGalleryImages(reordered.map((i) => i.id)).then((result) => {
+      setSavingOrder(false);
+      if (result.success) router.refresh();
+      else setImages(initialImages); // roll back an optimistic reorder the server rejected
+    });
+  }
+
   return (
     <div>
       <form onSubmit={handleAdd} className="rounded-xl border border-navy-100 bg-white p-6 shadow-card dark:border-navy-700 dark:bg-navy-800">
@@ -501,11 +543,44 @@ export function GalleryManager({ images }: { images: GalleryImageRow[] }) {
         <Button type="submit" size="sm" className="mt-3">Add to Gallery</Button>
       </form>
 
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <p className="mt-6 flex items-center gap-2 text-xs font-medium text-navy-500 dark:text-navy-400">
+        <GripVertical className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
+        Drag a photo by its handle to reorder the gallery.
+        {savingOrder && <span className="font-semibold text-gold-800 dark:text-gold-400">Saving order…</span>}
+      </p>
+      <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {images.map((img) => (
-          <div key={img.id} className="rounded-lg border border-navy-100 bg-white p-3 shadow-card dark:border-navy-700 dark:bg-navy-800">
+          <div
+            key={img.id}
+            draggable
+            onDragStart={() => setDraggedId(img.id)}
+            onDragOver={(e) => {
+              e.preventDefault();
+              if (dragOverId !== img.id) setDragOverId(img.id);
+            }}
+            onDragLeave={() => setDragOverId((cur) => (cur === img.id ? null : cur))}
+            onDrop={(e) => {
+              e.preventDefault();
+              handleDrop(img.id);
+            }}
+            onDragEnd={() => {
+              setDraggedId(null);
+              setDragOverId(null);
+            }}
+            className={cn(
+              "cursor-grab rounded-lg border bg-white p-3 shadow-card transition-all duration-200 ease-premium active:cursor-grabbing dark:bg-navy-800",
+              draggedId === img.id
+                ? "opacity-40"
+                : dragOverId === img.id
+                  ? "border-gold-500 ring-2 ring-gold-500/30"
+                  : "border-navy-100 dark:border-navy-700"
+            )}
+          >
+            <div className="mb-1.5 flex items-center justify-between">
+              <GripVertical className="h-4 w-4 text-navy-300 dark:text-navy-600" strokeWidth={2} aria-hidden="true" />
+            </div>
             {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary uploaded/seeded URL */}
-            <img src={img.image_url} alt={img.alt_text} className="aspect-[4/3] w-full rounded-md object-cover" />
+            <img src={img.image_url} alt={img.alt_text} className="aspect-[4/3] w-full rounded-md object-cover" draggable={false} />
             <p className="mt-2 truncate text-xs font-semibold text-navy-800 dark:text-navy-100">{img.caption ?? img.alt_text}</p>
             <div className="mt-2 flex items-center justify-between">
               <Badge tone={img.is_published ? "success" : "outline"}>{img.is_published ? "Live" : "Hidden"}</Badge>
