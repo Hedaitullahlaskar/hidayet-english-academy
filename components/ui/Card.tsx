@@ -25,7 +25,7 @@ export function Card({
         "rounded-lg border border-navy-100/60 p-6 shadow-card",
         tones[tone],
         hoverLift &&
-          "transition-all duration-300 hover:-translate-y-1 hover:shadow-elevated",
+          "transition-all duration-300 ease-premium hover:-translate-y-1 hover:border-gold-300/60 hover:shadow-elevated",
         className
       )}
       {...props}

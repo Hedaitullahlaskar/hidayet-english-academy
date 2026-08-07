@@ -29,6 +29,10 @@
 
   h1, h2, h3, h4 {
     @apply font-display text-navy-900;
+    /* Per-size letter-spacing now lives in the fontSize scale itself
+       (tailwind.config.ts) — tighter at display sizes, neutral at small
+       ones — so this is just the fallback for any heading using a size
+       step without an explicit pairing. */
     letter-spacing: -0.01em;
   }
 
@@ -39,6 +43,13 @@
   [lang="bn"] {
     @apply font-bengali;
     line-height: 1.7;
+  }
+
+  /* Premium link underline: offset from the text, thin, brand-colored on
+     hover — reads as considered rather than the browser default (flush
+     underline, no offset) used nowhere else in this design system. */
+  a {
+    text-underline-offset: 3px;
   }
 }
 

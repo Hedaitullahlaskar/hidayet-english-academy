@@ -10,15 +10,15 @@ type Size = "sm" | "md" | "lg";
 // component accidentally overrode it with a higher-specificity utility class,
 // silently removing keyboard focus indication on every button on the site.
 const base =
-  "inline-flex items-center justify-center gap-2 font-sans font-semibold transition-all duration-200 rounded-full active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex items-center justify-center gap-2 font-sans font-semibold transition-all duration-300 ease-premium rounded-full active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-gold-600 text-navy-900 hover:bg-gold-500 shadow-gold hover:shadow-lg",
+    "bg-gold-600 text-navy-900 hover:-translate-y-0.5 hover:bg-gold-500 shadow-gold hover:shadow-lg",
   secondary:
-    "bg-navy-800 text-white hover:bg-navy-700 shadow-card dark:bg-navy-700 dark:hover:bg-navy-600",
+    "bg-navy-800 text-white hover:-translate-y-0.5 hover:bg-navy-700 shadow-card hover:shadow-elevated dark:bg-navy-700 dark:hover:bg-navy-600",
   outline:
-    "border-2 border-navy-800 text-navy-800 hover:bg-navy-800 hover:text-white dark:border-navy-300 dark:text-navy-100 dark:hover:bg-navy-100 dark:hover:text-navy-900",
+    "border-2 border-navy-800 text-navy-800 hover:-translate-y-0.5 hover:bg-navy-800 hover:text-white dark:border-navy-300 dark:text-navy-100 dark:hover:bg-navy-100 dark:hover:text-navy-900",
   ghost: "text-navy-800 hover:bg-navy-100/60 dark:text-navy-100 dark:hover:bg-white/10",
 };
 

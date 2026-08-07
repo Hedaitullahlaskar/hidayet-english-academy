@@ -40,7 +40,7 @@ export async function Hero() {
             {badgeText}
           </Badge>
 
-          <h1 className="mt-6 animate-fade-up text-balance font-display text-4xl font-semibold leading-[1.1] text-white sm:text-5xl lg:text-6xl [animation-delay:80ms]">
+          <h1 className="mt-6 animate-fade-up text-balance font-display text-5xl font-semibold text-white sm:text-6xl lg:text-7xl [animation-delay:80ms]">
             {titleLine1}
             <br />
             <span className="text-gold-400">{titleLine2}</span>
