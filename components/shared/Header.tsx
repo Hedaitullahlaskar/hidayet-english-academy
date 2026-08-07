@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Menu, X } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Avatar } from "@/components/dashboard/Avatar";
@@ -121,7 +122,7 @@ export function Header({ settings }: { settings: SiteSettings }) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 w-full bg-white/95 backdrop-blur-sm transition-shadow duration-300 dark:bg-navy-950/95",
+        "glass glass-border sticky top-0 z-40 w-full border-x-0 border-t-0 transition-shadow duration-300",
         scrolled && "shadow-card"
       )}
     >
@@ -156,16 +157,20 @@ export function Header({ settings }: { settings: SiteSettings }) {
                 href={link.href}
                 aria-current={isActive ? "true" : undefined}
                 className={cn(
-                  "relative text-sm font-semibold transition-colors",
+                  "relative text-sm font-semibold transition-colors duration-300 ease-premium",
                   isActive
                     ? "text-gold-800 dark:text-gold-400"
                     : "text-navy-700 hover:text-gold-800 dark:text-navy-200 dark:hover:text-gold-400"
                 )}
               >
                 {link.label}
-                {isActive && (
-                  <span className="absolute -bottom-2 left-0 h-0.5 w-full rounded-full bg-gold-600" />
-                )}
+                <span
+                  className={cn(
+                    "absolute -bottom-2 left-0 h-0.5 w-full origin-left scale-x-0 rounded-full bg-gold-600 transition-transform duration-300 ease-premium",
+                    isActive && "scale-x-100"
+                  )}
+                  aria-hidden="true"
+                />
               </Link>
             );
           })}
@@ -209,28 +214,16 @@ export function Header({ settings }: { settings: SiteSettings }) {
         <div className="flex items-center gap-2 lg:hidden">
           <ThemeToggle />
           <button
-            className="flex h-10 w-10 items-center justify-center rounded-full text-navy-800 dark:text-white"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-navy-800 transition-colors hover:bg-navy-100/60 dark:text-white dark:hover:bg-white/10"
             onClick={() => setMenuOpen((v) => !v)}
             aria-expanded={menuOpen}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              {menuOpen ? (
-                <path
-                  d="M6 6l12 12M18 6L6 18"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                />
-              ) : (
-                <path
-                  d="M4 7h16M4 12h16M4 17h16"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                />
-              )}
-            </svg>
+            {menuOpen ? (
+              <X className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
+            ) : (
+              <Menu className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
+            )}
           </button>
         </div>
       </Container>
@@ -238,7 +231,7 @@ export function Header({ settings }: { settings: SiteSettings }) {
       {/* Mobile menu */}
       <div
         className={cn(
-          "fixed inset-x-0 top-[72px] z-30 origin-top bg-white shadow-elevated transition-all duration-300 dark:bg-navy-950 lg:hidden",
+          "glass fixed inset-x-0 top-[72px] z-30 origin-top overflow-y-auto shadow-elevated transition-all duration-300 ease-premium lg:hidden",
           menuOpen
             ? "pointer-events-auto max-h-[80vh] opacity-100"
             : "pointer-events-none max-h-0 opacity-0"

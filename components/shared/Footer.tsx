@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Phone, Mail } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { navLinks } from "@/content/site-data";
 import { allPolicies } from "@/content/legal";
@@ -31,8 +32,10 @@ export function Footer({ settings }: { settings: SiteSettings }) {
   ].filter((s): s is { key: string; url: string } => Boolean(s.url));
 
   return (
-    <footer className="bg-navy-950 text-navy-200">
-      <Container className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="relative overflow-hidden bg-gradient-navy text-navy-200">
+      <div className="bg-grid-navy pointer-events-none absolute inset-0 opacity-40" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-500/60 to-transparent" aria-hidden="true" />
+      <Container className="relative grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <div className="flex items-center gap-3">
             <Image
@@ -64,7 +67,7 @@ export function Footer({ settings }: { settings: SiteSettings }) {
           <ul className="space-y-3 text-sm">
             {navLinks.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className="hover:text-gold-400">
+                <Link href={link.href} className="transition-colors duration-200 hover:text-gold-400">
                   {link.label}
                 </Link>
               </li>
@@ -79,15 +82,15 @@ export function Footer({ settings }: { settings: SiteSettings }) {
           <ul className="space-y-3 text-sm">
             {settings.phone && (
               <li>
-                <a href={`tel:${settings.phone}`} className="hover:text-gold-400">
-                  📞 {settings.phoneDisplay ?? settings.phone}
+                <a href={`tel:${settings.phone}`} className="flex items-center gap-2 transition-colors duration-200 hover:text-gold-400">
+                  <Phone className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" /> {settings.phoneDisplay ?? settings.phone}
                 </a>
               </li>
             )}
             {settings.email && (
               <li>
-                <a href={`mailto:${settings.email}`} className="hover:text-gold-400">
-                  ✉️ {settings.email}
+                <a href={`mailto:${settings.email}`} className="flex items-center gap-2 transition-colors duration-200 hover:text-gold-400">
+                  <Mail className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" /> {settings.email}
                 </a>
               </li>
             )}
@@ -106,7 +109,7 @@ export function Footer({ settings }: { settings: SiteSettings }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`HEA on ${key}`}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-gold-600 hover:text-navy-900"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-all duration-300 ease-premium hover:-translate-y-0.5 hover:bg-gold-600 hover:text-navy-900 hover:shadow-gold"
               >
                 {socialIcons[key]}
               </a>
@@ -115,35 +118,35 @@ export function Footer({ settings }: { settings: SiteSettings }) {
         </div>
       </Container>
 
-      <div className="border-t border-white/10 py-10">
+      <div className="relative border-t border-white/10 py-10">
         <Container>
           <h3 className="mb-5 text-sm font-bold uppercase tracking-wide text-white">
             Legal &amp; Policies
           </h3>
           <div className="grid grid-cols-2 gap-x-6 gap-y-2.5 text-xs text-navy-300 sm:grid-cols-3 lg:grid-cols-4">
             {allPolicies.map((p) => (
-              <Link key={p.slug} href={`/legal/${p.slug}`} className="hover:text-gold-400">
+              <Link key={p.slug} href={`/legal/${p.slug}`} className="transition-colors duration-200 hover:text-gold-400">
                 {p.title}
               </Link>
             ))}
           </div>
           <Link
             href="/legal"
-            className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-gold-400 hover:text-gold-300"
+            className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-gold-400 transition-colors duration-200 hover:text-gold-300"
           >
             View the full Legal Center →
           </Link>
         </Container>
       </div>
 
-      <div className="border-t border-white/10 py-6">
+      <div className="relative border-t border-white/10 py-6">
         <Container className="flex flex-col items-center justify-between gap-3 text-xs text-navy-400 sm:flex-row">
           <p>© {new Date().getFullYear()} Hidayet English Academy. All rights reserved.</p>
           <div className="flex gap-5">
-            <Link href="/legal/privacy-policy" className="hover:text-gold-400">
+            <Link href="/legal/privacy-policy" className="transition-colors duration-200 hover:text-gold-400">
               Privacy Policy
             </Link>
-            <Link href="/legal/terms-and-conditions" className="hover:text-gold-400">
+            <Link href="/legal/terms-and-conditions" className="transition-colors duration-200 hover:text-gold-400">
               Terms
             </Link>
           </div>
