@@ -120,9 +120,30 @@ const config: Config = {
         // that want depth without the harder-edged "elevated" shadow's
         // hover-lift connotation.
         ambient: "0 24px 64px -20px rgba(10, 37, 64, 0.22), 0 8px 24px -8px rgba(10, 37, 64, 0.08)",
+        // Soft, barely-there resting shadow for dense enterprise surfaces
+        // (admin tables, stat tiles) where "card" already reads too heavy
+        // at high density.
+        soft: "0 1px 2px -1px rgba(10, 37, 64, 0.06), 0 1px 1px -1px rgba(10, 37, 64, 0.04)",
+        // Focus/active glow rings — used sparingly, on the one primary
+        // action per view, never as a default hover state.
+        "glow-gold": "0 0 0 1px rgba(201, 162, 39, 0.4), 0 8px 24px -4px rgba(201, 162, 39, 0.35)",
+        "glow-navy": "0 0 0 1px rgba(10, 37, 64, 0.5), 0 8px 24px -4px rgba(10, 37, 64, 0.35)",
+        // Modal/popover elevation — deliberately the heaviest shadow in the
+        // system, reserved for surfaces that float above everything else.
+        popover: "0 32px 80px -24px rgba(5, 15, 30, 0.35), 0 12px 32px -12px rgba(5, 15, 30, 0.18)",
+      },
+      backgroundImage: {
+        // Brand mesh gradient — layered radial washes of navy + gold at low
+        // opacity, for hero/section backgrounds that want depth without a
+        // literal photograph or a flat single-hue fill.
+        "mesh-gold": "radial-gradient(ellipse 80% 50% at 20% -10%, rgba(212, 175, 55, 0.15), transparent), radial-gradient(ellipse 60% 50% at 100% 0%, rgba(10, 37, 64, 0.12), transparent)",
+        "mesh-navy": "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(78, 123, 163, 0.25), transparent), radial-gradient(ellipse 60% 40% at 100% 100%, rgba(212, 175, 55, 0.1), transparent)",
+        "gradient-gold": "linear-gradient(135deg, #E0C465 0%, #C9A227 50%, #A9821A 100%)",
+        "gradient-navy": "linear-gradient(135deg, #123659 0%, #0A2540 60%, #050F1E 100%)",
       },
       maxWidth: {
         "8xl": "90rem",
+        "9xl": "100rem",
       },
       // The same "ease-out-expo"-family curve already used by the fade-up
       // keyframe, now reusable on any hover/transition so interactive
@@ -144,11 +165,31 @@ const config: Config = {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-6px)" },
         },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+        "scale-in": {
+          "0%": { opacity: "0", transform: "scale(0.96) translateY(4px)" },
+          "100%": { opacity: "1", transform: "scale(1) translateY(0)" },
+        },
+        "overlay-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        "ring-progress": {
+          "0%": { strokeDashoffset: "var(--ring-circumference)" },
+          "100%": { strokeDashoffset: "var(--ring-offset)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both",
         "loop-pulse": "loop-pulse 2.4s ease-in-out infinite",
         "gentle-float": "gentle-float 5s ease-in-out infinite",
+        shimmer: "shimmer 1.8s ease-in-out infinite",
+        "scale-in": "scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both",
+        "overlay-in": "overlay-in 0.2s ease-out both",
+        "ring-progress": "ring-progress 1.1s cubic-bezier(0.16, 1, 0.3, 1) both",
       },
     },
   },

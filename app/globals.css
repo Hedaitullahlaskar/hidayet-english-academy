@@ -64,6 +64,44 @@
       linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
     background-size: 40px 40px;
   }
+
+  /* Glass morphism — reserved for surfaces that float above other content
+     (sticky headers, popovers, modals, floating toolbars). Never used on
+     resting page content, where a flat card reads more premium than glass
+     everywhere would. */
+  .glass {
+    @apply bg-white/75 backdrop-blur-xl backdrop-saturate-150 dark:bg-navy-900/70;
+  }
+  .glass-border {
+    @apply border border-white/40 dark:border-navy-700/50;
+  }
+
+  /* Gold gradient text — for the one hero word/phrase per page that should
+     carry the brand's aspirational note. Deliberately not reused on every
+     heading, which would cheapen it. */
+  .text-gradient-gold {
+    @apply bg-gradient-gold bg-clip-text text-transparent;
+  }
+
+  /* Shimmering skeleton fill — see components/ui/Skeleton.tsx */
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(10, 37, 64, 0.06) 25%,
+      rgba(10, 37, 64, 0.12) 37%,
+      rgba(10, 37, 64, 0.06) 63%
+    );
+    background-size: 400% 100%;
+  }
+  html.dark .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.06) 25%,
+      rgba(255, 255, 255, 0.12) 37%,
+      rgba(255, 255, 255, 0.06) 63%
+    );
+    background-size: 400% 100%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
