@@ -1493,6 +1493,30 @@ create policy "Staff can delete site content images"
   using (bucket_id = 'site-content' and is_staff(auth.uid()));
 
 -- ============================================================================
+-- STUDENT NOTES — a teacher's private observations about a specific
+-- student ("struggles with past tense," "great improvement this month"),
+-- distinct from teacher_notes (Module 7) which is admin-about-staff, not
+-- teacher-about-student. Same isolation reasoning as teacher_notes: a
+-- separate table, never a column on profiles, so a student can never see
+-- what a teacher wrote about them through their own "view own profile"
+-- access. Any staff can read/write, matching this codebase's existing
+-- student-visibility pattern (getAllStudents/getStudentById in
+-- lib/teacher/repository.ts are already not course-scoped) rather than
+-- introducing a narrower per-course scope nothing else here uses for
+-- student records.
+-- ============================================================================
+create table if not exists student_notes (
+  id uuid primary key default gen_random_uuid(),
+  student_id uuid not null references profiles(id) on delete cascade,
+  note text not null,
+  created_by uuid references profiles(id),
+  created_at timestamptz not null default now()
+);
+alter table student_notes enable row level security;
+drop policy if exists "Staff manage student notes" on student_notes;
+create policy "Staff manage student notes" on student_notes for all using (is_staff(auth.uid()));
+
+-- ============================================================================
 -- End of schema. See COURSES_MODULE_README.md, LMS_MODULE_README.md,
 -- TEACHER_MODULE_README.md, ADMIN_MODULE_README.md, AUTH_MODULE_README.md,
 -- AI_LESSON_PLAYER_README.md, PAYMENTS_MODULE_README.md,

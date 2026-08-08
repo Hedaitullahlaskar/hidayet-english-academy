@@ -120,6 +120,86 @@ export async function getStudentAttendance(studentId: string) {
   }, []);
 }
 
+export async function getStudentTestAttempts(studentId: string) {
+  return safeQuery(async () => {
+    const supabase = createServerSupabaseClient();
+    const { data } = await supabase
+      .from("test_attempts")
+      .select("id, score, submitted_at, tests(title, total_marks, course_slug)")
+      .eq("student_id", studentId)
+      .not("submitted_at", "is", null)
+      .order("submitted_at", { ascending: false });
+    return data ?? [];
+  }, []);
+}
+
+export interface WeakArea {
+  courseSlug: string;
+  avgPercent: number;
+  attemptCount: number;
+}
+
+/**
+ * Real, computed from actual scored attempts — courses where a student's
+ * average test score sits below the course's own pass_percentage, sorted
+ * worst-first. Returns [] rather than a guess when there isn't enough
+ * data (fewer than 2 scored attempts for a course), since one low score
+ * isn't a pattern.
+ */
+export async function getStudentWeakAreas(studentId: string): Promise<WeakArea[]> {
+  return safeQuery(async () => {
+    const supabase = createServerSupabaseClient();
+    const { data } = await supabase
+      .from("test_attempts")
+      .select("score, tests(course_slug, total_marks, pass_percentage)")
+      .eq("student_id", studentId)
+      .not("score", "is", null);
+
+    const rows = (data ?? []) as { score: number; tests: { course_slug: string; total_marks: number; pass_percentage: number } | { course_slug: string; total_marks: number; pass_percentage: number }[] | null }[];
+    const byCourse = new Map<string, { percents: number[]; passThreshold: number }>();
+
+    for (const row of rows) {
+      const test = Array.isArray(row.tests) ? row.tests[0] : row.tests;
+      if (!test || !test.total_marks) continue;
+      const percent = (row.score / test.total_marks) * 100;
+      const entry = byCourse.get(test.course_slug) ?? { percents: [], passThreshold: test.pass_percentage };
+      entry.percents.push(percent);
+      byCourse.set(test.course_slug, entry);
+    }
+
+    const weakAreas: WeakArea[] = [];
+    for (const [courseSlug, { percents, passThreshold }] of byCourse) {
+      if (percents.length < 2) continue;
+      const avgPercent = Math.round(percents.reduce((sum, p) => sum + p, 0) / percents.length);
+      if (avgPercent < passThreshold) weakAreas.push({ courseSlug, avgPercent, attemptCount: percents.length });
+    }
+    return weakAreas.sort((a, b) => a.avgPercent - b.avgPercent);
+  }, []);
+}
+
+export async function getStudentNotes(studentId: string) {
+  return safeQuery(async () => {
+    const supabase = createServerSupabaseClient();
+    const { data } = await supabase
+      .from("student_notes")
+      .select("id, note, created_at, profiles!created_by(full_name)")
+      .eq("student_id", studentId)
+      .order("created_at", { ascending: false });
+    return data ?? [];
+  }, []);
+}
+
+export async function addStudentNote(studentId: string, note: string): Promise<MutationResult> {
+  const supabase = createServerSupabaseClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { success: false, error: "Not signed in." };
+  if (note.trim().length < 3) return { success: false, error: "Note is too short." };
+  const { error } = await supabase.from("student_notes").insert({ student_id: studentId, note: note.trim(), created_by: user.id });
+  return error ? { success: false, error: error.message } : { success: true };
+}
+
 export async function getTodaysLiveClasses() {
   return safeQuery(async () => {
     const supabase = createServerSupabaseClient();
