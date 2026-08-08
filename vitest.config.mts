@@ -10,6 +10,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "."),
+      // The real `server-only` package throws unconditionally outside
+      // Next's own bundler — see test-utils/server-only-stub.ts.
+      "server-only": path.resolve(import.meta.dirname, "test-utils/server-only-stub.ts"),
     },
   },
 });
