@@ -5,8 +5,9 @@ import { getCourseBySlug } from "@/lib/courses/repository";
 
 export const metadata = { robots: { index: false, follow: false } };
 
-export default async function CheckoutPage({ params }: { params: { courseSlug: string } }) {
-  const course = await getCourseBySlug(params.courseSlug);
+export default async function CheckoutPage({ params }: { params: Promise<{ courseSlug: string }> }) {
+  const { courseSlug } = await params;
+  const course = await getCourseBySlug(courseSlug);
   if (!course) notFound();
 
   return (
@@ -17,7 +18,7 @@ export default async function CheckoutPage({ params }: { params: { courseSlug: s
           Complete Your Enrollment
         </h1>
         <div className="animate-fade-up">
-          <CheckoutForm courseSlug={params.courseSlug} courseName={course.name} />
+          <CheckoutForm courseSlug={courseSlug} courseName={course.name} />
         </div>
       </Container>
     </section>

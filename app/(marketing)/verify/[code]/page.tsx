@@ -9,11 +9,12 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function VerifyCertificatePage({ params }: { params: { code: string } }) {
-  const certificate = await getCertificateByCode(params.code);
+export default async function VerifyCertificatePage({ params }: { params: Promise<{ code: string }> }) {
+  const { code } = await params;
+  const certificate = await getCertificateByCode(code);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.hidayetenglishacademy.com";
   const qrDataUrl = certificate
-    ? await QRCode.toDataURL(`${siteUrl}/verify/${params.code}`, { margin: 1, width: 160 })
+    ? await QRCode.toDataURL(`${siteUrl}/verify/${code}`, { margin: 1, width: 160 })
     : null;
 
   return (
@@ -35,7 +36,7 @@ export default async function VerifyCertificatePage({ params }: { params: { code
               <p className="font-semibold text-navy-800 dark:text-navy-100">{new Date(certificate.issued_at).toLocaleDateString()}</p>
             </div>
             <a
-              href={`/api/certificates/${params.code}/pdf`}
+              href={`/api/certificates/${code}/pdf`}
               className="mt-6 inline-block rounded-full bg-gold-600 px-6 py-3 text-sm font-semibold text-navy-900"
             >
               Download PDF →

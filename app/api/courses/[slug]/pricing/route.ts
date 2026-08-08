@@ -10,10 +10,11 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
  * for the button to appear, since this check happens client-side at
  * request time.
  */
-export async function GET(request: Request, { params }: { params: { slug: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
+    const { slug } = await params;
     const supabase = createServerSupabaseClient();
-    const { data: course } = await supabase.from("admin_courses").select("id, is_free").eq("slug", params.slug).maybeSingle();
+    const { data: course } = await supabase.from("admin_courses").select("id, is_free").eq("slug", slug).maybeSingle();
 
     if (!course || course.is_free) {
       return NextResponse.json({ available: false });

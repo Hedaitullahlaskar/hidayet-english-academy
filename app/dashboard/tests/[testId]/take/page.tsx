@@ -4,18 +4,19 @@ import { getTestForTaking, getMyAttemptsForTest, startTestAttempt } from "@/lib/
 
 export const metadata = { robots: { index: false, follow: false } };
 
-export default async function TakeTestPage({ params }: { params: { testId: string } }) {
-  const test = await getTestForTaking(params.testId);
+export default async function TakeTestPage({ params }: { params: Promise<{ testId: string }> }) {
+  const { testId } = await params;
+  const test = await getTestForTaking(testId);
   if (!test) notFound();
 
-  const attempts = await getMyAttemptsForTest(params.testId);
+  const attempts = await getMyAttemptsForTest(testId);
   const completedAttempts = attempts.filter((a: { submitted_at: string | null }) => a.submitted_at);
 
   if (completedAttempts.length >= test.max_attempts) {
     redirect("/dashboard/tests");
   }
 
-  const attemptResult = await startTestAttempt(params.testId, completedAttempts.length + 1);
+  const attemptResult = await startTestAttempt(testId, completedAttempts.length + 1);
   if (!attemptResult) {
     redirect("/dashboard/tests");
   }
@@ -40,7 +41,7 @@ export default async function TakeTestPage({ params }: { params: { testId: strin
       <div className="mt-6">
         <TestTakingInterface
           attemptId={attemptResult.attemptId}
-          testId={params.testId}
+          testId={testId}
           totalMarks={test.total_marks}
           passPercentage={test.pass_percentage}
           durationMinutes={test.duration_minutes}

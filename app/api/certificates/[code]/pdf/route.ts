@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { getCertificateByCode } from "@/lib/certificates/repository";
 import { generateCertificatePdf } from "@/lib/certificates/generate";
 
-export async function GET(request: Request, { params }: { params: { code: string } }) {
-  const certificate = await getCertificateByCode(params.code);
+export async function GET(request: Request, { params }: { params: Promise<{ code: string }> }) {
+  const { code } = await params;
+  const certificate = await getCertificateByCode(code);
   if (!certificate) {
     return NextResponse.json({ error: "Certificate not found" }, { status: 404 });
   }
@@ -18,7 +19,7 @@ export async function GET(request: Request, { params }: { params: { code: string
   return new NextResponse(Buffer.from(pdfBytes), {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="HEA-Certificate-${params.code}.pdf"`,
+      "Content-Disposition": `attachment; filename="HEA-Certificate-${code}.pdf"`,
     },
   });
 }

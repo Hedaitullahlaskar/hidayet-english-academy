@@ -13,7 +13,7 @@ import { safeJsonLd } from "@/lib/utils";
 const SITE_URL = "https://www.hidayetenglishacademy.com";
 
 interface PageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 // Pre-renders a static page for every course in the repository at build
@@ -25,7 +25,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const course = await getCourseBySlug(params.slug);
+  const { slug } = await params;
+  const course = await getCourseBySlug(slug);
   if (!course) return {};
 
   return {
@@ -40,7 +41,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function CourseDetailPage({ params }: PageProps) {
-  const course = await getCourseBySlug(params.slug);
+  const { slug } = await params;
+  const course = await getCourseBySlug(slug);
   if (!course) notFound();
 
   const faqJsonLd = {

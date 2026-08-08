@@ -16,17 +16,18 @@ import {
 
 export const metadata = { robots: { index: false, follow: false } };
 
-export default async function StudentProfilePage({ params }: { params: { id: string } }) {
-  const student = await getStudentById(params.id);
+export default async function StudentProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const student = await getStudentById(id);
   if (!student) notFound();
 
   const [enrollments, submissions, attendance, testAttempts, weakAreas, notes] = await Promise.all([
-    getStudentEnrollments(params.id),
-    getStudentSubmissions(params.id),
-    getStudentAttendance(params.id),
-    getStudentTestAttempts(params.id),
-    getStudentWeakAreas(params.id),
-    getStudentNotes(params.id),
+    getStudentEnrollments(id),
+    getStudentSubmissions(id),
+    getStudentAttendance(id),
+    getStudentTestAttempts(id),
+    getStudentWeakAreas(id),
+    getStudentNotes(id),
   ]);
 
   return (
@@ -119,7 +120,7 @@ export default async function StudentProfilePage({ params }: { params: { id: str
           )}
         </div>
 
-        <StudentNotesPanel studentId={params.id} notes={notes} />
+        <StudentNotesPanel studentId={id} notes={notes} />
       </div>
     </div>
   );

@@ -6,11 +6,12 @@ import { getAdminCourseById, getTeacherAssignmentsForCourse, getAllTeachers } fr
 export const metadata = { robots: { index: false, follow: false } };
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function EditCoursePage({ params }: PageProps) {
-  const course = await getAdminCourseById(params.id);
+  const { id } = await params;
+  const course = await getAdminCourseById(id);
   if (!course) notFound();
 
   const [assignments, allTeachers] = await Promise.all([

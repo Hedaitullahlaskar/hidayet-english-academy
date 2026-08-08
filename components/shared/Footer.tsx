@@ -5,8 +5,12 @@ import { Container } from "@/components/ui/Container";
 import { navLinks } from "@/content/site-data";
 import { allPolicies } from "@/content/legal";
 import type { SiteSettings } from "@/lib/settings/repository";
+import type { ReactElement } from "react";
 
-const socialIcons: Record<string, JSX.Element> = {
+// React 19's updated type definitions removed the ambient global `JSX`
+// namespace — `JSX.Element` now needs an explicit import as
+// `ReactElement` (or `React.JSX.Element`), same type, different name.
+const socialIcons: Record<string, ReactElement> = {
   facebook: (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M22 12.06C22 6.51 17.52 2 12 2S2 6.51 2 12.06c0 5 3.66 9.15 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.89h2.78l-.44 2.91h-2.34V22c4.78-.79 8.44-4.94 8.44-9.94Z" />

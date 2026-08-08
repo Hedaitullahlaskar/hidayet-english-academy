@@ -17,27 +17,38 @@ import { cookies } from "next/headers";
  * treated as the untyped data it actually is, everywhere at once, rather
  * than needing a workaround at each of the 70+ individual call sites.
  */
+/**
+ * Deliberately kept synchronous (not `async function`), even though
+ * Next.js 15 made `cookies()` itself return a Promise — @supabase/ssr's
+ * cookie methods (get/set/remove) are typed to accept either a value or
+ * a Promise of one, so each method just `await`s `cookies()` internally
+ * instead. That's what makes this a one-file fix: every one of this
+ * app's 60+ call sites (`const supabase = createServerSupabaseClient()`)
+ * keeps working completely unchanged, rather than every repository
+ * function needing to become `await createServerSupabaseClient()`.
+ */
 export function createServerSupabaseClient() {
-  const cookieStore = cookies();
-
   return createServerClient<any>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
+        async get(name: string) {
+          const cookieStore = await cookies();
           return cookieStore.get(name)?.value;
         },
-        set(name: string, value: string, options: CookieOptions) {
+        async set(name: string, value: string, options: CookieOptions) {
           try {
+            const cookieStore = await cookies();
             cookieStore.set({ name, value, ...options });
           } catch {
             // Called from a Server Component that can't set cookies —
             // safe to ignore if middleware.ts is refreshing the session.
           }
         },
-        remove(name: string, options: CookieOptions) {
+        async remove(name: string, options: CookieOptions) {
           try {
+            const cookieStore = await cookies();
             cookieStore.set({ name, value: "", ...options });
           } catch {
             // Same as above.

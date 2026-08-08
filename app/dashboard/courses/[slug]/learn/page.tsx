@@ -23,16 +23,17 @@ interface Lesson {
   order_index: number;
 }
 
-export default async function CourseLessonListPage({ params }: { params: { slug: string } }) {
-  const course = await getCourseBySlug(params.slug);
+export default async function CourseLessonListPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const course = await getCourseBySlug(slug);
   if (!course) notFound();
 
   const [lessons, progress, continueLessonId, liveClasses, replays, profile] = await Promise.all([
-    getLessonsForCourse(params.slug),
-    getMyProgressForCourse(params.slug),
-    getContinueLessonForCourse(params.slug),
+    getLessonsForCourse(slug),
+    getMyProgressForCourse(slug),
+    getContinueLessonForCourse(slug),
     getUpcomingLiveClasses(1),
-    getClassReplaysForCourse(params.slug),
+    getClassReplaysForCourse(slug),
     getCurrentProfile(),
   ]);
 
@@ -78,7 +79,7 @@ export default async function CourseLessonListPage({ params }: { params: { slug:
               <p className="mt-1 font-display text-lg font-semibold">{completedCount} of {totalCount} lessons complete ({percent}%)</p>
             </div>
             {continueLessonId && (
-              <Button href={`/dashboard/courses/${params.slug}/learn/${continueLessonId}`} size="lg">
+              <Button href={`/dashboard/courses/${slug}/learn/${continueLessonId}`} size="lg">
                 Continue Lesson →
               </Button>
             )}
@@ -95,7 +96,7 @@ export default async function CourseLessonListPage({ params }: { params: { slug:
                       return (
                       <Link
                         key={lesson.id}
-                        href={`/dashboard/courses/${params.slug}/learn/${lesson.id}`}
+                        href={`/dashboard/courses/${slug}/learn/${lesson.id}`}
                         className="flex items-center justify-between rounded-lg border border-navy-100 bg-white p-4 shadow-card transition-colors hover:border-gold-300 dark:border-navy-700 dark:bg-navy-800"
                       >
                         <div className="flex items-center gap-3">

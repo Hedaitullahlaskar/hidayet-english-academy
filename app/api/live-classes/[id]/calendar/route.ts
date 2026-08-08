@@ -6,14 +6,15 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 // Defense in depth, same as the other /api routes: the `live_classes` RLS
 // policy already restricts the underlying query to enrolled students and
 // staff, but a route handler shouldn't rely on RLS being the only check.
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const supabase = createServerSupabaseClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const liveClass = await getLiveClassById(params.id);
+  const liveClass = await getLiveClassById(id);
   if (!liveClass) return NextResponse.json({ error: "Class not found" }, { status: 404 });
 
   const ics = generateIcsFile({

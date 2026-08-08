@@ -14,8 +14,9 @@ export function generateStaticParams() {
   return allPolicies.map((p) => ({ slug: p.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const policy = getPolicyBySlug(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const policy = getPolicyBySlug(slug);
   if (!policy) return {};
 
   return {
@@ -31,8 +32,9 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-export default function PolicyPage({ params }: { params: { slug: string } }) {
-  const policy = getPolicyBySlug(params.slug);
+export default async function PolicyPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const policy = getPolicyBySlug(slug);
   if (!policy) notFound();
 
   const jsonLd = {
