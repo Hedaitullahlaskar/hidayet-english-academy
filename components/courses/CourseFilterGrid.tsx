@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { CourseCard } from "@/components/courses/CourseCard";
 import { cn } from "@/lib/utils";
 import { filterOptions } from "@/lib/courses/filterOptions";
@@ -103,9 +104,9 @@ export function CourseFilterGrid({ courses }: CourseFilterGridProps) {
         <div className="mt-10 rounded-xl border border-dashed border-navy-200 bg-white p-10 text-center dark:border-navy-700 dark:bg-navy-900">
           <p className="text-navy-600 dark:text-navy-300">
             No courses match that combination yet — try clearing a filter, or{" "}
-            <a href="/#contact" className="font-semibold text-gold-800 underline dark:text-gold-400">
+            <Link href="/#contact" className="font-semibold text-gold-800 underline dark:text-gold-400">
               ask us directly
-            </a>
+            </Link>
             .
           </p>
         </div>

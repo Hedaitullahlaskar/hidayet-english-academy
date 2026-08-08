@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { TeacherSettingsForm } from "@/components/teacher/TeacherSettingsForm";
 import { getCurrentTeacherProfile } from "@/lib/teacher/repository";
 
@@ -19,9 +20,9 @@ export default async function TeacherSettingsPage() {
         />
       </div>
       <div className="mt-8 rounded-lg border border-navy-100 bg-paper-100 p-4 dark:border-navy-700 dark:bg-navy-900">
-        <a href="/account" className="text-sm font-semibold text-gold-800 underline dark:text-gold-400">
+        <Link href="/account" className="text-sm font-semibold text-gold-800 underline dark:text-gold-400">
           Account Security — change password, login history, devices →
-        </a>
+        </Link>
       </div>
     </div>
   );

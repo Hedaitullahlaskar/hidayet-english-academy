@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AdminSettingsForm } from "@/components/admin/AdminSettingsForm";
 import { getCurrentAdminProfile } from "@/lib/admin/repository";
 
@@ -46,9 +47,9 @@ export default async function AdminSettingsPage() {
         </div>
       </section>
       <div className="mt-8 rounded-lg border border-navy-100 bg-paper-100 p-4 dark:border-navy-700 dark:bg-navy-900">
-        <a href="/account" className="text-sm font-semibold text-gold-800 underline dark:text-gold-400">
+        <Link href="/account" className="text-sm font-semibold text-gold-800 underline dark:text-gold-400">
           Account Security — change password, login history, devices →
-        </a>
+        </Link>
       </div>
     </div>
   );

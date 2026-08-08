@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { CurrencySelector, useCurrency } from "@/components/shared/CurrencySelector";
@@ -64,9 +65,9 @@ export function CheckoutForm({ courseSlug, courseName }: CheckoutFormProps) {
         Secured by {currency === "INR" ? "Razorpay" : "Stripe"}. We never see or store your card details.
         <br />
         By paying, you agree to our{" "}
-        <a href="/legal/payment-policy" className="underline hover:text-gold-800 dark:hover:text-gold-400">Payment Policy</a>{" "}
+        <Link href="/legal/payment-policy" className="underline hover:text-gold-800 dark:hover:text-gold-400">Payment Policy</Link>{" "}
         and{" "}
-        <a href="/legal/refund-and-cancellation-policy" className="underline hover:text-gold-800 dark:hover:text-gold-400">Refund Policy</a>.
+        <Link href="/legal/refund-and-cancellation-policy" className="underline hover:text-gold-800 dark:hover:text-gold-400">Refund Policy</Link>.
       </p>
     </div>
   );
