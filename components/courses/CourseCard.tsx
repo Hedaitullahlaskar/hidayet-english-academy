@@ -25,14 +25,17 @@ export function CourseCard({ course }: { course: CourseDetail }) {
         ) : null}
       </div>
 
-      <h3
+      {/* h2, not h3: this card sits directly under the page's h1 with no
+          intermediate section heading, so h3 skipped a level (a real,
+          Lighthouse-caught heading-order failure). */}
+      <h2
         className={cn(
           "mt-4 font-display text-lg font-semibold",
           course.featured ? "text-white" : "text-navy-900 dark:text-white"
         )}
       >
         {course.name}
-      </h3>
+      </h2>
       <p className={cn("mt-1 text-sm", course.featured ? "text-navy-200" : "text-navy-600 dark:text-navy-300")}>
         {course.tagline}
       </p>
@@ -41,7 +44,9 @@ export function CourseCard({ course }: { course: CourseDetail }) {
         <span
           className={cn(
             "rounded-full px-2.5 py-1 text-xs font-semibold",
-            course.featured ? "bg-white/10 text-gold-300" : "bg-gold-100 text-gold-800 dark:bg-navy-700 dark:text-gold-400"
+            // text-gold-900, not gold-800: gold-800 on gold-100 measures
+            // 4.43:1, just under WCAG AA's 4.5:1 — see components/ui/Badge.tsx.
+            course.featured ? "bg-white/10 text-gold-300" : "bg-gold-100 text-gold-900 dark:bg-navy-700 dark:text-gold-400"
           )}
         >
           {course.level}
