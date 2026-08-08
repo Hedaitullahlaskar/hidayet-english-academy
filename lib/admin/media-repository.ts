@@ -2,6 +2,7 @@
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import type { MutationResult } from "@/lib/admin/repository";
+import { isSafePath } from "@/lib/admin/media-path-safety";
 
 /**
  * Media Manager — built entirely on the `site-content` Storage bucket that
@@ -41,6 +42,7 @@ function publicUrlFor(supabase: ReturnType<typeof createServerSupabaseClient>, p
 }
 
 export async function listMedia(folder: string): Promise<MediaItem[]> {
+  if (!isSafePath(folder)) return [];
   const supabase = createServerSupabaseClient();
   const prefix = folder ? `${folder}/` : "";
   const { data, error } = await supabase.storage.from(BUCKET).list(folder || undefined, {
@@ -70,6 +72,7 @@ export async function listMedia(folder: string): Promise<MediaItem[]> {
 }
 
 export async function createMediaFolder(parentFolder: string, name: string): Promise<MutationResult> {
+  if (!isSafePath(parentFolder)) return { success: false, error: "Invalid folder path." };
   const clean = name.trim().replace(/[^a-zA-Z0-9._-]/g, "-");
   if (!clean) return { success: false, error: "Please enter a folder name." };
   const supabase = createServerSupabaseClient();
@@ -79,6 +82,7 @@ export async function createMediaFolder(parentFolder: string, name: string): Pro
 }
 
 export async function softDeleteMedia(path: string): Promise<MutationResult> {
+  if (!isSafePath(path)) return { success: false, error: "Invalid path." };
   const supabase = createServerSupabaseClient();
   const trashPath = `${TRASH_PREFIX}/${encodeURIComponent(path)}__${Date.now()}`;
   const { error } = await supabase.storage.from(BUCKET).move(path, trashPath);
@@ -110,12 +114,16 @@ export async function listTrash(): Promise<TrashedMediaItem[]> {
 }
 
 export async function restoreMedia(trashPath: string, originalPath: string): Promise<MutationResult> {
+  if (!trashPath.startsWith(`${TRASH_PREFIX}/`) || !isSafePath(originalPath)) {
+    return { success: false, error: "Invalid path." };
+  }
   const supabase = createServerSupabaseClient();
   const { error } = await supabase.storage.from(BUCKET).move(trashPath, originalPath);
   return error ? { success: false, error: error.message } : { success: true };
 }
 
 export async function permanentlyDeleteMedia(trashPath: string): Promise<MutationResult> {
+  if (!trashPath.startsWith(`${TRASH_PREFIX}/`)) return { success: false, error: "Invalid path." };
   const supabase = createServerSupabaseClient();
   const { error } = await supabase.storage.from(BUCKET).remove([trashPath]);
   return error ? { success: false, error: error.message } : { success: true };
