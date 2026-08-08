@@ -119,7 +119,7 @@ export function TeacherLoginForm() {
 
       <div className="my-5 flex items-center gap-3">
         <div className="h-px flex-1 bg-navy-200 dark:bg-navy-700" />
-        <span className="text-xs font-semibold text-navy-400 dark:text-navy-500">OR</span>
+        <span className="text-xs font-semibold text-navy-500 dark:text-navy-300">OR</span>
         <div className="h-px flex-1 bg-navy-200 dark:bg-navy-700" />
       </div>
       <GoogleSignInButton redirectTo="/teach" />

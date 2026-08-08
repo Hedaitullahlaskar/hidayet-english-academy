@@ -115,7 +115,12 @@ export function LoginForm() {
 
       <div className="my-5 flex items-center gap-3">
         <div className="h-px flex-1 bg-navy-200 dark:bg-navy-700" />
-        <span className="text-xs font-semibold text-navy-400 dark:text-navy-500">OR</span>
+        {/* navy-500/navy-300, not navy-400 both ways: navy-400 measures
+            4.48:1 on white (light mode) and 4.29:1 on navy-950 (dark
+            mode) — both just under WCAG AA's 4.5:1. navy-500 (7.65:1 on
+            white) and navy-300 (7.04:1 on navy-950) are genuinely
+            different colors per mode, not one swapped value. */}
+        <span className="text-xs font-semibold text-navy-500 dark:text-navy-300">OR</span>
         <div className="h-px flex-1 bg-navy-200 dark:bg-navy-700" />
       </div>
 
