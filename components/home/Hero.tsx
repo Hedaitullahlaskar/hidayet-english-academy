@@ -34,8 +34,11 @@ export async function Hero() {
       <div className="pointer-events-none absolute -top-32 right-0 h-96 w-96 rounded-full bg-gold-600/20 blur-3xl" />
 
       <Container className="relative grid items-center gap-16 lg:grid-cols-[1.05fr_0.95fr]">
-        {/* Left: message */}
-        <div className="text-center lg:text-left">
+        {/* Left: message. min-w-0 matters here — a CSS grid item's default
+            min-width is `auto`, not 0, so without it the long badge/body
+            text forces this column (and the page) wider than the
+            viewport on mobile instead of wrapping within it. */}
+        <div className="min-w-0 text-center lg:text-left">
           <Badge tone="gold" className="animate-fade-up">
             {badgeText}
           </Badge>
@@ -81,7 +84,7 @@ export async function Hero() {
         </div>
 
         {/* Right: signature Learning Loop + founder portrait */}
-        <div className="relative mx-auto flex w-full max-w-md flex-col items-center justify-center gap-8">
+        <div className="relative mx-auto flex w-full min-w-0 max-w-md flex-col items-center justify-center gap-8">
           {/* Radial diagram: shown from sm breakpoint up, where there's room
               for six labeled nodes without crowding the founder photo. */}
           <div className="relative hidden aspect-square w-full items-center justify-center sm:flex">
@@ -92,7 +95,7 @@ export async function Hero() {
           {/* Mobile: founder photo alone, method compressed into a scrollable
               chip strip beneath it — avoids cramming six radial labels into
               a ~320px-wide screen. */}
-          <div className="flex flex-col items-center gap-5 sm:hidden">
+          <div className="flex w-full min-w-0 flex-col items-center gap-5 sm:hidden">
             <FounderPortrait size="sm" caption priority />
             <div className="flex w-full gap-2 overflow-x-auto pb-1" role="list" aria-label="Our teaching method, in order">
               {learningLoop.map((stage) => (
