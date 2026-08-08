@@ -4,7 +4,11 @@ import type { HTMLAttributes } from "react";
 type Tone = "gold" | "navy" | "success" | "outline";
 
 const tones: Record<Tone, string> = {
-  gold: "bg-gold-100 text-gold-800 border border-gold-300",
+  // text-gold-900, not gold-800: gold-800 on gold-100 measures 4.43:1,
+  // just under WCAG AA's 4.5:1 for normal-weight text this size — a real,
+  // Lighthouse-caught contrast failure, not a stylistic choice. gold-900
+  // measures 5.70:1.
+  gold: "bg-gold-100 text-gold-900 border border-gold-300",
   navy: "bg-navy-800 text-white",
   success: "bg-success/10 text-success-text border border-success/30 dark:bg-success/15 dark:text-emerald-400 dark:border-success/40",
   outline: "bg-transparent text-navy-700 border border-navy-300 dark:text-navy-200 dark:border-navy-600",

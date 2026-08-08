@@ -10,10 +10,12 @@ export const fraunces = Fraunces({
   display: "swap",
 });
 
-// Body / UI face — clean, highly legible at small sizes.
+// Body / UI face — clean, highly legible at small sizes. Weight 800 was
+// never used anywhere (verified via `grep -r font-extrabold`) — every page
+// was preloading an entire unused font file for nothing.
 export const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-jakarta",
   display: "swap",
 });
